@@ -1,6 +1,7 @@
 ﻿namespace WebProjectG.Server.domain
 {
-    public class ZakelijkeHuurder
+    public class ZakelijkeHuurder : Klant
     {
+        
     }
 }
