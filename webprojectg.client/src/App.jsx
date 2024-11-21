@@ -1,49 +1,30 @@
-import { useEffect, useState } from 'react';
+import logo from './assets/logo.png';
+import ReactDOM from 'react-dom/client';
 import './App.css';
 
 function App() {
-    const [forecasts, setForecasts] = useState();
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
+    const frontpage = (
+        <>
+            <img
+                src={logo} 
+                alt="Logo van CarAndAll"
+                style={{ width: "200px", height: "auto" }}
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+            />
+            <h2>CarAndAll</h2>
+            <p> CarAndAll is een bedrijf dat specialiseert in het verhuren van verschillende soorten voertuigen</p>
+            <a
+                href="https://www.google.nl/maps/place/De+Haagse+Hogeschool/@52.0670747,4.3213991,17z/data=!3m1!4b1!4m6!3m5!1s0x47c5b6e175fe3619:0x9d1994a880751d7a!8m2!3d52.0670747!4d4.323974!16s%2Fm%2F027_cbq?entry=ttu&g_ep=EgoyMDI0MTExOC4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank"
+                rel ="noopener noreferrer"
+            >
+               De haagse hogeschool locatie Den Haag op google maps
+            </a>
+        </>
     );
-    
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(frontpage);
     }
-}
 
 export default App;
