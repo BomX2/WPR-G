@@ -1,18 +1,16 @@
-﻿namespace WebProjectG.Server.domain
+﻿using System.ComponentModel.Design.Serialization;
+using System.Runtime.InteropServices;
+
+namespace WebProjectG.Server.domain
 {
-    public abstract class Bedrijf
+    public class Bedrijf(string bedrijfsNaam, int kvknummer, string domeinnaam, string adres)
     {
-
-      public string BedrijfsNaam { get; set; }
-      public int Kvknummer { get; set; }
-       public string Domeinnaam { get; set; }
-        public List<ZakelijkeHuurder> zakelijkeHuurders = [];
-        public Bedrijf(string bedrijfsNaam, int kvknummer, string domeinnaam) 
-        { 
-            BedrijfsNaam = bedrijfsNaam;
-            Kvknummer = kvknummer;
-            Domeinnaam = domeinnaam;
-        }
-
+        public string BedrijfsNaam { get; set; } = bedrijfsNaam;
+        public int Kvknummer { get; init; } = kvknummer;
+        public string Domeinnaam { get; set; } = domeinnaam;
+        public string Adres { get; set; } = adres;
+        public List<ZakelijkeHuurder> ZakelijkeHuurders { get; private set; } = new List<ZakelijkeHuurder>();
+        public List<WagenParkBeheerder> WagenParkBeheerders { get; private set; } = new List<WagenParkBeheerder>();
+        private Abonnement Abonnement { get; set; } = new Abonnement();
     }
 }

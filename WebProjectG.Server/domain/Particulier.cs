@@ -2,12 +2,11 @@
 {
     public class Particulier : Klant
     {
-        public string Name { get; set; }
-        
-        public Particulier (string name, string adres, int telefoonnummer, string email)
-            :base(adres, telefoonnummer, email)
+        public Abonnement Abonnement { get; set; }
+
+        public Particulier(string Naam, string adres, string telefoonnummer, string email) 
+            : base(Naam, adres, telefoonnummer, email)
         {
-            Name = name;
         }
     }
 }
