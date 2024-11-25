@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain
+﻿namespace WebProjectG.Server.domain.Medewerker
 {
     public class BackOffice : Medewerker
     {
