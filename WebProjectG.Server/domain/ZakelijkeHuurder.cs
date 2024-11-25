@@ -2,6 +2,8 @@
 {
     public class ZakelijkeHuurder : Klant
     {
-        public ZakelijkeHuurder(string naam, string email, int telefoonnummer, string adres) :base( naam, email, telefoonnummer, adres) { }
+        public ZakelijkeHuurder(string Naam, string adres, int telefoonnummer, string email) : base(Naam, adres,telefoonnummer, email)
+        {
+        }
     }
 }
