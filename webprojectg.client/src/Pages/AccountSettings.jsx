@@ -17,12 +17,13 @@ const AccSettings = () => {
        //         email,
                 
          //   })
-      //  }
+        }
         catch (error) {
             console.error("fout opgetreden bij opslaan gegevens", error)
             alert("Er is een fout opgetreden bij opslaan gegevens")
         }
     }
+
     return (
         <div>
             <h1>Account Settings</h1>
@@ -40,7 +41,7 @@ const AccSettings = () => {
                            onChange={(e) => setNaam(e.target.value)}
                         placeholder="verander uw naam"
                     >
-                     
+x
                     </input>
                 </div>
                 <div>
@@ -78,13 +79,13 @@ const AccSettings = () => {
                         value={telefoonnummer}
                         onChange={(e) => setTelefoonnummer(e.target.value)}
                         placeholder="verander uw telefoonnummer"
-                    >
 
-                    </input>
+                    />   
                 </div>
                 <button type="submit">submit</button>
             </form>
         </div>
     );
+    
 };
 export default AccSettings
