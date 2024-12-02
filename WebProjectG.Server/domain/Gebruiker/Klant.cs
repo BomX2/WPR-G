@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain
+﻿namespace WebProjectG.Server.domain.Gebruiker
 {
     public abstract class Klant
     {
@@ -6,12 +6,12 @@
         public string Adres { get; set; }
         public int Telefoonnummer { get; set; }
         public string Email { get; set; }
-        protected Klant(string Naam,string adres,int telefoonnummer,string email)
+        protected Klant(string Naam, string adres, int telefoonnummer, string email)
         {
             this.Naam = Naam;
-            this.Adres = adres;
-            this.Telefoonnummer = telefoonnummer;
-            this.Email = email;
+            Adres = adres;
+            Telefoonnummer = telefoonnummer;
+            Email = email;
         }
 
         protected Klant(string naam, string adres, string telefoonnummer, string email) {

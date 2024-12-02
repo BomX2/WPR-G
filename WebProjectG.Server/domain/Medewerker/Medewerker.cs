@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain
+﻿namespace WebProjectG.Server.domain.Medewerker
 {
     abstract public class Medewerker
     {
@@ -6,11 +6,11 @@
         public string Name { get; set; }
         public int AccessLevel { get; set; }
 
-        protected Medewerker (int medewerkerID, string name, int accessLevel)
+        protected Medewerker(int medewerkerID, string name, int accessLevel)
         {
-            this.MedewerkerID = medewerkerID;
-            this.Name = name;
-            this.AccessLevel = accessLevel;
+            MedewerkerID = medewerkerID;
+            Name = name;
+            AccessLevel = accessLevel;
         }
 
         abstract public void VoertuigStatusBeheren();
