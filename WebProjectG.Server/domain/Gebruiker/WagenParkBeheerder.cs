@@ -2,8 +2,10 @@
 {
     public class WagenParkBeheerder : Klant
     {
-        public WagenParkBeheerder(string Naam, string adres, int telefoonnummer, string email) : base(Naam, adres, telefoonnummer, email)
+        public WagenParkBeheerder(string naam,string adres, int telefoonnummer, string email) : base(naam,adres, telefoonnummer, email)
         {
         }
+
+       
     }
 }
