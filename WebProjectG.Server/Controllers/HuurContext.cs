@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebProjectG.Server.domain.Gebruiker;
 namespace WebProjectG.Server.domain
 {
     public class HuurContext : DbContext

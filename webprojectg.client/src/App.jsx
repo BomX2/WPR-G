@@ -1,35 +1,24 @@
-    import logo from './assets/logo.png';
-    import ReactDOM from 'react-dom/client';
-    import './App.css';
-    import { useState } from 'react';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Navigation from './componements/Navigation';
+import Home from './Pages/Home';
+import About from './pages/About';
+import Registratie from './Pages/Registratie'
 
-function App() {
-    const [code, setCode] = useState("");
-    const secretLogIn = (waarde) => {
-        setCode(waarde);
-        if (waarde === "mib") {
-            console.log("Geheime code is ingevoerd");
-        }
-    };
+const App = () => {
+     
     return (
-        <>
-            <img
-                src={logo}
-                alt="Logo van CarAndAll"
-                style={{ width: "200px", height: "auto" }}
+        
+        <div>
+            <Navigation />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/registratie" element={<Registratie />} />
+            </Routes>
 
-            />
-            <h2>CarAndAll</h2>
-            <p> CarAndAll is een bedrijf dat specialiseert in het verhuren van verschillende soorten voertuigen</p>
-            <p>{code }</p>
-            <input onInput={(e) => secretLogIn(e.target.value)}
-                type="text"
-            >
-            </input>
-        </>
+        </div>
     );
 }
-const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
 
-    export default App;
+export default App;
