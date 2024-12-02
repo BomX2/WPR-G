@@ -41,7 +41,6 @@ const AccSettings = () => {
                            onChange={(e) => setNaam(e.target.value)}
                         placeholder="verander uw naam"
                     >
-x
                     </input>
                 </div>
                 <div>
