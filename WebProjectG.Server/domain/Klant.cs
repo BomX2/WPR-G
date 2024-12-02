@@ -6,6 +6,7 @@
         public string Adres { get; set; }
         public int Telefoonnummer { get; set; }
         public string Email { get; set; }
+        public int Id { get; set; }
         protected Klant(string Naam,string adres,int telefoonnummer,string email)
         {
             this.Naam = Naam;

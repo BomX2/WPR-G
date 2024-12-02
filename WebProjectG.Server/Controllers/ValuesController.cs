@@ -11,7 +11,7 @@ namespace WebProjectG.Server.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private HuurContext _huurContext = new HuurContext();
+        private HuurContext _huurContext = new HuurContext(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         [HttpPost]
         public async Task<ActionResult<Klant>> PostTest(Klant klant)
@@ -46,7 +46,7 @@ namespace WebProjectG.Server.Controllers
 
             catch (DbUpdateConcurrencyException)
             {
-                if (!_huurContext.klanten.Any(e => Id == id)) { return NotFound(); }
+                if (!_huurContext.klanten.Any(e => klant.Id == id)) { return NotFound(); }
                 else { throw; }
             }
             return NoContent();
