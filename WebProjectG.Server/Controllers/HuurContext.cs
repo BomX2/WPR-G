@@ -5,6 +5,7 @@ namespace WebProjectG.Server.domain
     {
         public DbSet<Klant> klanten { get; set; }
         public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
+        public HuurContext() { }
       public void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

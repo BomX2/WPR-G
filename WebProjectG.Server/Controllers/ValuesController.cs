@@ -11,7 +11,7 @@ namespace WebProjectG.Server.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private HuurContext _huurContext = new HuurContext(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        private HuurContext _huurContext = new HuurContext();
 
         [HttpPost]
         public async Task<ActionResult<Klant>> PostTest(Klant klant)
