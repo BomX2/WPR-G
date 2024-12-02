@@ -13,21 +13,30 @@ const Registratie = () => {
                 </div>
                 <div className="inputs">
                     <div className="input">
-                    <input type="naam"/>
+                    <input type="naam" placeholder = "naam"/>
                     </div>
                     <div className="input">
-                        <input type="adress" />
+                        <input type="adress" placeholder="adress"/>
                     </div>
                     <div className="input">
-                        <input type="telefoon nummer" />
+                        <input type="telefoon nummer" placeholder= "telefoon nummer" />
                     </div>
                     <div className="input">
-                        <input type="email" />
+                        <input type="email" placeholder="email"/>
                     </div>
                     <div className="input">
-                        <input type="wachtwoord" />
+                        <input type="wachtwoord" placeholder= "wachtwoord"/>
                     </div>
                 </div>
+                <div className="submit-container">
+                    <div className="submit">
+                        <button className="buttons" value="ga terug">
+                        </button>
+                    </div>
+                    <div className="submit">
+                        <button className = "buttons" value="registreer">
+                        </button>
+                    </div>
                 </div>
             </div>
         </>
