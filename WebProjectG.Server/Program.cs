@@ -7,13 +7,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Voeg de database context samen met de SQL server
 builder.Services.AddDbContext<HuurContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//koppel backend aan frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Allowvite",
+        builder => builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader()); 
+});
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
+app.UseCors("Allowvite");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
