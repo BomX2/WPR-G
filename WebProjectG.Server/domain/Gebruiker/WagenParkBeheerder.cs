@@ -5,5 +5,7 @@
         public WagenParkBeheerder(string Naam, string adres, int telefoonnummer, string email) : base(Naam, adres, telefoonnummer, email)
         {
         }
+
+       
     }
 }

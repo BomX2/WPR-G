@@ -35,5 +35,19 @@ namespace WebProjectG.Server.domain.Gebruiker
             Notify($"Zakelijk account aangemaakt voor {naam} ({email})");
             return zakelijkHuurder;
         }
+
+        public Klant MaakWagenParkBeheerderAccount(string naam, string adres, int telefoonnummer, string email)
+        { 
+            //Maakt nieuwe zakelijke huurder gebruiker
+            var wagenParkBeheerder = new WagenParkBeheerder(naam, adres, telefoonnummer, email);
+            //log en notify
+            Console.WriteLine($"WagenparkBeheerder account aangemaakt: {naam} ({email})");
+            Notify($"WagenparkBeheerder account aangemaakt voor {naam} ({email})");
+            return wagenParkBeheerder;
+        }
+
+        public Bedrijf MaakBedrijfsAccount() 
+        {
+        }
     }
 }
