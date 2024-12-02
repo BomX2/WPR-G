@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.png';
     import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import App1 from './file.jsx'
+import AccSettings from '/AccountSettings.Jsx';
 import { Link } from 'react-router-dom';
 const Home = () => (
     <div style={{ position: "relative", minHeight: "100vh", padding: "20px" }}>
@@ -38,7 +38,7 @@ function App() {
                 <main>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/account-settings" element={<App1 />} />
+                        <Route path="/account-settings" element={<AccSettings />} />
                     </Routes>
                 </main>
             </Router>
