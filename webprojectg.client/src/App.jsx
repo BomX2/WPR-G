@@ -4,6 +4,7 @@ import Navigation from './componements/Navigation';
 import Home from './Pages/Home';
 import About from './pages/About';
 import Registratie from './Pages/Registratie'
+import Inlog from './Pages/Inlog'
 
 const App = () => {
      
@@ -14,6 +15,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
             </Routes>
 

@@ -13,7 +13,7 @@ const Navigation = () => {
                     <Link to="/about">about</Link>
                 </li>
                 <li>
-                    <Link to="/registratie">log in</Link>
+                    <Link to="/Inlog">log in</Link>
                 </li>
             </ul>
         </nav>

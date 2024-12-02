@@ -1,8 +1,14 @@
 import React from 'react';
-import "./Registratie.css"
+import "./Registratie.css";
+import { useNavigate } from 'react-router-dom';
 
 const Registratie = () => {
 
+    const navigate = useNavigate();
+
+    const goBack = () => {
+        navigate('/Inlog')
+    }
 
     return (
         <>
@@ -30,12 +36,10 @@ const Registratie = () => {
                 </div>
                 <div className="submit-container">
                     <div className="submit">
-                        <button className="buttons" value="ga terug">
-                        </button>
+                        <button className="buttons" onClick={goBack}>ga terug</button>
                     </div>
                     <div className="submit">
-                        <button className = "buttons" value="registreer">
-                        </button>
+                        <button className = "buttons">registreer</button>
                     </div>
                 </div>
             </div>
