@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
 
-namespace WebProjectG.Server.domain
+namespace WebProjectG.Server.domain.Gebruiker
 {
-    public class Bedrijf(string bedrijfsNaam, int kvknummer, string domeinnaam, string adres)
+    public class Bedrijf(string bedrijfsNaam, int kvknummer, string domeinnaam, string adres) 
     {
         public string BedrijfsNaam { get; set; } = bedrijfsNaam;
         public int Kvknummer { get; init; } = kvknummer;
@@ -12,5 +12,6 @@ namespace WebProjectG.Server.domain
         public List<ZakelijkeHuurder> ZakelijkeHuurders { get; private set; } = new List<ZakelijkeHuurder>();
         public List<WagenParkBeheerder> WagenParkBeheerders { get; private set; } = new List<WagenParkBeheerder>();
         private Abonnement Abonnement { get; set; } = new Abonnement();
+
     }
 }
