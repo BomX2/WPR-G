@@ -1,29 +1,38 @@
 nav {
     display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
+    justify-content: space-between;
     align-items: center;
+    background-color: #5D0538;
+    position: sticky;
+    top: 0;
     width: 100%;
-    height: 50px;
-    background-color: purple;
 }
 
-    nav ul li a {
-        font-size: 18px;
-        text-decoration: none;
-        color: black;
-    }
+nav .title {
+    font-size: 1.5rem;
+    margin: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+
+}
 
 nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
+
+        display: flex;
 }
 
 nav li {
-    margin-right: 20px;
+        list-style: none;
+}
+
+nav ul li a {
+        display: block;
+        text-decoration: none;
+        color: white;
+        padding: 0.5rem;
+        margin: 0 0.5rem;
+        border-radius: 0.5rem;
 }
 
     nav li:last-child {

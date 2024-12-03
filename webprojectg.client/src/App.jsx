@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import About from './pages/About';
 import Registratie from './Pages/Registratie'
 import Inlog from './Pages/Inlog'
+import Catalogus from './Pages/Catalogus'
 
 const App = () => {
      
@@ -14,7 +15,8 @@ const App = () => {
             <Navigation />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/about" element={<About />} />\
+                <Route path="/catalogus/:id" element={<Catalogus/>}/>
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
             </Routes>

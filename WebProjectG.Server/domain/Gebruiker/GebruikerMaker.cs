@@ -46,8 +46,8 @@ namespace WebProjectG.Server.domain.Gebruiker
             return wagenParkBeheerder;
         }
 
-        public Bedrijf MaakBedrijfsAccount() 
+        /*public Bedrijf MaakBedrijfsAccount() 
         {
-        }
+        }*/
     }
 }
