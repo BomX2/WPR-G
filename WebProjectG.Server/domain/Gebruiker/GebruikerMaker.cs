@@ -16,6 +16,7 @@ namespace WebProjectG.Server.domain.Gebruiker
                 observer.Update(message);
             }
         }
+
         public Klant MaakParticulierAccount(string naam,string adres, int telefoonnummer, string email)
         {
             //Maakt nieuwe particulier gebruiker
@@ -38,16 +39,28 @@ namespace WebProjectG.Server.domain.Gebruiker
 
         public Klant MaakWagenParkBeheerderAccount(string naam, string adres, int telefoonnummer, string email)
         { 
-            //Maakt nieuwe zakelijke huurder gebruiker
+            //Maakt nieuwe wagenparkbeheerder gebruiker
             var wagenParkBeheerder = new WagenParkBeheerder(naam, adres, telefoonnummer, email);
             //log en notify
             Console.WriteLine($"WagenparkBeheerder account aangemaakt: {naam} ({email})");
             Notify($"WagenparkBeheerder account aangemaakt voor {naam} ({email})");
             return wagenParkBeheerder;
         }
-
-        public Bedrijf MaakBedrijfsAccount() 
+/*
+        public Bedrijf MaakBedrijfsAccount(string bedrijfsnaam, string kvknummer, string domeinnaam, string adres) 
         {
+            //logic for if wagenparkbeheerder is active.
+            if (Klant.getActiveWagenparkBeheerder == null)
+            {
+                throw new InvalidOperationException("Een actieve WagenParkBeheerder is vereist om een bedrijfsprofiel aan te maken.");
+            }
+            //Maakt nieuwe bedrijf profiel
+            var bedrijf = new Bedrijf(bedrijfsnaam, kvknummer, domeinnaam, adres);
+            // log n notify
+            Console.WriteLine($"Bedrijfs profiel account aangemaakt: {bedrijfsnaam}");
+            Notify($"Bedrijfprofiel aangemaakt voor {wagenparkbeheerder.Naam} ({wagenparkbeheerder.Email})");
+            return bedrijf;
         }
+*/
     }
 }
