@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace WebProjectG.Server.domain.Gebruiker
 {
-    public class Bedrijf(string bedrijfsNaam, int kvknummer, string domeinnaam, string adres) 
+    public class Bedrijf(string bedrijfsNaam, string kvknummer, string domeinnaam, string adres) 
     {
         public string BedrijfsNaam { get; set; } = bedrijfsNaam;
-        public int Kvknummer { get; init; } = kvknummer;
+        public string Kvknummer { get; init; } = kvknummer;
         public string Domeinnaam { get; set; } = domeinnaam;
         public string Adres { get; set; } = adres;
         public List<ZakelijkeHuurder> ZakelijkeHuurders { get; private set; } = new List<ZakelijkeHuurder>();

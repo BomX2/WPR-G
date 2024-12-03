@@ -13,12 +13,5 @@
             Telefoonnummer = telefoonnummer;
             Email = email;
         }
-
-        protected Klant(string naam, string adres, string telefoonnummer, string email) {
-            Naam = naam;
-            Adres = adres;
-            Email = email;
-        }
     }
-
 }
