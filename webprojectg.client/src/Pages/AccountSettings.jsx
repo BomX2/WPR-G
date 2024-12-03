@@ -7,22 +7,53 @@ const AccSettings = () => {
     const [email, setEmail] = useState('');
     const [telefoonnummer, setTelefoonnummer] = useState('');
 
+    const DeleteAccount = async () => {
+
+            try {
+            const verwijdering = await fetch('http://localhost:5137/api/klant/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    naam,
+                    adres,
+                    email,
+                    telefoonnummer,
+                }),
+            });
+            if (verwijdering.ok) {
+                alert("Account succesvol verwijderd");
+            }
+            else {
+                alert("Er is een fout opgetreden bij het verwijderen van uw account");
+            }
+        }
+        catch (error) {
+            console.error("try is mislukt", error);
+            alert("Er is een fout opgetreden");
+        }
+    };
+
     const SaveOnSubmit = async () => {
         try {
-
-            //    method: put;
-         //   body: JSON.stringify({
-           //     naam,
-           //     adres,
-       //         email,
-                
-         //   })
-      }
+            const verwerking = await fetch('http://localhost:5137/api/klant/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    naam,
+                    adres,
+                    email,
+                    telefoonnummer,
+                }),
+            });
         catch (error) {
-            console.error("fout opgetreden bij opslaan gegevens", error)
-            alert("Er is een fout opgetreden bij opslaan gegevens")
+            console.error("try is mislukt", error);
+            alert("Er is een fout opgetreden");
         }
-    }
+    };
     return (
         <div>
             <h1>Account Settings</h1>
@@ -31,24 +62,19 @@ const AccSettings = () => {
                 SaveOnSubmit()
             }} >
                 <div>
-                    <label>
-                       naam
-                    </label>
-                    <input 
+                    <input
                         type="text"
                         value={naam}
-                           onChange={(e) => setNaam(e.target.value)}
+                        onChange={(e) => setNaam(e.target.value)}
                         placeholder="verander uw naam"
                     >
-                     
+
                     </input>
                 </div>
                 <div>
-                    <label>
-                        adres
-                    </label>
+
                     <input
-                       type="text"
+                        type="text"
                         value={adres}
                         onChange={(e) => setAdres(e.target.value)}
                         placeholder="verander uw adres"
@@ -57,9 +83,7 @@ const AccSettings = () => {
                     </input>
                 </div>
                 <div>
-                    <label>
-                        email
-                    </label>
+
                     <input
                         type="text"
                         value={email}
@@ -70,9 +94,7 @@ const AccSettings = () => {
                     </input>
                 </div>
                 <div>
-                    <label>
-                        telefoonnummer
-                    </label>
+
                     <input
                         type="tel"
                         value={telefoonnummer}
@@ -80,11 +102,15 @@ const AccSettings = () => {
                         placeholder="verander uw telefoonnummer"
                     />
 
-                   
+
                 </div>
                 <button type="submit">submit</button>
+                <button type="button" onClick={DeleteAccount}>Verwijder uw account</button>
             </form>
         </div>
+
+        
     );
-};
-export default AccSettings
+ };
+      export default AccSettings;
+
