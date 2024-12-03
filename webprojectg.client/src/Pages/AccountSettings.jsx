@@ -65,16 +65,16 @@ const AccSettings = () => {
                     <input
                         type="text"
                         value={naam}
-                        onChange={(e) => setNaam(e.target.value)}
+                           onChange={(e) => setNaam(e.target.value)}
                         placeholder="verander uw naam"
                     >
-
+                     
                     </input>
                 </div>
                 <div>
 
                     <input
-                        type="text"
+                       type="text"
                         value={adres}
                         onChange={(e) => setAdres(e.target.value)}
                         placeholder="verander uw adres"
@@ -102,10 +102,9 @@ const AccSettings = () => {
                         placeholder="verander uw telefoonnummer"
                     />
 
-
+                   
                 </div>
                 <button type="submit">submit</button>
-                <button type="button" onClick={DeleteAccount}>Verwijder uw account</button>
             </form>
         </div>
 
