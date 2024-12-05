@@ -9,8 +9,9 @@ const AccSettings = () => {
 
     const DeleteAccount = async () => {
 
-            try {
-            const verwijdering = await fetch('http://localhost:5137/api/klant/delete', {
+        try {
+            const verwijdering = await fetch('http://localhost:7065/api/klant/delete', {
+                
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ const AccSettings = () => {
 
     const SaveOnSubmit = async () => {
         try {
-            const verwerking = await fetch('http://localhost:5137/api/klant/update', {
+            const verwerking = await fetch('http://localhost:7065/api/klant/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -49,7 +50,13 @@ const AccSettings = () => {
                     telefoonnummer,
                 }),
             });
-        catch (error) {
+
+            if (verwerking.ok) {
+                alert('Account succesvol bijgewerkt');
+            } else {
+                alert('Er is een fout opgetreden bij het bijwerken van uw account');
+            }
+        } catch (error) {
             console.error("try is mislukt", error);
             alert("Er is een fout opgetreden");
         }
@@ -105,6 +112,7 @@ const AccSettings = () => {
                    
                 </div>
                 <button type="submit">submit</button>
+                <button onClick={DeleteAccount}>Verwijder account</button>
             </form>
         </div>
 

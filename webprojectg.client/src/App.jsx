@@ -5,7 +5,7 @@ import Home from './Pages/Home';
 import About from './pages/About';
 import Registratie from './Pages/Registratie'
 import Inlog from './Pages/Inlog'
-
+import AccSettings   from './Pages/AccountSettings'
 const App = () => {
      
     return (
@@ -17,6 +17,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
+                <Route path="/AccountSettings" element={<AccSettings /> } />
             </Routes>
 
         </div>

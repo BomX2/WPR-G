@@ -15,6 +15,9 @@ const Navigation = () => {
                 <li>
                     <Link to="/Inlog">log in</Link>
                 </li>
+                <li>
+                    <Link to="/AccountSettings">account settings</Link>
+                </li>
             </ul>
         </nav>
     )

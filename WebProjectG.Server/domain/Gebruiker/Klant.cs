@@ -1,17 +1,23 @@
 ﻿namespace WebProjectG.Server.domain.Gebruiker
 {
-    public abstract class Klant
+    public class Klant
     {
+        public int Id { get; set; }
         public string Naam { get; set; }
         public string Adres { get; set; }
         public int Telefoonnummer { get; set; }
         public string Email { get; set; }
-        protected Klant(string Naam, string adres, int telefoonnummer, string email)
+        public Klant()
+        {
+
+        }
+        public Klant(string Naam, string adres, int telefoonnummer, string email)
         {
             this.Naam = Naam;
-            Adres = adres;
-            Telefoonnummer = telefoonnummer;
-            Email = email;
+            this.Adres = adres;
+            this.Telefoonnummer = telefoonnummer;
+            this.Email = email;
         }
+       
     }
 }

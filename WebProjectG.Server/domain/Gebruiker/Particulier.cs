@@ -1,11 +1,15 @@
-﻿namespace WebProjectG.Server.domain.Gebruiker
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebProjectG.Server.domain.Gebruiker
 {
     public class Particulier : Klant
     {
-        public Particulier(string Naam, string adres, int telefoonnummer, string email) : base(Naam, adres, telefoonnummer, email)
-        {
-        }
-
         
+       [Key] int Id { get; set; }
+        private Particulier() { }
+        public Particulier(int id,string naam, string adres, int telefoonnummer, string email) : base(naam, adres, telefoonnummer, email)
+        {
+            Id = id;
+        }
     }
 }

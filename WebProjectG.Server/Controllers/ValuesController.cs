@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿    using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SQLitePCL;
 using WebProjectG.Server.domain;
+using WebProjectG.Server.domain.Gebruiker;
 
 namespace WebProjectG.Server.Controllers
 {
@@ -11,7 +12,12 @@ namespace WebProjectG.Server.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private HuurContext _huurContext = new HuurContext();
+        private readonly HuurContext _huurContext;
+
+        public ValuesController(HuurContext huurContext)
+        {
+            _huurContext = huurContext; 
+        }
 
         [HttpPost]
         public async Task<ActionResult<Klant>> PostTest(Klant klant)

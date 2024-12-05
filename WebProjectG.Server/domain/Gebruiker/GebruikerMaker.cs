@@ -1,9 +1,10 @@
-﻿using WebProjectG.Server.domain.EmailObserver;
+﻿/*using WebProjectG.Server.domain.EmailObserver;
 
 namespace WebProjectG.Server.domain.Gebruiker
 {
     public class GebruikerMaker : IObservable
-    {
+    { 
+        /*
         private List<IObserver> observers = new List<IObserver>();
 
         public void Attach(IObserver observer) => observers.Add(observer);
@@ -61,6 +62,7 @@ namespace WebProjectG.Server.domain.Gebruiker
             Notify($"Bedrijfprofiel aangemaakt voor {wagenparkbeheerder.Naam} ({wagenparkbeheerder.Email})");
             return bedrijf;
         }
-*/
+
     }
 }
+*/
