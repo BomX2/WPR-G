@@ -5,7 +5,8 @@ import Home from './Pages/Home';
 import About from './pages/About';
 import Registratie from './Pages/Registratie'
 import Inlog from './Pages/Inlog'
-import AccSettings   from './Pages/AccountSettings'
+import Catalogus from './Pages/Catalogus'
+
 const App = () => {
      
     return (
@@ -14,10 +15,10 @@ const App = () => {
             <Navigation />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/about" element={<About />} />\
+                <Route path="/catalogus/:id" element={<Catalogus/>}/>
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
-                <Route path="/AccountSettings" element={<AccSettings /> } />
             </Routes>
 
         </div>
