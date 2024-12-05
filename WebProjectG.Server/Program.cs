@@ -1,12 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain;
+using WebProjectG.Server.domain.Gebruiker;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 // Voeg de database context samen met de SQL server
 builder.Services.AddDbContext<HuurContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddDbContext<Gebruiker>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GebruikerDbConnection")));
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<Gebruiker>()
+    .AddEntityFrameworkStores<GebruikerDbContext>();
 //koppel backend aan frontend
 builder.Services.AddCors(options =>
 {
