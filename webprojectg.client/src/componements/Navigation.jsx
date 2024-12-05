@@ -5,9 +5,10 @@ import './Navigation.css';
 const Navigation = () => {
     return (
         <nav>
+            <Link to="/" className="title">CarAndAll</Link>
             <ul>
                 <li>
-                    <Link to="/">Home</Link>
+                    <Link to="/Catalogus">Catalogus</Link>
                 </li>
                 <li>
                     <Link to="/about">about</Link>

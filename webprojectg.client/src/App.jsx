@@ -5,7 +5,6 @@ import Home from './Pages/Home';
 import About from './pages/About';
 import Registratie from './Pages/Registratie'
 import Inlog from './Pages/Inlog'
-import Catalogus from './Pages/Catalogus'
 
 const App = () => {
      
@@ -19,6 +18,7 @@ const App = () => {
                 <Route path="/catalogus/:id" element={<Catalogus/>}/>
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
+                <Route path="/AccountSettings" element={<AccSettings /> } />
             </Routes>
 
         </div>
