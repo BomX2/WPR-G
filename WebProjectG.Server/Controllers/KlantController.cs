@@ -10,17 +10,17 @@ namespace WebProjectG.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class KlantController : ControllerBase
     {
         private readonly HuurContext _huurContext;
 
-        public ValuesController(HuurContext huurContext)
+        public KlantController(HuurContext huurContext)
         {
             _huurContext = huurContext; 
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Klant>> PostTest(Klant klant)
+        [HttpPost("post")]
+        public async Task<ActionResult<Klant>> PostKlant(Klant klant)
         {
             _huurContext.klanten.Add(klant);
             await _huurContext.SaveChangesAsync();
@@ -41,7 +41,7 @@ namespace WebProjectG.Server.Controllers
             return Ok(klant);
         }
 
-        [HttpPut]
+        [HttpPut("update")]
         public async Task<IActionResult> PutKlant(int id, Klant klant)
         {
             if (id != klant.Id) { return BadRequest(); }
@@ -58,7 +58,7 @@ namespace WebProjectG.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteKlant(int id)
         {
             var klant = await _huurContext.klanten.FindAsync(id);

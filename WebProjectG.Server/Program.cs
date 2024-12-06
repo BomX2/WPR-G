@@ -1,5 +1,7 @@
+using System.Numerics;
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain;
+using WebProjectG.Server.domain.Gebruiker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +13,7 @@ builder.Services.AddDbContext<HuurContext>(options => options.UseSqlServer(build
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allowvite",
-        builder => builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader()); 
+        builder => builder.WithOrigins("https://localhost:5173").AllowAnyMethod().AllowAnyHeader()); 
 });
 
 
@@ -41,5 +43,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-app.MapGet("/", (HuurContext db) => db.klanten.ToList());
+app.MapGet("/klanten", (HuurContext db) => db.klanten.ToList());
 app.Run();

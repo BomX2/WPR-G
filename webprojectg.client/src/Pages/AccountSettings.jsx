@@ -10,7 +10,7 @@ const AccSettings = () => {
     const DeleteAccount = async () => {
 
         try {
-            const verwijdering = await fetch('http://localhost:7065/api/klant/delete', {
+            const verwijdering = await fetch('https://localhost:7065/api/klant/delete', {
                 
                 method: 'DELETE',
                 headers: {
@@ -19,12 +19,12 @@ const AccSettings = () => {
                 body: JSON.stringify({
                     naam,
                     adres,
-                    email,
                     telefoonnummer,
+                    email,
                 }),
             });
             if (verwijdering.ok) {
-                alert("Account succesvol verwijderd");
+                alert("Account succesvol verwijdering");
             }
             else {
                 alert("Er is een fout opgetreden bij het verwijderen van uw account");
@@ -38,7 +38,7 @@ const AccSettings = () => {
 
     const SaveOnSubmit = async () => {
         try {
-            const verwerking = await fetch('http://localhost:7065/api/klant/update', {
+            const verwerking = await fetch('https://localhost:7065/api/klant/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,8 +46,8 @@ const AccSettings = () => {
                 body: JSON.stringify({
                     naam,
                     adres,
-                    email,
                     telefoonnummer,
+                    email,
                 }),
             });
 
@@ -112,7 +112,7 @@ const AccSettings = () => {
                    
                 </div>
                 <button type="submit">submit</button>
-                <button onClick={DeleteAccount}>Verwijder account</button>
+                <button type="button" onClick={DeleteAccount}>Verwijder account</button>
             </form>
         </div>
 
