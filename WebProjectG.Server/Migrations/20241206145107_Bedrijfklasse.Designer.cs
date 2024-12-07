@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain;
 
@@ -10,9 +11,11 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    partial class HuurContextModelSnapshot : ModelSnapshot
+    [Migration("20241206145107_Bedrijfklasse")]
+    partial class Bedrijfklasse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,10 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BedrijfsNaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Domeinnaam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

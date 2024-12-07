@@ -19,7 +19,14 @@ namespace WebProjectG.Server.Controllers
             _huurContext = huurContext; 
         }
 
-        [HttpPost("post")]
+        [HttpPost("postbedrijf")]
+        public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
+        {
+            _huurContext.Bedrijven.Add(bedrijf);
+            await _huurContext.SaveChangesAsync();
+            return CreatedAtAction("GetKlant", new {id = bedrijf.Id}, bedrijf);
+        }
+        [HttpPost("postKlant")]
         public async Task<ActionResult<Klant>> PostKlant(Klant klant)
         {
             _huurContext.klanten.Add(klant);

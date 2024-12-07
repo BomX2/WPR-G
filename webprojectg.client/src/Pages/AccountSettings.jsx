@@ -66,7 +66,7 @@ const AccSettings = () => {
             <h1>Account Settings</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
-                SaveOnSubmit()
+                SaveOnSubmit();
             }} >
                 <div>
                     <input

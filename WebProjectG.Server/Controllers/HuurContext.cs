@@ -10,7 +10,7 @@ namespace WebProjectG.Server.domain
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarAndAll_database;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
         public DbSet<Klant> klanten { get; set; }
-     
+        public DbSet<Bedrijf> Bedrijven { get; set; }
         public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
       protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
