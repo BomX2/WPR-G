@@ -24,7 +24,7 @@ namespace WebProjectG.Server.Controllers {
             return CreatedAtAction("GetKlant", new { id = gebruiker.Id }, gebruiker);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("getid{id}")]
         public async Task<ActionResult<Gebruiker>> GetKlant(int id) {
             var gebruiker = await _huurContext.klanten.FindAsync(id);
 
