@@ -7,7 +7,7 @@ const Inlog = () => {
     const [email, setEmail] = useState('');
     const [wachtwoord, setWachtwoord] = useState('');
 
-    const [error, setError] = useState<String>('')
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const Inlog = () => {
         navigate('/registratie');
     };
 
-    const handelLogin = (e) => {
+    const handelLogin = () => {
         if (!email || !wachtwoord) {
             setError("vul allen velden in")
         } else {
@@ -29,7 +29,7 @@ const Inlog = () => {
             },
             body: JSON.stringify({
                 email: email,
-                password: wachtwoord,
+                wachtwoord: wachtwoord,
             }),
         })
             .then((response) => {
@@ -53,9 +53,10 @@ const Inlog = () => {
                 <div className="header">
                     <div className="text">login</div>
                 </div>
-                <form onSubmit={
-                    handelLogin
-                }>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handelLogin();
+                }}>
                 <div className="inputs">
                     <div className="input">
                             <input
@@ -66,7 +67,7 @@ const Inlog = () => {
                     </div>
                     <div className="input">
                             <input
-                                type="wachtwoord"
+                                type="password"
                                 value={wachtwoord}
                                 onChange={(e) => setWachtwoord(e.target.value)}
                                 placeholder="wachtwoord" />
