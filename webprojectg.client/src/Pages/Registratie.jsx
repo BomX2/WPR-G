@@ -33,6 +33,7 @@ const Registratie = () => {
 
             if (verwerking.ok) {
                 alert('Account succesvol bijgewerkt');
+                goBack();
             } else {
                 alert('Er is een fout opgetreden bij het bijwerken van uw account');
             }
@@ -53,7 +54,6 @@ const Registratie = () => {
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     onSubmit();
-                    goBack()
                 }} >
                 <div className="inputs">
                     <div className="input">
