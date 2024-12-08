@@ -29,37 +29,37 @@ namespace WebProjectG.Server.Controllers
         [HttpPost("postKlant")]
         public async Task<ActionResult<Klant>> PostKlant(Klant klant)
         {
-            _huurContext.klanten.Add(klant);
+            _huurContext.klanten.Add(gebruiker);
             await _huurContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetKlant", new { id = klant.Id}, klant);
+            return CreatedAtAction("GetKlant", new { id = gebruiker.Id}, gebruiker);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Klant>> GetKlant(int id)
+        public async Task<ActionResult<Gebruiker>> GetKlant(int id)
         {
-            var klant = await _huurContext.klanten.FindAsync(id); 
+            var gebruiker = await _huurContext.klanten.FindAsync(id); 
 
-            if (klant == null)
+            if (gebruiker == null)
             {
                 return NotFound();
             }
 
-            return Ok(klant);
+            return Ok(gebruiker);
         }
 
         [HttpPut("update")]
         public async Task<IActionResult> PutKlant(int id, Klant klant)
         {
-            if (id != klant.Id) { return BadRequest(); }
+            if (id != gebruiker.Id) { return BadRequest(); }
 
-            _huurContext.Entry(klant).State = EntityState.Modified;
+            _huurContext.Entry(gebruiker).State = EntityState.Modified;
 
             try { await _huurContext.SaveChangesAsync(); }
 
             catch (DbUpdateConcurrencyException)
             {
-                if (!_huurContext.klanten.Any(e => klant.Id == id)) { return NotFound(); }
+                if (!_huurContext.klanten.Any(e => gebruiker.Id == id)) { return NotFound(); }
                 else { throw; }
             }
             return NoContent();

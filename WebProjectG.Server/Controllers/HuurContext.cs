@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using WebProjectG.Server.domain.Gebruiker;
 namespace WebProjectG.Server.domain
 {
     public class HuurContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DbSet<Gebruiker.Gebruiker> klanten { get; set; }
+        public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
+        public HuurContext() { }
+      public void OnModelCreating(ModelBuilder modelBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarAndAll_database;Trusted_Connection=True;MultipleActiveResultSets=true");
+            base.OnModelCreating(modelBuilder);
         }
         public DbSet<Klant> klanten { get; set; }
         public DbSet<Bedrijf> Bedrijven { get; set; }
