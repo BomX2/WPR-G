@@ -3,7 +3,7 @@ import { useState } from 'react';
 import "./Registratie.css";
 import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Registratie = () => {
     // State variables for email and passwords
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -106,7 +106,7 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default Registratie;
 /*
 const Registratie = () => {
 
