@@ -10,11 +10,11 @@ namespace WebProjectG.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KlantController : ControllerBase
+    public class GebruikerController : ControllerBase
     {
         private readonly HuurContext _huurContext;
 
-        public KlantController(HuurContext huurContext)
+        public GebruikerController(HuurContext huurContext)
         {
             _huurContext = huurContext; 
         }
@@ -24,21 +24,21 @@ namespace WebProjectG.Server.Controllers
         {
             _huurContext.Bedrijven.Add(bedrijf);
             await _huurContext.SaveChangesAsync();
-            return CreatedAtAction("GetKlant", new {id = bedrijf.Id}, bedrijf);
+            return CreatedAtAction("GetGebruiker", new {id = bedrijf.Id}, bedrijf);
         }
-        [HttpPost("postKlant")]
-        public async Task<ActionResult<Klant>> PostKlant(Klant klant)
+        [HttpPost("postGebruiker")]
+        public async Task<ActionResult<Gebruiker>> PostGebruiker(Gebruiker gebruiker)
         {
-            _huurContext.klanten.Add(gebruiker);
+            _huurContext.gebruikers.Add(gebruiker);
             await _huurContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetKlant", new { id = gebruiker.Id}, gebruiker);
+            return CreatedAtAction("GetGebruiker", new { id = gebruiker.Id}, gebruiker);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Gebruiker>> GetKlant(int id)
+        public async Task<ActionResult<Gebruiker>> GetGebruiker(int id)
         {
-            var gebruiker = await _huurContext.klanten.FindAsync(id); 
+            var gebruiker = await _huurContext.gebruikers.FindAsync(id); 
 
             if (gebruiker == null)
             {
@@ -49,7 +49,7 @@ namespace WebProjectG.Server.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> PutKlant(int id, Klant klant)
+        public async Task<IActionResult> PutGebruiker(string id, Gebruiker gebruiker)
         {
             if (id != gebruiker.Id) { return BadRequest(); }
 
@@ -59,19 +59,19 @@ namespace WebProjectG.Server.Controllers
 
             catch (DbUpdateConcurrencyException)
             {
-                if (!_huurContext.klanten.Any(e => gebruiker.Id == id)) { return NotFound(); }
+                if (!_huurContext.gebruikers.Any(e => gebruiker.Id == id)) { return NotFound(); }
                 else { throw; }
             }
             return NoContent();
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteKlant(int id)
+        public async Task<IActionResult> DeleteGebruiker(int id)
         {
-            var klant = await _huurContext.klanten.FindAsync(id);
-            if (klant == null) { return NotFound(); }
+            var gebruiker = await _huurContext.gebruikers.FindAsync(id);
+            if (gebruiker == null) { return NotFound(); }
 
-            _huurContext.klanten.Remove(klant);
+            _huurContext.gebruikers.Remove(gebruiker);
             await _huurContext.SaveChangesAsync();
 
             return NoContent();

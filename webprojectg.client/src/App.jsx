@@ -7,7 +7,8 @@ import Registratie from './Pages/Registratie'
 import Inlog from './Pages/Inlog'
 import Catalogus from './Pages/Catalogus'
 import AccSettings from './Pages/AccountSettings'
-import  RegistreerBedrijf   from './Pages/BedrijfsRegistratie'
+import RegistreerBedrijf from './Pages/BedrijfsRegistratie'
+import Abonnementen from './Pages/Abonnement';
 const App = () => {
      
     return (
@@ -16,12 +17,13 @@ const App = () => {
             <Navigation />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />\
+                <Route path="/about" element={<About />} />
                 <Route path="/catalogus/:id" element={<Catalogus/>}/>
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
                 <Route path="/AccountSettings" element={<AccSettings />} />
-                <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf /> } />
+                <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf />} />
+                <Route path="/Abonnement" element={<Abonnementen /> }/>
             </Routes>
 
         </div>

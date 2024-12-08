@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
-
-
 const AccSettings = () => {
     const [naam, setNaam] = useState('');
     const [adres, setAdres] = useState('');
     const [email, setEmail] = useState('');
     const [telefoonnummer, setTelefoonnummer] = useState('');
-
-    const DeleteAccount = async () => {
+  const DeleteAccount = async () => {
 
         try {
-            const verwijdering = await fetch('https://localhost:7065/api/klant/delete', {
+            const verwijdering = await fetch('https://localhost:7065/api/gebruiker/delete', {
                 
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    naam,
-                    adres,
-                    telefoonnummer,
-                    email,
+                    
                 }),
             });
             if (verwijdering.ok) {
                 alert("Account succesvol verwijdering");
+                
             }
             else {
                 alert("Er is een fout opgetreden bij het verwijderen van uw account");

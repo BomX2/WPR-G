@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 const RegistreerBedrijf = () => {
     const [BedrijfsNaam, setBedrijfsNaam] = useState("");
-    const [Adres, setAdres] = useState("");
+    const [adres, setAdres] = useState("");
     const [Kvknummer, setKvknummer] = useState("");
-
+    const navigeren = useNavigate();
     const BedrijfToevoegen = async () => {
         try {
 
-            const Toevoegen = await fetch('https://localhost:7065/api/klant/postbedrijf', {
+            const Toevoegen = await fetch('https://localhost:7065/api/gebruiker/postbedrijf', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     BedrijfsNaam,
-                    Adres,
                     Kvknummer,
-
+                    adres,
                 }),
 
 
             });
             if (Toevoegen.ok) {
                 alert("Bedrijfs account succesvol toegevoegd.");
+                navigeren('/Abonnement');
             }
             else {
                 alert("er is een fout opgetreden bij het aanmaken van een bedrijfs account");
@@ -44,7 +44,7 @@ const RegistreerBedrijf = () => {
                      placeholder="voer de naam van uw bedrijf in:" >
                     </input>
                     <div>
-                        <input type="text" value={Adres}
+                        <input type="text" value={adres}
                             onChange={(e) => setAdres(e.target.value)}
                             placeholder="voer het adres van uw bedrijf in:" >
                         </input>
