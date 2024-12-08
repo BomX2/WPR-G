@@ -9,8 +9,8 @@ namespace WebProjectG.Server.domain.Gebruiker
         public string Kvknummer { get; init; } = kvknummer;
         public string Domeinnaam { get; set; } = domeinnaam;
         public string Adres { get; set; } = adres;
-        public List<ZakelijkeHuurder> ZakelijkeHuurders { get; private set; } = new List<ZakelijkeHuurder>();
-        public List<WagenParkBeheerder> WagenParkBeheerders { get; private set; } = new List<WagenParkBeheerder>();
+     
+        public List<Gebruiker> ZakelijkeHuurders { get; private set; } = new List<Gebruiker>();
         private Abonnement Abonnement { get; set; } = new Abonnement();
 
     }
