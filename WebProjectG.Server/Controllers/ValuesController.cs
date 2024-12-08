@@ -19,7 +19,7 @@ namespace WebProjectG.Server.Controllers
             _huurContext = huurContext; 
         }
 
-        [HttpPost]
+        [HttpPost("post")]
         public async Task<ActionResult<Klant>> PostTest(Klant klant)
         {
             _huurContext.klanten.Add(klant);
