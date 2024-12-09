@@ -9,38 +9,82 @@ const Registratie = () => {
     const [tel, setTel] = useState('');
     const [email, setEmail] = useState('');
     const [wachtwoord, setWachtwoord] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
 
     const goBack = () => {
         navigate('/Inlog')
     }
 
-    const onSubmit = async () => {
+    const registratieBasisDetails = async () => {
         try {
-            const verwerking = await fetch('http://localhost:7065/api/klant/post', {
+            const verwerking = await fetch('/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    naam,
-                    adres,
-                    email,
-                    tel,
-                    wachtwoord,
+                    email: email,
+                    wachtwoord: wachtwoord
                 }),
             });
 
             if (verwerking.ok) {
                 alert('Account succesvol bijgewerkt');
-                goBack();
             } else {
                 alert('Er is een fout opgetreden bij het bijwerken van uw account');
             }
+            return true;
         } catch (error) {
             console.error("try is mislukt", error);
             alert("Er is een fout opgetreden");
+            return false;
         }
+    }
+
+    const registerUserDetails = async () => {
+        try {
+            const verwerking = await fetch('http://localhost:7065/api/klant/post', {
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            body: JSON.stringify({
+                naam: naam,
+                adres: adres,
+                telephone: tel,
+                email: email,
+            }),
+        });
+        if (verwerking.ok) {
+            alert('Account succesvol bijgewerkt');
+        } else {
+            alert('Er is een fout opgetreden bij het bijwerken van uw account');
+        }
+        return true;
+    } catch (error) {
+        console.error("try is mislukt", error);
+        alert("Er is een fout opgetreden");
+        return false;
+    }
+    }
+    
+    const onSubmit = async () => {
+        setError('');
+
+        if (!naam || !adres || !tel || !email || !wachtwoord) {
+            setError('Alle velden zijn verplicht.');
+            return;
+        }
+
+        const basicDetailsSuccess = await registratieBasisDetails();
+        if (!basicDetailsSuccess) return;
+
+       
+        
+
+        goBack();
     }
 
     return (
