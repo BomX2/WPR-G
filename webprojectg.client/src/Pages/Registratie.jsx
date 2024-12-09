@@ -81,7 +81,8 @@ const Registratie = () => {
         const basicDetailsSuccess = await registratieBasisDetails();
         if (!basicDetailsSuccess) return;
 
-       
+        const userDetailsSuccess = await registerUserDetails();
+        if (!userDetailsSuccess) return;
         
 
         goBack();
