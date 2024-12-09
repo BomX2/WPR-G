@@ -1,16 +1,31 @@
-﻿using System.ComponentModel.Design.Serialization;
+﻿using System.   ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.Design.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebProjectG.Server.domain.Gebruiker
 {
-    public class Bedrijf(int id,string bedrijfsNaam, string kvknummer, string adres) 
+    public class Bedrijf 
     {
-        public int Id { get; set; } = id;
-        public string BedrijfsNaam { get; set; } = bedrijfsNaam;
-        public string Adres { get; set; } = adres;
-        public string Kvknummer { get; init; } = kvknummer;
+        
+        public int Id { get; set; }
+        public string BedrijfsNaam { get; set; }
+        public string Adres { get; set; } 
+        public string Kvknummer { get; init; } 
+        public Abonnement? Abonnement { get; set; }
         public List<Gebruiker> gebruikers { get; private set; } = [];
-        private Abonnement Abonnement { get; set; } = new Abonnement();
-         
+        public Bedrijf ()
+        {
+
+        }
+        public Bedrijf(int id, string bedrijfsNaam, string adres, string kvknummer, Abonnement? abonnement = null)
+        {
+            Id = id;
+            BedrijfsNaam = bedrijfsNaam;
+            Adres = adres;
+            Kvknummer = kvknummer;
+            Abonnement = abonnement;
+        }
     }
 }

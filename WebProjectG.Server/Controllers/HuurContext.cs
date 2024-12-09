@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using WebProjectG.Server.domain.Gebruiker;
 namespace WebProjectG.Server.domain
 {
@@ -6,11 +7,11 @@ namespace WebProjectG.Server.domain
     {
         public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
         public HuurContext() { }
-      public void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
         public DbSet<Gebruiker.Gebruiker> gebruikers { get; set; }
+        public void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            
+        }
         public DbSet<Bedrijf> Bedrijven { get; set; }
       
     }

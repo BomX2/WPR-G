@@ -44,7 +44,7 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bedrijven");
+                    b.ToTable("Bedrijven", (string)null);
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>
@@ -101,7 +101,7 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasIndex("BedrijfId");
 
-                    b.ToTable("Gebruiker");
+                    b.ToTable("Gebruiker", (string)null);
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>
