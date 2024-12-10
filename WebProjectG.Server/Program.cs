@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GebruikerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GebruikerDbConnection")));
 
-// Configure other application DbContext
+// Configure CarAndAll DbContext
 builder.Services.AddDbContext<HuurContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

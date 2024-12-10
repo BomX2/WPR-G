@@ -1,67 +1,61 @@
-import React, { useState } from 'react'; // Import React and useState hook
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-
+import React, { useState } from 'react'; 
+import { useNavigate } from 'react-router-dom'; 
 function Login() {
     // State variables to store user input
-    const [email, setEmail] = useState(""); // Stores the email entered by the user
-    const [password, setPassword] = useState(""); // Stores the password entered by the user
-    const [rememberme, setRememberme] = useState(false); // Tracks if "Remember Me" is checked
-    const [error, setError] = useState(""); // Stores any error messages to display
+    const [email, setEmail] = useState(""); 
+    const [password, setPassword] = useState(""); 
+    const [rememberme, setRememberme] = useState(false); 
+    const [error, setError] = useState(""); 
 
-    const navigate = useNavigate(); // Allows navigation to different routes
+    const navigate = useNavigate();
 
     // Handles changes in the input fields
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        if (name === "email") setEmail(value); // Update email state
-        if (name === "password") setPassword(value); // Update password state
-        if (name === "rememberme") setRememberme(type === "checkbox" ? checked : value); // Update "Remember Me" state
-    };
+        if (name === "email") setEmail(value); 
+        if (name === "password") setPassword(value); 
+        if (name === "rememberme") setRememberme(type === "checkbox" ? checked : value); 
 
     // Redirects to the Register page when the button is clicked
     const handleRegisterClick = () => {
-        navigate("/Registratie"); // Navigate to the register page
+        navigate("/Registratie");
     };
 
     // Handles the form submission
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
+        e.preventDefault();
 
-        // Validate that both email and password fields are filled
         if (!email || !password) {
-            setError("Please fill in all fields."); // Set an error message if fields are empty
+            setError("Please fill in all fields."); 
         } else {
-            setError(""); // Clear any previous error messages
+            setError("");
 
-            // Determine the login URL based on "Remember Me" status
             const loginurl = rememberme ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
                 : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
 
-            // Send login details to the server
             fetch(loginurl, {
-                method: "POST", // HTTP POST request
+                method: "POST", 
                 headers: {
-                    "Content-Type": "application/json", // Indicate JSON content
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }), // Send email and password as JSON
+                body: JSON.stringify({ email, password }), 
             })
                 .then((response) => {
-                    console.log(response); // Log the response for debugging
+                    console.log(response); 
                     if (response.ok) {
-                        setError("Successful Login."); // Notify the user of successful login
-                        window.location.href = '/'; // Redirect to the homepage
+                        setError("Successful Login."); 
+                        window.location.href = '/'; 
                     } else {
-                        setError("Error Logging In."); // Notify the user of a login error
+                        setError("Error Logging In."); 
                     }
                 })
                 .catch((error) => {
-                    console.error(error); // Log any network errors
-                    setError("Error Logging in."); // Notify the user of a network error
+                    console.error(error);
+                    setError("Error Logging in."); 
                 });
         }
     };
 
-    // JSX for rendering the login form
     return (
         <div className="containerbox">
             <h3>Login</h3>
@@ -71,11 +65,11 @@ function Login() {
                 </div>
                 <div>
                     <input
-                        type="email" // Input type for email
+                        type="email" 
                         id="email"
-                        name="email" // Field name
-                        value={email} // Bind state to input value
-                        onChange={handleChange} // Call handleChange when the input changes
+                        name="email" 
+                        value={email} 
+                        onChange={handleChange}
                     />
                 </div>
                 <div>
@@ -83,7 +77,7 @@ function Login() {
                 </div>
                 <div>
                     <input
-                        type="password" // Input type for password
+                        type="password" 
                         id="password"
                         name="password"
                         value={password}
@@ -92,22 +86,22 @@ function Login() {
                 </div>
                 <div>
                     <input
-                        type="checkbox" // Checkbox for "Remember Me"
+                        type="checkbox" 
                         id="rememberme"
                         name="rememberme"
-                        checked={rememberme} // Bind state to checkbox
+                        checked={rememberme} 
                         onChange={handleChange}
                     />
                     <span>Remember Me</span>
                 </div>
                 <div>
-                    <button type="submit">Login</button> {/* Submit the form */}
+                    <button type="submit">Login</button> {}
                 </div>
                 <div>
-                    <button type="button" onClick={handleRegisterClick}>Register</button> {/* Go to register page */}
+                    <button type="button" onClick={handleRegisterClick}>Register</button> {}
                 </div>
             </form>
-            {error && <p className="error">{error}</p>} {/* Display error message if any */}
+            {error && <p className="error">{error}</p>} {}
         </div>
     );
 }
