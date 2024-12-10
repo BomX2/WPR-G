@@ -13,7 +13,7 @@ const Registratie = () => {
     const navigate = useNavigate();
 
     const goBack = () => {
-        navigate('/Inlog')
+        navigate('/Inlog');
     };
 
     const handleChange = (e) => {
@@ -67,80 +67,86 @@ const Registratie = () => {
     };
 
     return (
-        <>
-            <div className='container'>
-                <div className="header">
-                    <div className="text">Sign Up</div>
+        <div className="container">
+            <div className="header">
+                <div className="text">Sign Up</div>
+            </div>
 
-                </div>
-
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    onSubmit();
-                }} >
+            <form onSubmit={onSubmit}>
                 <div className="inputs">
                     <div className="input">
                         <input
-                                placeholder = "email"
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={email}
-                                onChange={handleChange}
-                                required />
+                            placeholder="email"
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={email}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                     <div className="input">
-                            <input
-                                placeholder = "password"
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={password}
-                                onChange={handleChange}
-                                required />
+                        <input
+                            placeholder="password"
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={password}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                     <div className="input">
-                            <input
-                                placeholder = "confirmPassword"
-                                type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={confirmPassword}
-                                onChange={handleChange}
-                                required />
+                        <input
+                            placeholder="confirmPassword"
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            value={confirmPassword}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                     <div className="input">
-                            <input
-                                placeholder = "adres"
-                                type="text"
-                                id="adres"
-                                name="adres"
-                                value={adres}
-                                onChange={handleChange}
-                                required />
+                        <input
+                            placeholder="adres"
+                            type="text"
+                            id="adres"
+                            name="adres"
+                            value={adres}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                     <div className="input">
-                            <input
-                                placeholder = "phoneNumber"
-                                type="tel"
-                                id="phoneNumber"
-                                name="phoneNumber"
-                                value={phoneNumber}
-                                onChange={handleChange}
-                                required />
+                        <input
+                            placeholder="phoneNumber"
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={phoneNumber}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                 </div>
                 <div className="submit-container">
                     <div className="submit">
-                        <button className="buttons" onClick={goBack}>ga terug</button>
+                        <button type="button" className="buttons" onClick={goBack}>
+                            Ga terug
+                        </button>
                     </div>
                     <div className="submit">
-                        <button type="submit" className = "buttons">registreer</button>
+                        <button type="submit" className="buttons" disabled={loading}>
+                            {loading ? "Registering..." : "Registreer"}
+                        </button>
                     </div>
                 </div>
-              </form>
-            </div>
-        </>
+                {error && <p className="error">{error}</p>}
+            </form>
+            
+        </div>
     );
 };
-export default Registratie
+
+export default Registratie;
