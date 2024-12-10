@@ -6,7 +6,7 @@ namespace WebProjectG.Server.domain.Gebruiker
     public class Bedrijf(string bedrijfsNaam, string kvknummer, string domeinnaam, string adres) 
     {
         public string BedrijfsNaam { get; set; } = bedrijfsNaam;
-        public string Kvknummer { get; init; } = kvknummer;
+        [Key] public string Kvknummer { get; init; } = kvknummer;
         public string Domeinnaam { get; set; } = domeinnaam;
         public string Adres { get; set; } = adres;
      
