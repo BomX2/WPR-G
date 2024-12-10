@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
-
+using System.ComponentModel.DataAnnotations;
 namespace WebProjectG.Server.domain.Gebruiker
 {
     public class Bedrijf(string bedrijfsNaam, string kvknummer, string domeinnaam, string adres) 

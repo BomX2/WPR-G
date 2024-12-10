@@ -34,7 +34,8 @@ function Login() {
             setError(""); // Clear any previous error messages
 
             // Determine the login URL based on "Remember Me" status
-            const loginurl = rememberme ? "/login?useCookies=true" : "/login?useSessionCookies=true";
+            const loginurl = rememberme ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
+                : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
 
             // Send login details to the server
             fetch(loginurl, {

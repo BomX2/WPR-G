@@ -137,7 +137,7 @@ const Registratie = () => {
                     </button>
                 </div>
                 <div>
-                    <button type="button" onClick={() => navigate("/login")}>
+                    <button type="button" onClick={() => navigate("/inlog")}>
                         Go to Login
                     </button>
                 </div>

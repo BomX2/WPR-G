@@ -61,7 +61,6 @@ app.UseAuthorization();
 
 // Map API routes
 app.MapControllers(); // Maps `[ApiController]` routes from your controllers
-
 // Map custom API endpoints
 app.MapPost("/logout", async (SignInManager<Gebruiker> signInManager) =>
 {
