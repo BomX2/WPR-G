@@ -19,6 +19,9 @@ const Navigation = () => {
                 <li>
                     <Link to="/AccountSettings">account settings</Link>
                 </li>
+                <li>
+                    <Link to="/BedrijfsRegistratie">log in voor bedrijven</Link>
+                </li>
             </ul>
         </nav>
     )

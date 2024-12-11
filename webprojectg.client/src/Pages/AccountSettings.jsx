@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
-
-
 const AccSettings = () => {
     const [naam, setNaam] = useState('');
     const [adres, setAdres] = useState('');
     const [email, setEmail] = useState('');
     const [telefoonnummer, setTelefoonnummer] = useState('');
-
-    const DeleteAccount = async () => {
+  const DeleteAccount = async () => {
 
         try {
-            const verwijdering = await fetch('http://localhost:7065/api/klant/delete', {
+            const verwijdering = await fetch('https://localhost:7065/api/gebruiker/delete', {
                 
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    naam,
-                    adres,
-                    email,
-                    telefoonnummer,
+                    
                 }),
             });
             if (verwijdering.ok) {
-                alert("Account succesvol verwijderd");
+                alert("Account succesvol verwijdering");
+                
             }
             else {
                 alert("Er is een fout opgetreden bij het verwijderen van uw account");
@@ -38,16 +33,13 @@ const AccSettings = () => {
 
     const SaveOnSubmit = async () => {
         try {
-            const verwerking = await fetch('http://localhost:7065/api/klant/update', {
+            const verwerking = await fetch('https://localhost:7065/api/klant/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     naam,
-                    adres,
-                    email,
-                    telefoonnummer,
                 }),
             });
 
@@ -66,7 +58,7 @@ const AccSettings = () => {
             <h1>Account Settings</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
-                SaveOnSubmit()
+                SaveOnSubmit();
             }} >
                 <div>
                     <input
@@ -100,7 +92,7 @@ const AccSettings = () => {
 
                     </input>
                 </div>
-                <div>
+                <div>   
 
                     <input
                         type="tel"
@@ -112,7 +104,7 @@ const AccSettings = () => {
                    
                 </div>
                 <button type="submit">submit</button>
-                <button onClick={DeleteAccount}>Verwijder account</button>
+                <button type="button" onClick={DeleteAccount}>Verwijder account</button>
             </form>
         </div>
 
