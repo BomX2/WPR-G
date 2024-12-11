@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./Inlog.css"
 import { useNavigate } from 'react-router-dom';
 
 const Inlog = () => {
+
+    const [email, setEmail] = useState('');
+    const [wachtwoord, setWachtwoord] = useState('');
+
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
 
@@ -10,18 +15,62 @@ const Inlog = () => {
         navigate('/registratie');
     };
 
+    const handelLogin = () => {
+        if (!email || !wachtwoord) {
+            setError("vul allen velden in")
+        } else {
+            setError("");
+        }
+        var loginurl = "/login?useSessionCookies=true";
+        fetch(loginurl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                wachtwoord: wachtwoord,
+            }),
+        })
+            .then((response) => {
+            console.log(response);
+            if (response.ok) {
+                setError("sucsesful login.");
+                window.location.href = '/';
+            } else {
+                setError("login error");
+            }
+        })
+            .catch((error) => {
+            console.error(error);
+            setError("Error Logging in.");
+        });
+    }
+
     return (
         <>
             <div className='container'>
                 <div className="header">
                     <div className="text">login</div>
                 </div>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handelLogin();
+                }}>
                 <div className="inputs">
                     <div className="input">
-                        <input type="naam" placeholder="naam" />
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="email" />
                     </div>
                     <div className="input">
-                        <input type="wachtwoord" placeholder="wachtwoord" />
+                            <input
+                                type="password"
+                                value={wachtwoord}
+                                onChange={(e) => setWachtwoord(e.target.value)}
+                                placeholder="wachtwoord" />
                     </div>
                 </div>
                 <div className="submit-container">
@@ -29,9 +78,10 @@ const Inlog = () => {
                         <button className="buttons" onClick={goToRegister}>registreer</button>
                     </div>
                     <div className="submit">
-                        <button className="buttons">log in</button>
+                        <button type="submit"className="buttons">log in</button>
                     </div>
-                </div>
+                    </div>
+                </form>
             </div>
         </>
     );
