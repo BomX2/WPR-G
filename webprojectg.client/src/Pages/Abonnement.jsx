@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Abonnementen = () => {
     const [keuze, setKeuze] = useState('');
     const navigeren = useNavigate();
-const PutAbonnement = async (id) => {
+const PutAbonnement = async () => {
 
         try {
             const wijzig = await fetch('https://7065/api/gebruiker/putbedrijf', {
