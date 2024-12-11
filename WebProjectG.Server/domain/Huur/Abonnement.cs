@@ -1,10 +1,10 @@
-﻿namespace WebProjectG.Server.domain
+﻿namespace WebProjectG.Server.domain.Huur
 {
     public class Abonnement
     {
-        public int AbonnementID { get; set; } 
-        public string AbonnementType{ get; set; }
-        public decimal Prijs { get; set; } 
+        public int AbonnementID { get; set; }
+        public string AbonnementType { get; set; }
+        public decimal Prijs { get; set; }
         public DateTime StartTime { get; set; } // Start datum abonnement
         public DateTime? EndTime { get; set; } // Eind datum, nullable voor maandelijks/onbepaald abbo
         public TimeSpan? Duur
@@ -20,13 +20,5 @@
         // Calculated property to determine if the subscription is active
         public bool IsActive => DateTime.Now >= StartTime && (EndTime == null || DateTime.Now <= EndTime);
 
-        public Abonnement(int abonnementID, string abonnementType, decimal prijs, DateTime startTime, DateTime? endTime)
-        {
-            AbonnementID = abonnementID;
-            AbonnementType = abonnementType;
-            Prijs = prijs;
-            StartTime = startTime;
-            EndTime = endTime;
-        }
     }
 }

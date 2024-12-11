@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SQLitePCL;
 using WebProjectG.Server.domain;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.GebruikerFiles;
 
-namespace WebProjectG.Server.Controllers {
+namespace WebProjectG.Server.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase {
