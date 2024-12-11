@@ -11,7 +11,7 @@ const PutAbonnement = async () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application.Json' },
                 body: JSON.stringify({
-                                  })
+                })
             }
             )
 

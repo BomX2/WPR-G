@@ -12,8 +12,8 @@ using WebProjectG.Server.domain.Gebruiker;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20241209122640_initialRealbadmanDbMig")]
-    partial class initialRealbadmanDbMig
+    [Migration("20241211141358_initialmigration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

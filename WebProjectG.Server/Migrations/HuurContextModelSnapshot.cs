@@ -92,9 +92,6 @@ namespace WebProjectG.Server.Migrations
                     b.Property<int?>("BedrijfId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BedrijfsDomainNaam")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
