@@ -60,14 +60,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Map API routes
-app.MapControllers(); // Maps `[ApiController]` routes from your controllers
-// Map custom API endpoints
-app.MapPost("/logout", async (SignInManager<Gebruiker> signInManager) =>
-{
-    await signInManager.SignOutAsync();
-    return Results.Ok();
-}).RequireAuthorization();
+app.MapControllers();
 
+// Map Api endpoint to return value of user.
 app.MapGet("/pingauth", (ClaimsPrincipal user) =>
 {
     var email = user.FindFirstValue(ClaimTypes.Email);
