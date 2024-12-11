@@ -14,6 +14,7 @@ builder.Services.AddDbContext<GebruikerDbContext>(options => options.UseSqlServe
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<Gebruiker>()
     .AddEntityFrameworkStores<GebruikerDbContext>();
+
 //koppel backend aan frontend
 builder.Services.AddCors(options =>
 {

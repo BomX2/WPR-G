@@ -22,6 +22,32 @@ namespace WebProjectG.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WebProjectG.Server.domain.Abonnement", b =>
+                {
+                    b.Property<int>("AbonnementID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AbonnementID"));
+
+                    b.Property<string>("AbonnementType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Prijs")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AbonnementID");
+
+                    b.ToTable("Abonnement");
+                });
+
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Bedrijf", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +55,9 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AbonnementID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Adres")
                         .IsRequired()
@@ -44,7 +73,9 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bedrijven", (string)null);
+                    b.HasIndex("AbonnementID");
+
+                    b.ToTable("Bedrijven");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>
@@ -55,8 +86,14 @@ namespace WebProjectG.Server.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Adres")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("BedrijfId")
                         .HasColumnType("int");
+
+                    b.Property<string>("BedrijfsDomainNaam")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
@@ -101,7 +138,16 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasIndex("BedrijfId");
 
-                    b.ToTable("Gebruiker", (string)null);
+                    b.ToTable("gebruikers");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Bedrijf", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Abonnement", "Abonnement")
+                        .WithMany()
+                        .HasForeignKey("AbonnementID");
+
+                    b.Navigation("Abonnement");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>

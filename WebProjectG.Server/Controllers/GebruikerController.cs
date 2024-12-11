@@ -26,7 +26,32 @@ namespace WebProjectG.Server.Controllers
             await _huurContext.SaveChangesAsync();
             return CreatedAtAction("GetGebruiker", new {id = bedrijf.Id}, bedrijf);
         }
-        [HttpPost("postGebruiker")]
+        [HttpPut("putBedrijf")]
+        public async Task<IActionResult> PutBedrijf(int id, Bedrijf bedrijf)
+        {
+            if (id != bedrijf.Id)
+            {
+                return BadRequest();
+            }
+               _huurContext.Entry(bedrijf).State = EntityState.Modified;
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if(!_huurContext.Bedrijven.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return Ok();
+            }
+            [HttpPost("postGebruiker")]
         public async Task<ActionResult<Gebruiker>> PostGebruiker(Gebruiker gebruiker)
         {
             _huurContext.gebruikers.Add(gebruiker);
@@ -34,7 +59,7 @@ namespace WebProjectG.Server.Controllers
 
             return CreatedAtAction("GetGebruiker", new { id = gebruiker.Id}, gebruiker);
         }
-
+  
         [HttpGet("{id}")]
         public async Task<ActionResult<Gebruiker>> GetGebruiker(int id)
         {

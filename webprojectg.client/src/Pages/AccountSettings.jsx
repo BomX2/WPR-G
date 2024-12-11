@@ -40,9 +40,6 @@ const AccSettings = () => {
                 },
                 body: JSON.stringify({
                     naam,
-                    adres,
-                    telefoonnummer,
-                    email,
                 }),
             });
 
@@ -95,7 +92,7 @@ const AccSettings = () => {
 
                     </input>
                 </div>
-                <div>
+                <div>   
 
                     <input
                         type="tel"
