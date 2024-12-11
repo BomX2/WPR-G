@@ -2,20 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebProjectG.Server.domain;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.GebruikerFiles;
+using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-// Configure the GebruikerDbContext for your identity database
+
+// Database contexts
 builder.Services.AddDbContext<GebruikerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GebruikerDbConnection")));
-
-// Configure CarAndAll DbContext
 builder.Services.AddDbContext<HuurContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Identity for the Gebruiker entity
+// add identity services
 builder.Services.AddIdentity<Gebruiker, IdentityRole>()
     .AddEntityFrameworkStores<GebruikerDbContext>()
     .AddDefaultTokenProviders();

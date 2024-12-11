@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebProjectG.Server.domain.Gebruiker;
 using System.Threading.Tasks;
 using System.Linq;
-using WebProjectG.Server.domain.Gebruiker.Dtos;
+using WebProjectG.Server.domain.GebruikerFiles.Dtos;
+using WebProjectG.Server.domain.GebruikerFiles;
 
 [ApiController]
 [Route("api/gebruikers")]

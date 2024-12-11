@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebProjectG.Server.domain.Gebruiker.Dtos
+namespace WebProjectG.Server.domain.GebruikerFiles.Dtos
 {
     public class ChangePasswordDto
     {
