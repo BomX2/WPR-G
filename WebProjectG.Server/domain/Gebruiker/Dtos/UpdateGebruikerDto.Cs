@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain.Gebruiker.Dto_s
+﻿namespace WebProjectG.Server.domain.Gebruiker.Dtos
 {
     public class UpdateGebruikerDto
     {

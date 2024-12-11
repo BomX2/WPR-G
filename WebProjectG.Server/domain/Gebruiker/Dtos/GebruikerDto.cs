@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebProjectG.Server.domain.Gebruiker
+namespace WebProjectG.Server.domain.Gebruiker.Dtos
 {
     public class GebruikerDto
     {

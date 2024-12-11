@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebProjectG.Server.domain.Gebruiker;
-using WebProjectG.Server.domain.Gebruiker.Dto_s;
 using System.Threading.Tasks;
 using System.Linq;
+using WebProjectG.Server.domain.Gebruiker.Dtos;
 
 [ApiController]
 [Route("api/gebruikers")]
@@ -18,7 +18,7 @@ public class GebruikerController : ControllerBase
         _signInManager = signInManager;
     }
 
-    // 1. Register a new user
+    //Register a new user
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] GebruikerDto model)
     {
@@ -51,7 +51,7 @@ public class GebruikerController : ControllerBase
         return BadRequest(new { message = errors });
     }
 
-    // 2. Login a user
+    //Login a user
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto model)
     {
@@ -70,7 +70,15 @@ public class GebruikerController : ControllerBase
         return Unauthorized(new { message = "Invalid email or password." });
     }
 
-    // 3. Fetch user details
+    //Logout a user
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Ok(new { message = "Logout successful" });
+    }
+
+    //Fetch user details
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserDetails(string id)
     {
@@ -90,7 +98,7 @@ public class GebruikerController : ControllerBase
         });
     }
 
-    // 4. Update user details
+    //Update user details
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUserDetails(string id, [FromBody] UpdateGebruikerDto model)
     {
@@ -116,7 +124,29 @@ public class GebruikerController : ControllerBase
         return BadRequest(new { message = errors });
     }
 
-    // 5. Delete a user
+    //Change password
+    [HttpPost("password/change")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+        if (result.Succeeded)
+        {
+            return Ok(new { message = "Password changed successfully." });
+        }
+
+        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+        return BadRequest(new { message = errors });
+    }
+
+    //Delete a user
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(string id)
     {
