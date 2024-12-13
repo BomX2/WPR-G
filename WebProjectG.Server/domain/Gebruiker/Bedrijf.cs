@@ -14,6 +14,7 @@ namespace WebProjectG.Server.domain.Gebruiker
         public string Adres { get; set; } 
         public string Kvknummer { get; init; } 
         public Abonnement? Abonnement { get; set; }
+       
         public List<Gebruiker> gebruikers { get; private set; } = [];
         public Bedrijf ()
         {
@@ -26,6 +27,7 @@ namespace WebProjectG.Server.domain.Gebruiker
             Adres = adres;
             Kvknummer = kvknummer;
             Abonnement = abonnement;
+
         }
     }
 }

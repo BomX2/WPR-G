@@ -15,6 +15,15 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<Gebruiker>()
     .AddEntityFrameworkStores<GebruikerDbContext>();
 
+//Localstorage, sessionId en cookies
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout = TimeSpan.FromMinutes(30);
+    opt.Cookie.HttpOnly = true;
+    opt.Cookie.IsEssential = true;
+});
+
 //koppel backend aan frontend
 builder.Services.AddCors(options =>
 {
@@ -33,6 +42,7 @@ app.UseCors("Allowvite");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapIdentityApi<Gebruiker>();
+app.UseSession();
 
 //Delete cookies, end session.
 app.MapPost("/logout", async (SignInManager<Gebruiker> signInManager) =>

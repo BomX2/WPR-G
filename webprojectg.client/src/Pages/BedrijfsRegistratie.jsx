@@ -6,9 +6,9 @@ const RegistreerBedrijf = () => {
     const [adres, setAdres] = useState("");
     const [Kvknummer, setKvknummer] = useState("");
     const navigeren = useNavigate();
+
     const BedrijfToevoegen = async () => {
-        try {
-            
+        try { 
             const Toevoegen = await fetch('https://localhost:7065/api/gebruiker/postbedrijf', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -21,8 +21,11 @@ const RegistreerBedrijf = () => {
             });
             if (Toevoegen.ok) {
                 alert("Bedrijfs account succesvol toegevoegd.");
+                const data = await Toevoegen.json();
+                const bedrijfsId = data.id;
+           
+                sessionStorage.setItem('bedrijfsId', bedrijfsId);
                 navigeren('/Abonnement');
-                
             }
             else {
                 alert("er is een fout opgetreden bij het aanmaken van een bedrijfs account");

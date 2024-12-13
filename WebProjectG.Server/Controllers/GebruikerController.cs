@@ -26,31 +26,43 @@ namespace WebProjectG.Server.Controllers
             await _huurContext.SaveChangesAsync();
             return CreatedAtAction("GetGebruiker", new {id = bedrijf.Id}, bedrijf);
         }
-        [HttpPut("putBedrijf")]
-        public async Task<IActionResult> PutBedrijf(int id, Bedrijf bedrijf)
+        [HttpPut("putBedrijfsAbonnement/{id}")]
+        public async Task<IActionResult> PutBedrijf(int id, BedrijfPutDto dto)
         {
-            if (id != bedrijf.Id)
             {
-                return BadRequest();
-            }
-               _huurContext.Entry(bedrijf).State = EntityState.Modified;
-            try
-            {
-                await _huurContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if(!_huurContext.Bedrijven.Any(e => e.Id == id))
+                if (id != dto.Id)
+                {
+                    return BadRequest();
+                }
+                var bedrijf = await _huurContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.Id == id); 
+                if (bedrijf == null)
                 {
                     return NotFound();
                 }
-                else
+                if (bedrijf.Abonnement == null)
                 {
-                    throw;
+                    bedrijf.Abonnement = new Abonnement();
                 }
+                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+                _huurContext.Entry(bedrijf).State = EntityState.Modified;
+                try
+                {
+                    await _huurContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_huurContext.Bedrijven.Any(e => e.Id == id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return NoContent();
             }
-            return Ok();
-            }
+        }
             [HttpPost("postGebruiker")]
         public async Task<ActionResult<Gebruiker>> PostGebruiker(Gebruiker gebruiker)
         {

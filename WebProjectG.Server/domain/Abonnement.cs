@@ -20,6 +20,10 @@
         // Calculated property to determine if the subscription is active
         public bool IsActive => DateTime.Now >= StartTime && (EndTime == null || DateTime.Now <= EndTime);
 
+        public  Abonnement()
+        {
+             
+        }
         public Abonnement(int abonnementID, string abonnementType, decimal prijs, DateTime startTime, DateTime? endTime)
         {
             AbonnementID = abonnementID;
