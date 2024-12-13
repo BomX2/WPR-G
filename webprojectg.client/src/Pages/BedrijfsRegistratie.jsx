@@ -41,6 +41,10 @@ const RegistreerBedrijf = () => {
             <h1>Bedrijfsregistratiepagina</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
+                if (!BedrijfsNaam || !Kvknummer || !adres) {
+                    alert("Alle velden dienen worden ingevuld");
+                    return;
+                }
                 BedrijfToevoegen();
             }} >
                 <div>
