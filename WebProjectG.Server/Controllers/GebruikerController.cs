@@ -16,10 +16,16 @@ namespace WebProjectG.Server.Controllers
     {
 
         private readonly HuurContext _huurContext;
-
-        public GebruikerController(HuurContext huurContext)
+        private readonly UserManager<Gebruiker> _userManager;
+        private readonly SignInManager<Gebruiker> _signInManager;
+        public GebruikerController(
+        HuurContext huurContext,
+        UserManager<Gebruiker> userManager,
+        SignInManager<Gebruiker> signInManager)
         {
-            _huurContext = huurContext; 
+            _huurContext = huurContext;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpPost("postbedrijf")]
@@ -75,7 +81,7 @@ namespace WebProjectG.Server.Controllers
             return CreatedAtAction("GetGebruiker", new { id = gebruiker.Id}, gebruiker);
         }
   
-        [HttpGet("{id}")]
+        [HttpGet("Getgebruiker{id}")]
         public async Task<ActionResult<Gebruiker>> GetGebruiker(int id)
         {
             var gebruiker = await _huurContext.gebruikers.FindAsync(id); 
@@ -120,14 +126,7 @@ namespace WebProjectG.Server.Controllers
 
 
    
-        private readonly UserManager<Gebruiker> _userManager;
-        private readonly SignInManager<Gebruiker> _signInManager;
-
-        public GebruikerController(UserManager<Gebruiker> userManager, SignInManager<Gebruiker> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+        
 
         //Register a new user
         [HttpPost("register")]
