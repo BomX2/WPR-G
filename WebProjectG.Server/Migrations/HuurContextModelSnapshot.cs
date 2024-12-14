@@ -22,7 +22,7 @@ namespace WebProjectG.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebProjectG.Server.domain.Abonnement", b =>
+            modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Abonnement", b =>
                 {
                     b.Property<int>("AbonnementID")
                         .ValueGeneratedOnAdd()
@@ -87,13 +87,11 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("BedrijfId")
                         .HasColumnType("int");
-
-                    b.Property<string>("BedrijfsDomainNaam")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
@@ -143,7 +141,7 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Bedrijf", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Abonnement", "Abonnement")
+                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Abonnement", "Abonnement")
                         .WithMany()
                         .HasForeignKey("AbonnementID");
 
@@ -152,9 +150,11 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Bedrijf", null)
+                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Bedrijf", "Bedrijf")
                         .WithMany("gebruikers")
                         .HasForeignKey("BedrijfId");
+
+                    b.Navigation("Bedrijf");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Bedrijf", b =>

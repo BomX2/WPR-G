@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain.Huur
+﻿namespace WebProjectG.Server.domain.Gebruiker
 {
     public class Abonnement
     {
@@ -17,8 +17,20 @@
             }
         }
 
-        // Calculated property to determine if the subscription is active
         public bool IsActive => DateTime.Now >= StartTime && (EndTime == null || DateTime.Now <= EndTime);
+
+        public Abonnement()
+        {
+
+        }
+        public Abonnement(int abonnementID, string abonnementType, decimal prijs, DateTime startTime, DateTime? endTime)
+        {
+            AbonnementID = abonnementID;
+            AbonnementType = abonnementType;
+            Prijs = prijs;
+            StartTime = startTime;
+            EndTime = endTime;
+        }
 
     }
 }

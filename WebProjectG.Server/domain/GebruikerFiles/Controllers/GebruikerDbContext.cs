@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebProjectG.Server.domain.BedrijfFiles;
-using WebProjectG.Server.domain.GebruikerFiles;
+using WebProjectG.Server.domain.Gebruiker;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
-    public class GebruikerDbContext : IdentityDbContext<Gebruiker>
+    public class GebruikerDbContext : IdentityDbContext<Gebruiker.Gebruiker>
     {
         public DbSet<Bedrijf> Bedrijven { get; set; } // Include Bedrijf table in the schema
 
@@ -18,7 +17,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Gebruiker>(entity =>
+            builder.Entity<Gebruiker.Gebruiker>(entity =>
             {
                 entity.Property(e => e.Adres)
                     .IsRequired()
