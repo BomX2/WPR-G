@@ -1,18 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.GebruikerFiles;
 namespace WebProjectG.Server.domain
 {
     public class HuurContext : DbContext
     {
+        public DbSet<Gebruiker> klanten { get; set; }
         public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
         public HuurContext() { }
-        public DbSet<Gebruiker.Gebruiker> gebruikers { get; set; }
-        public void OnModelCreating(ModelBuilder modelBuilder)
+      public void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            base.OnModelCreating(modelBuilder);
         }
-        public DbSet<Bedrijf> Bedrijven { get; set; }
-      
+        public void OnConfiguring() 
+        { 
+          
+        }
     }
 }

@@ -10,6 +10,7 @@ import AccSettings from './Pages/AccountSettings';
 import Product from './Pages/Product';
 import RegistreerBedrijf from './Pages/BedrijfsRegistratie';
 import Abonnementen from './Pages/Abonnement';
+
 const App = () => {
      
     return (

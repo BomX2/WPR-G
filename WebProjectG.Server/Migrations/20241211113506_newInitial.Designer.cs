@@ -5,15 +5,20 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/20241211141358_initialmigration.Designer.cs
     [Migration("20241211141358_initialmigration")]
     partial class initialmigration
+========
+    [Migration("20241211113506_newInitial")]
+    partial class newInitial
+>>>>>>>> development:WebProjectG.Server/Migrations/20241211113506_newInitial.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +163,29 @@ namespace WebProjectG.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebProjectG.Server.domain.Gebruiker.Gebruiker", b =>
+            modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
+                {
+                    b.Property<string>("KvkNummer")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Adres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BedrijfsNaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Domeinnaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KvkNummer");
+
+                    b.ToTable("Bedrijven");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -167,7 +194,9 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -179,6 +208,9 @@ namespace WebProjectG.Server.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("KvkNummer")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -198,6 +230,7 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -214,6 +247,8 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("KvkNummer");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -237,7 +272,7 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Gebruiker", null)
+                    b.HasOne("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -246,7 +281,7 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Gebruiker", null)
+                    b.HasOne("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -261,7 +296,7 @@ namespace WebProjectG.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Gebruiker", null)
+                    b.HasOne("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,11 +305,25 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Gebruiker.Gebruiker", null)
+                    b.HasOne("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", "Bedrijf")
+                        .WithMany("ZakelijkeHuurders")
+                        .HasForeignKey("KvkNummer");
+
+                    b.Navigation("Bedrijf");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
+                {
+                    b.Navigation("ZakelijkeHuurders");
                 });
 #pragma warning restore 612, 618
         }

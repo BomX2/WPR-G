@@ -1,4 +1,4 @@
-﻿using WebProjectG.Server.domain.Gebruiker;
+﻿using WebProjectG.Server.domain.GebruikerFiles;
 
 namespace WebProjectG.Server.domain.EmailObserver
 {
