@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebProjectG.Server.domain;
 using WebProjectG.Server.domain.Gebruiker;
-
+using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

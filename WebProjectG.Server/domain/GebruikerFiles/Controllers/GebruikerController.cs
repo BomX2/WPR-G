@@ -3,17 +3,79 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Linq;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
-using WebProjectG.Server.domain.GebruikerFiles;
+using WebProjectG.Server.domain.Gebruiker;
+using Microsoft.EntityFrameworkCore;
+using WebProjectG.Server.domain;
 
 [ApiController]
 [Route("api/gebruikers")]
 public class GebruikerController : ControllerBase
 {
+    private readonly HuurContext _huurContext;
+
+    public GebruikerController(HuurContext huurContext)
+    {
+        _huurContext = huurContext;
+    }
+    [HttpPost("postbedrijf")]
+    public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
+    {
+        _huurContext.Bedrijven.Add(bedrijf);
+        await _huurContext.SaveChangesAsync();
+        return CreatedAtAction("GetId", new { id = bedrijf.Id }, bedrijf);
+    }
+    [HttpPut("putBedrijfsAbonnement/{id}")]
+    public async Task<IActionResult> PutBedrijf(int id, [FromBody] BedrijfPutDto dto)
+    {
+        if (id != dto.Id)
+        {            
+            return BadRequest();
+        }
+
+        var bedrijf = await _huurContext.Bedrijven
+            .Include(b => b.Abonnement)
+            .FirstOrDefaultAsync(b => b.Id == id);
+
+        if (bedrijf == null)
+        {
+            Console.WriteLine($"No bedrijf found for id={id}");
+            return NotFound();
+        }
+
+        if (bedrijf.Abonnement == null)
+        {
+            bedrijf.Abonnement = new Abonnement();
+        }
+
+        // Debug AbonnementType
+        bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+
+        try
+        {
+            await _huurContext.SaveChangesAsync();
+            Console.WriteLine("Bedrijf updated successfully.");
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!_huurContext.Bedrijven.Any(e => e.Id == id))
+            {
+                Console.WriteLine($"Concurrency error: no bedrijf found for id={id}");
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return NoContent();
+    }
     private readonly UserManager<Gebruiker> _userManager;
     private readonly SignInManager<Gebruiker> _signInManager;
 
     public GebruikerController(UserManager<Gebruiker> userManager, SignInManager<Gebruiker> signInManager)
     {
+        
         _userManager = userManager;
         _signInManager = signInManager;
     }
