@@ -30,7 +30,7 @@ namespace WebProjectG.Server.Controllers
 
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
-        {
+        {   
             _huurContext.Bedrijven.Add(bedrijf);
             await _huurContext.SaveChangesAsync();
             return CreatedAtAction("GetGebruiker", new {id = bedrijf.Id}, bedrijf);
@@ -72,12 +72,35 @@ namespace WebProjectG.Server.Controllers
                 return NoContent();
             }
         }
+       [HttpPost("AddGebruikerTo")] 
+        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(int bedrijfsId  ,string email) { 
+        
+            var gebruiker = await _huurContext.gebruikers.FirstOrDefaultAsync(g => g.Email == email);
+             if (gebruiker == null)
+            {
+                return BadRequest("gebruiker is niet gevonden");
+            }
+            var bedrijf = await _huurContext.Bedrijven.Include(g => g.gebruikers).FirstOrDefaultAsync(b => b.Id == bedrijfsId);
+            if (bedrijf == null)            
+            {
+                return BadRequest("bedrijfsid is niet gevonden");
+            }
+            if (bedrijf.gebruikers.Any(g => g.Email == email))
+            {
+                return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
+            }
+           
+             bedrijf.gebruikers.Add(gebruiker);
+               await _huurContext.SaveChangesAsync();
+            return Ok();
+        }
+
             [HttpPost("postGebruiker")]
         public async Task<ActionResult<Gebruiker>> PostGebruiker(Gebruiker gebruiker)
         {
             _huurContext.gebruikers.Add(gebruiker);
             await _huurContext.SaveChangesAsync();
-
+                
             return CreatedAtAction("GetGebruiker", new { id = gebruiker.Id}, gebruiker);
         }
   
@@ -112,7 +135,7 @@ namespace WebProjectG.Server.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteGebruiker(int id)
+        public async Task<IActionResult> DeleteGebruiker(string id)
         {
             var gebruiker = await _huurContext.gebruikers.FindAsync(id);
             if (gebruiker == null) { return NotFound(); }

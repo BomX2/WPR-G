@@ -48,10 +48,13 @@ const Abonnementen = () => {
             <button onClick={() => Update('pre-paid')}>
                     pre-paid
                 </button>
-                <p> u heeft gekozen voor: {keuze}</p>
+                <p> U heeft gekozen voor: {keuze}</p>
                 <div>
                 <button onClick={() => navigeren('/Catalogus')} disabled={!keuze } >
-                  ga naar de catalogus pagina
+                  Ga naar de catalogus pagina
+                </button>
+                <button onClick={() => navigeren('/BedrijfsInstellingen')} disabled={!keuze} >
+                 Voeg medewerkers toe aan uw BedrijfsAccount
                 </button>
             </div>
         </div>  

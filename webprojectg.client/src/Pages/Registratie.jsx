@@ -60,7 +60,7 @@ const Registratie = () => {
                 setError(data.message || "Registration failed");
             }
         } catch (error) {
-            setError("An error occurred during registration");
+            setError("An error occurred during registration", error);
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,7 @@ const RegistreerBedrijf = () => {
     const [BedrijfsNaam, setBedrijfsNaam] = useState("");
     const [adres, setAdres] = useState("");
     const [Kvknummer, setKvknummer] = useState("");
+    const [domeinNaam, setDomeinNaam] = useState("");
     const navigeren = useNavigate();
 
     const BedrijfToevoegen = async () => {
@@ -15,6 +16,7 @@ const RegistreerBedrijf = () => {
                     BedrijfsNaam,
                     Kvknummer,
                     adres,
+                    domeinNaam,
                 }),
 
 
@@ -41,29 +43,37 @@ const RegistreerBedrijf = () => {
             <h1>Bedrijfsregistratiepagina</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
-                if (!BedrijfsNaam || !Kvknummer || !adres) {
+                if (!BedrijfsNaam || !Kvknummer || !adres  || !domeinNaam) {
                     alert("Alle velden dienen worden ingevuld");
                     return;
+                }
+                if (!domeinNaam.includes("@")) {
+                    alert("dit is geen geldig domeinNaam");
                 }
                 BedrijfToevoegen();
             }} >
                 <div>
                     <input type="text" value={BedrijfsNaam}
                         onChange={(e) => setBedrijfsNaam(e.target.value)}
-                     placeholder="voer de naam van uw bedrijf in:" >
+                     placeholder="Voer de naam van uw bedrijf in:" >
                     </input>
                     <div>
                         <input type="text" value={adres}
                             onChange={(e) => setAdres(e.target.value)}
-                            placeholder="voer het adres van uw bedrijf in:" >
+                            placeholder="Voer het adres van uw bedrijf in:" >
                         </input>
                     </div>
                 </div>
                 <div>
                     <input type="text" value={Kvknummer}
                         onChange={(e) => setKvknummer(e.target.value)}
-                        placeholder="voer het kvknummer van uw bedrijf in:" >
+                        placeholder="Voer het kvknummer van uw bedrijf in:" >
                     </input>
+                </div>
+                <div>
+                    <input type="text" value={domeinNaam}
+                        onChange={(e) => setDomeinNaam(e.target.value)}
+                        placeholder="Voer het domeinnaam van uw bedrijf in:"></input>
                 </div>
                 <button type="submit">bedrijfsaccount aanmaken</button>
             </form>

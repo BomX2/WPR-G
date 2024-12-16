@@ -75,4 +75,4 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 app.MapGet("/klanten", (HuurContext db) => db.gebruikers.ToList());
-app.Run();
+    app.Run();

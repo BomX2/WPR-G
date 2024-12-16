@@ -5,7 +5,7 @@ const AccSettings = () => {
     const [email, setEmail] = useState('');
     const [telefoonnummer, setTelefoonnummer] = useState('');
   const DeleteAccount = async () => {
-
+          
         try {
             const verwijdering = await fetch('https://localhost:7065/api/gebruiker/delete', {
                 
