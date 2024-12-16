@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebProjectG.Server.domain;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.GebruikerFiles;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
+using WebProjectG.Server.domain.GebruikerFiles.RoleFiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -67,6 +69,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enable role service
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<Gebruiker>>();
+    await SeedRoles.Initialize(services, userManager);
+}
+
+// Enable CORS policy
+app.UseCors("Allowvite");
+
+// Enable HTTPS redirection and serve static files for SPA
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -74,5 +88,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-app.MapGet("/klanten", (HuurContext db) => db.gebruikers.ToList());
     app.Run();

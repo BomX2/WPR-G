@@ -1,4 +1,4 @@
-﻿namespace WebProjectG.Server.domain.Gebruiker
+﻿namespace WebProjectG.Server.domain.Huur
 {
     public class Abonnement
     {

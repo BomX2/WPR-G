@@ -4,25 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SQLitePCL;
-using WebProjectG.Server.domain;
+using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.Gebruiker;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 
-namespace WebProjectG.Server.Controllers
+namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class GebruikerController : ControllerBase
     {
-
+        private readonly GebruikerDbContext _dbContext;
         private readonly HuurContext _huurContext;
         private readonly UserManager<Gebruiker> _userManager;
         private readonly SignInManager<Gebruiker> _signInManager;
         public GebruikerController(
+
+        GebruikerDbContext dbContext,
         HuurContext huurContext,
         UserManager<Gebruiker> userManager,
         SignInManager<Gebruiker> signInManager)
         {
+            _dbContext = dbContext;
             _huurContext = huurContext;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -30,10 +33,10 @@ namespace WebProjectG.Server.Controllers
 
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
-        {   
-            _huurContext.Bedrijven.Add(bedrijf);
-            await _huurContext.SaveChangesAsync();
-            return CreatedAtAction("GetGebruiker", new {id = bedrijf.Id}, bedrijf);
+        {
+            _dbContext.Bedrijven.Add(bedrijf);
+            await _dbContext.SaveChangesAsync();
+            return CreatedAtAction("GetGebruiker", new { id = bedrijf.Id }, bedrijf);
         }
         [HttpPut("putBedrijfsAbonnement/{id}")]
         public async Task<IActionResult> PutBedrijf(int id, BedrijfPutDto dto)
@@ -43,7 +46,7 @@ namespace WebProjectG.Server.Controllers
                 {
                     return BadRequest();
                 }
-                var bedrijf = await _huurContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.Id == id); 
+                var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.Id == id);
                 if (bedrijf == null)
                 {
                     return NotFound();
@@ -53,14 +56,14 @@ namespace WebProjectG.Server.Controllers
                     bedrijf.Abonnement = new Abonnement();
                 }
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
-                _huurContext.Entry(bedrijf).State = EntityState.Modified;
+                _dbContext.Entry(bedrijf).State = EntityState.Modified;
                 try
                 {
-                    await _huurContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_huurContext.Bedrijven.Any(e => e.Id == id))
+                    if (!_dbContext.Bedrijven.Any(e => e.Id == id))
                     {
                         return NotFound();
                     }
@@ -72,16 +75,18 @@ namespace WebProjectG.Server.Controllers
                 return NoContent();
             }
         }
-       [HttpPost("AddGebruikerTo")] 
-        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(int bedrijfsId  ,string email) { 
-        
-            var gebruiker = await _huurContext.gebruikers.FirstOrDefaultAsync(g => g.Email == email);
-             if (gebruiker == null)
+        //Voegt een medewerker toe aan een bedrijfsaccount
+        [HttpPost("AddGebruikerTo")]
+        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(int bedrijfsId, string email)
+        {
+
+            var gebruiker = await _dbContext.Gebruiker.FirstOrDefaultAsync(g => g.Email == email);
+            if (gebruiker == null)
             {
                 return BadRequest("gebruiker is niet gevonden");
             }
-            var bedrijf = await _huurContext.Bedrijven.Include(g => g.gebruikers).FirstOrDefaultAsync(b => b.Id == bedrijfsId);
-            if (bedrijf == null)            
+            var bedrijf = await _dbContext.Bedrijven.Include(g => g.gebruikers).FirstOrDefaultAsync(b => b.Id == bedrijfsId);
+            if (bedrijf == null)
             {
                 return BadRequest("bedrijfsid is niet gevonden");
             }
@@ -89,67 +94,23 @@ namespace WebProjectG.Server.Controllers
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
-           
-             bedrijf.gebruikers.Add(gebruiker);
-               await _huurContext.SaveChangesAsync();
+
+            bedrijf.gebruikers.Add(gebruiker);
+            await _dbContext.SaveChangesAsync();
             return Ok();
         }
 
-            [HttpPost("postGebruiker")]
-        public async Task<ActionResult<Gebruiker>> PostGebruiker(Gebruiker gebruiker)
-        {
-            _huurContext.gebruikers.Add(gebruiker);
-            await _huurContext.SaveChangesAsync();
-                
-            return CreatedAtAction("GetGebruiker", new { id = gebruiker.Id}, gebruiker);
-        }
-  
-        [HttpGet("Getgebruiker{id}")]
-        public async Task<ActionResult<Gebruiker>> GetGebruiker(int id)
-        {
-            var gebruiker = await _huurContext.gebruikers.FindAsync(id); 
+       
 
-            if (gebruiker == null)
-            {
-                return NotFound();
-            }
+      
 
-            return Ok(gebruiker);
-        }
-
-        [HttpPut("update")]
-        public async Task<IActionResult> PutGebruiker(string id, Gebruiker gebruiker)
-        {
-            if (id != gebruiker.Id) { return BadRequest(); }
-
-            _huurContext.Entry(gebruiker).State = EntityState.Modified;
-
-            try { await _huurContext.SaveChangesAsync(); }
-
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_huurContext.gebruikers.Any(e => gebruiker.Id == id)) { return NotFound(); }
-                else { throw; }
-            }
-            return NoContent();
-        }
-
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteGebruiker(string id)
-        {
-            var gebruiker = await _huurContext.gebruikers.FindAsync(id);
-            if (gebruiker == null) { return NotFound(); }
-
-            _huurContext.gebruikers.Remove(gebruiker);
-            await _huurContext.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-
-
-   
         
+
+     
+
+
+
+
 
         //Register a new user
         [HttpPost("register")]
