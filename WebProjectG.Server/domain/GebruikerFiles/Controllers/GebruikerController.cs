@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Linq;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.GebruikerFiles;
 
@@ -11,6 +9,8 @@ public class GebruikerController : ControllerBase
 {
     private readonly UserManager<Gebruiker> _userManager;
     private readonly SignInManager<Gebruiker> _signInManager;
+    //Fake email confirmation service - to be update with the real thing when possible.
+    private static Dictionary<string, string> fakeEmailStorage = new();
 
     public GebruikerController(UserManager<Gebruiker> userManager, SignInManager<Gebruiker> signInManager)
     {
@@ -22,6 +22,11 @@ public class GebruikerController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] GebruikerDto model)
     {
+        var userId = Guid.NewGuid().ToString();
+        var confirmationToken = Guid.NewGuid().ToString();
+
+        fakeEmailStorage[userId]= confirmationToken; 
+
         if (!ModelState.IsValid)
         {
             return BadRequest(new { message = "Invalid data provided." });
@@ -42,13 +47,28 @@ public class GebruikerController : ControllerBase
 
         var result = await _userManager.CreateAsync(user, model.Password);
 
+        var confirmationLink = $"http://localhost:3000/confirm?userId={userId}&token={confirmationToken}";
+
         if (result.Succeeded)
         {
             return Ok(new { message = "Registration successful" });
+            // Console.WriteLine($"Confirmation Email: To {model.Email}, Link: {confirmationLink}"); -- TODO: Figure out how to display where the confirmation email went to
         }
 
         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
         return BadRequest(new { message = errors });
+    }
+
+    //NEW ENDPOINT CONFIRMATION
+    [HttpGet("confirm")]
+    public IActionResult Confirm([FromQuery] string userId, [FromQuery] string token)
+    {
+        if (fakeEmailStorage.TryGetValue(userId, out var savedToken) && savedToken == token)
+        {
+            return Ok(new { Message = "Email confirmed successfully!" });
+        }
+
+        return BadRequest(new { Message = "Invalid confirmation link." });
     }
 
     //Login a user
