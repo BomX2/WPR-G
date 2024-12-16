@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SQLitePCL;
 using WebProjectG.Server.domain.Huur;
-using WebProjectG.Server.domain.Gebruiker;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
-
+using WebProjectG.Server.domain.BedrijfFiles;
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     [Route("api/[controller]")]
@@ -36,17 +35,17 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             _dbContext.Bedrijven.Add(bedrijf);
             await _dbContext.SaveChangesAsync();
-            return CreatedAtAction("GetGebruiker", new { id = bedrijf.Id }, bedrijf);
+            return CreatedAtAction("GetGebruiker", new { bedrijf = bedrijf.KvkNummer }, bedrijf);
         }
         [HttpPut("putBedrijfsAbonnement/{id}")]
-        public async Task<IActionResult> PutBedrijf(int id, BedrijfPutDto dto)
+        public async Task<IActionResult> PutBedrijf(String kvkNummer, BedrijfPutDto dto)
         {
             {
-                if (id != dto.Id)
+                if (kvkNummer != dto.KvkNummer)
                 {
                     return BadRequest();
                 }
-                var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.Id == id);
+                var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
                 if (bedrijf == null)
                 {
                     return NotFound();
@@ -63,7 +62,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_dbContext.Bedrijven.Any(e => e.Id == id))
+                    if (!_dbContext.Bedrijven.Any(e => e.KvkNummer == kvkNummer))
                     {
                         return NotFound();
                     }
@@ -77,25 +76,25 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
         //Voegt een medewerker toe aan een bedrijfsaccount
         [HttpPost("AddGebruikerTo")]
-        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(int bedrijfsId, string email)
+        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(string kvkNummer, string email)
         {
 
-            var gebruiker = await _dbContext.Gebruiker.FirstOrDefaultAsync(g => g.Email == email);
+            var gebruiker = await _userManager.FindByEmailAsync(email);
             if (gebruiker == null)
             {
                 return BadRequest("gebruiker is niet gevonden");
             }
-            var bedrijf = await _dbContext.Bedrijven.Include(g => g.gebruikers).FirstOrDefaultAsync(b => b.Id == bedrijfsId);
+            var bedrijf = await _dbContext.Bedrijven.Include(g => g.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
             if (bedrijf == null)
             {
                 return BadRequest("bedrijfsid is niet gevonden");
             }
-            if (bedrijf.gebruikers.Any(g => g.Email == email))
+            if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
 
-            bedrijf.gebruikers.Add(gebruiker);
+            bedrijf.ZakelijkeHuurders.Add(gebruiker);
             await _dbContext.SaveChangesAsync();
             return Ok();
         }

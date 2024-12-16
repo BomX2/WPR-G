@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
-using WebProjectG.Server.domain.Gebruiker;
+using WebProjectG.Server.domain.BedrijfFiles;
 
 namespace WebProjectG.Server.domain.GebruikerFiles
 {

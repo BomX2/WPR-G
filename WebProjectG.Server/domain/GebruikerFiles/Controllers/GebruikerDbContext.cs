@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebProjectG.Server.domain.Gebruiker;
-
+using WebProjectG.Server.domain.BedrijfFiles;
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     public class GebruikerDbContext : IdentityDbContext<Gebruiker>

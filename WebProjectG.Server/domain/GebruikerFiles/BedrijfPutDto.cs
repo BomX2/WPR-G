@@ -1,9 +1,9 @@
-﻿namespace WebProjectG.Server.domain.Gebruiker
+﻿namespace WebProjectG.Server.domain.GebruikerFiles
 {
     public class BedrijfPutDto
     {
         
-            public int Id { get; set; }
+            public String KvkNummer { get; set; }
             public string AbonnementType { get; set; }
         
     }

@@ -1,33 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.Design.Serialization;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
-using Microsoft.EntityFrameworkCore;
-using WebProjectG.Server.domain.Huur;
+using System.ComponentModel.DataAnnotations;
 using WebProjectG.Server.domain.GebruikerFiles;
-namespace WebProjectG.Server.domain.BedrijfFiles;
-
-public class Bedrijf 
+using WebProjectG.Server.domain.Huur;
+namespace WebProjectG.Server.domain.BedrijfFiles
 {
-    
-    public int Id { get; set; }
-    public string BedrijfsNaam { get; set; }
-    public string Adres { get; set; } 
-    public string Kvknummer { get; init; }
-    public string DomeinNaam { get; set; }
-    public Abonnement? Abonnement { get; set; }
-    public List<Gebruiker> gebruikers { get; private set; } = [];
-    public Bedrijf ()
+    public class Bedrijf
     {
+        public Bedrijf() { }
 
-    }
-    public Bedrijf(int id, string bedrijfsNaam, string adres, string kvknummer, string domeinnaam, Abonnement? abonnement = null)
-    {
-        Id = id;
-        BedrijfsNaam = bedrijfsNaam;
-        Adres = adres;
-        Kvknummer = kvknummer;
-        DomeinNaam = domeinnaam;
-        Abonnement = abonnement;
+        public Bedrijf(string bedrijfsNaam, string kvknummer, string domeinnaam, string adres)
+        {
+            BedrijfsNaam = bedrijfsNaam;
+            KvkNummer = kvknummer;
+            Domeinnaam = domeinnaam;
+            Adres = adres;
+            ZakelijkeHuurders = new List<Gebruiker>();
+        }
+
+        public string BedrijfsNaam { get; set; }
+        [Key] public string KvkNummer { get; init; }
+        public string Domeinnaam { get; set; }
+        public string Adres { get; set; }
+
+        public List<Gebruiker> ZakelijkeHuurders { get; private set; }
+        public Abonnement? Abonnement { get; set; } = new Abonnement();
+
     }
 }
