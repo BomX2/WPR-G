@@ -12,8 +12,8 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20241211113506_newInitial")]
-    partial class newInitial
+    [Migration("20241216100748_newinitialgebruikDB")]
+    partial class newinitialgebruikDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,6 +230,9 @@ namespace WebProjectG.Server.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
