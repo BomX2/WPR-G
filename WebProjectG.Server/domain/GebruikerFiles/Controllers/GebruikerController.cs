@@ -44,6 +44,16 @@ public class GebruikerController : ControllerBase
 
         if (result.Succeeded)
         {
+            // Assign role based on user choice
+            if (model.Role == "ZakelijkeHuurder" || model.Role == "WagenparkBeheerder")
+            {
+                await _userManager.AddToRoleAsync(user, model.Role);
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(user, "Particulier");
+            }
+
             return Ok(new { message = "Registration successful" });
         }
 

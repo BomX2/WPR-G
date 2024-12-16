@@ -4,6 +4,7 @@ using System.Security.Claims;
 using WebProjectG.Server.domain;
 using WebProjectG.Server.domain.GebruikerFiles;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
+using WebProjectG.Server.domain.GebruikerFiles.RoleFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// Enable role service
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<Gebruiker>>();
+    await SeedRoles.Initialize(services, userManager);
 }
 
 // Enable CORS policy
