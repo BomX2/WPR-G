@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations
+namespace WebProjectG.Server.Migrations.GebruikerDb
 {
     [DbContext(typeof(GebruikerDbContext))]
-    partial class GebruikerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241216095535_initialbadman")]
+    partial class initialbadman
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
