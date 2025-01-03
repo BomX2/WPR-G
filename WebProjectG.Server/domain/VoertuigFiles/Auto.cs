@@ -2,6 +2,7 @@
 {
     public class Auto : Voertuig
     {
+        public int Id { get; set; }
         public int AantalDeuren { get; set; }
         public string BrandstofType { get; set; }
         public bool HeeftAirco { get; set; }

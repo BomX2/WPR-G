@@ -8,7 +8,7 @@ export default function Catalogus() {
         <SideBar/>
             <div className="content">
                 <h1>catalogus nr </h1>
-
+            
             <Products props='1' />
             <Products props='2' />
             <Products props='3' />
