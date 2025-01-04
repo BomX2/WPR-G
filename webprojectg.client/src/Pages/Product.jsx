@@ -4,13 +4,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from "react-router-dom";
 import './modal.css';
 export default function Product() {
-    const [modalWindow, setModalWindow] = useState("");
-    //const [datum, setDatum] = useState("");
+    const [modalWindow, setModalWindow] = useState(false);
+    const [begindatum, setBeginDatum] = useState(null);
+     const [eindDatum, setEindDatum] = useState(null);
     const [naam, setNaam] = useState("");
     const [email, setEmail] = useState("");
     const [telnummer, setTelNummer] = useState("")
     const { id } = useParams()
-    const OnButtonClick = () => {
+    const OnButtonClick = () => {   
         setModalWindow(true);
     }
     const  CloseWindow = () => {
@@ -19,11 +20,25 @@ export default function Product() {
     return (
         <div>
             <h1>catalogus nr {id}</h1>
-            <DatePicker
-                selected={new Date()}
-                onChange={(date) => console.log(date)}
+            <DatePicker 
+                selected={begindatum}
+                onChange={(date) => setBeginDatum(date)}
+                selectsStart
+                startDate={begindatum}
+                endDate={eindDatum}
+                dateFormat="dd/MM/yyyy"
             />
-            <button onClick={OnButtonClick} >klik hier om een huuraanvraag te maken voor deze auto</button>
+            <DatePicker
+                selected={eindDatum}
+                onChange={(date) => setEindDatum(date)}
+                selectsEnd
+                startDate={begindatum}
+                endDate={eindDatum}
+                minDate={begindatum}
+                dateFormat="dd/MM/yyyy"
+                disabled={!begindatum }
+            />
+            <button onClick={OnButtonClick} disabled={!begindatum || !eindDatum} >klik hier om een huuraanvraag te maken voor deze auto</button>
             {modalWindow && (
                 <div className="modal-overlay">
                 <div className="modal-content" >
