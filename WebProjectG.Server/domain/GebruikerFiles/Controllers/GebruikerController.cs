@@ -29,7 +29,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
+        [HttpPost("postAanvraag")]
+        public async Task<ActionResult<Aanvraag>> PostAanvraag(Aanvraag aanvraag)
+        {
+            _huurContext.Aanvragen.Add(aanvraag);
+            await _huurContext.SaveChangesAsync();
+            return Ok();
+        }
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
         {
