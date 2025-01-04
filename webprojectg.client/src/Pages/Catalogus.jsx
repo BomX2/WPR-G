@@ -7,22 +7,25 @@ export default function Catalogus() {
 
     useEffect(() => {
         const fetchAutos = async () => {
-            const response = await fetch("https://localhost:7065/api/gebruikers/autos");
-            const data = await response.json();
-            setautos(data);
-        } catch (error) {
-            console.error('Error fetching autos',error);
-        }
-            
-})
+            try {
+                const response = await fetch("https://localhost:7065/api/gebruiker/autos");
+                const data = await response.json();
+                setautos(data);
+            } catch (error) {
+                console.error('Error fetching autos', error);
+            }
+        };
+        fetchAutos();
+    }, []);
 
     return (
         <div className="catalogus-container">
         <SideBar/>
             <div className="content">
                 <h1>catalogus nr </h1>
-            
-            <Products props='1' />
+                {autos.map(auto => (
+                    <Products auto={auto} />
+                ))}
             </div>
         </div>
     );
