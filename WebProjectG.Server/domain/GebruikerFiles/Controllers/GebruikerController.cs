@@ -262,7 +262,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return BadRequest(new { message = errors });
         }
 
-        [HttpGet]
+        [HttpGet("autos")]
         public async Task<ActionResult<Auto>> GetAutos()
         {
             var autos = await _huurContext.autos.ToListAsync();
