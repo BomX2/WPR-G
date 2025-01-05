@@ -40,7 +40,8 @@ builder.Services.AddCors(options =>
     {
         policyBuilder.WithOrigins("https://localhost:5173")
                      .AllowAnyMethod()
-                     .AllowAnyHeader();
+                     .AllowAnyHeader()
+                     .AllowCredentials();
     });
 });
 
@@ -82,13 +83,6 @@ app.UseAuthorization();
 
 // Map API routes
 app.MapControllers();
-
-// Map Api endpoint to return value of user.
-app.MapGet("/pingauth", (ClaimsPrincipal user) =>
-{
-    var email = user.FindFirstValue(ClaimTypes.Email);
-    return Results.Json(new { Email = email });
-}).RequireAuthorization();
 
 // Ensure the SPA serves on fallback routes
 app.MapFallbackToFile("/index.html");

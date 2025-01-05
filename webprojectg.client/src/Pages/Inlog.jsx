@@ -26,6 +26,7 @@ function Login() {
     // Handles the form submission
     const onSubmit = (e) => {
         e.preventDefault();
+        console.log("from submitted") //debug log
 
         if (!email || !password) {
             setError("Please fill in all fields.");
@@ -36,11 +37,13 @@ function Login() {
                 ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
                 : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
 
+            console.log("calling api:", loginurl);
             fetch(loginurl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({ email, password }),
             })
                 .then((response) => {

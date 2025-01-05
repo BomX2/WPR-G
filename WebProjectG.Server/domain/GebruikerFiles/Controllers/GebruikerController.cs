@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.GebruikerFiles;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/gebruikers")]
@@ -32,6 +34,16 @@ public class GebruikerController : ControllerBase
             return BadRequest(new { message = "Passwords do not match." });
         }
 
+        if (string.IsNullOrEmpty(model.Role))
+        {
+            return BadRequest(new { message = "Role is required." });
+        }
+
+        if (model.Role != "ZakelijkeHuurder" && model.Role != "WagenparkBeheerder" && model.Role != "Particulier")
+        {
+            return BadRequest(new { message = "Invalid role specified." });
+        }
+
         var user = new Gebruiker
         {
             UserName = model.Email,
@@ -44,15 +56,7 @@ public class GebruikerController : ControllerBase
 
         if (result.Succeeded)
         {
-            // Assign role based on user choice. defaults to particulier
-            if (model.Role == "ZakelijkeHuurder" || model.Role == "WagenparkBeheerder")
-            {
-                await _userManager.AddToRoleAsync(user, model.Role);
-            }
-            else
-            {
-                await _userManager.AddToRoleAsync(user, "Particulier");
-            }
+            await _userManager.AddToRoleAsync(user, model.Role);
 
             return Ok(new { message = "Registration successful" });
         }
@@ -73,7 +77,10 @@ public class GebruikerController : ControllerBase
         var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
         if (result.Succeeded)
-        {
+        {         
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            await _signInManager.SignInAsync(user, model.RememberMe);
+
             return Ok(new { message = "Login successful" });
         }
 
@@ -176,5 +183,34 @@ public class GebruikerController : ControllerBase
 
         var errors = string.Join(", ", result.Errors.Select(e => e.Description));
         return BadRequest(new { message = errors });
+    }
+
+    [HttpGet("pingauth")]
+    [Authorize] // Ensure only authenticated users can access this endpoint
+    public async Task<IActionResult> GetAuthenticatedUserRole()
+    {
+        // Extract the logged-in user's email from the claims
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        if (email == null)
+        {
+            return Unauthorized(new { message = "User is not logged in." });
+        }
+
+        // Fetch the user by email
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        // Retrieve the roles of the user
+        var roles = await _userManager.GetRolesAsync(user);
+
+        // Return the email and roles
+        return Ok(new
+        {
+            Email = email,
+            Role = roles.FirstOrDefault() // Adjust for multiple roles if needed
+        });
     }
 }
