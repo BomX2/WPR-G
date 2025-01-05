@@ -4,7 +4,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from "react-router-dom";
 import './modal.css';
 export default function Product() {
-    const [auto, setAuto] = useState(null);
+    const [auto, setAuto] = useState("");
+    const [autoBestaat, setAutoBestaat] = useState(true);
     const [modalWindow, setModalWindow] = useState(false);
     const [beginDatum, setBeginDatum] = useState(null);
     const [eindDatum, setEindDatum] = useState(null);
@@ -17,10 +18,20 @@ export default function Product() {
         const fetchCar = async () => {
             try {
                 const response = await fetch(`https://localhost:7065/api/gebruiker/getAutoById/${id}`);
+                if (!response.ok) {
+                    setAutoBestaat(false); // Stel in dat de auto niet bestaat
+                    return;
+                }
                 const data = await response.json();
+
+                if (!data || Object.keys(data).length === 0) {
+                    setAutoBestaat(false); // Geen gegevens ontvangen
+                    return;
+                }
                 setAuto(data);
             } catch (error) {
                 console.error('Error fetching auto', error);
+                setAutoBestaat(false);
             }
         };
         fetchCar();
@@ -66,13 +77,17 @@ export default function Product() {
     const  CloseWindow = () => {
         setModalWindow(false);
     }
+
+    if (!autoBestaat) {
+            return <h2>De auto bestaat niet.</h2>;
+    }
     return (
         <div>
             <div>
 
             </div>
             <h1>catalogus nr {id}</h1>
-            <h1>De auto is {auto ? auto.merk  : "wordt geladen..."}</h1>
+            <h1>De auto is {auto.merk}</h1>
             <DatePicker 
                 selected={beginDatum}
                 onChange={(date) => setBeginDatum(date)}
