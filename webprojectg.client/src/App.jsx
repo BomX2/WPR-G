@@ -11,6 +11,7 @@ import Product from './Pages/Product';
 import RegistreerBedrijf from './Pages/BedrijfsRegistratie';
 import Abonnementen from './Pages/Abonnement';
 import BedrijfsSettings from './Pages/BedrijfsInstellingen';
+import AanvraagBackOffice from './Pages/AanvraagBackOffice';
 const App = () => {
      
     return (
@@ -27,7 +28,8 @@ const App = () => {
                 <Route path="/AccountSettings" element={<AccSettings />} />
                   <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf />} />
                 <Route path="/Abonnement" element={<Abonnementen />} />
-                <Route path="/BedrijfsInstellingen" element={<BedrijfsSettings /> } />
+                <Route path="/BedrijfsInstellingen" element={<BedrijfsSettings />} />
+                <Route path="/AanvraagBackOffice" element={<AanvraagBackOffice  /> }/>
             </Routes>
         </div>
     );

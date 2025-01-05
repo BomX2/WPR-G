@@ -14,6 +14,8 @@ export default function Product() {
     const HandleAanvraag = async () => {
         try {
             const formatDateToUTC = (date) => {
+                if (!date) return null;
+
                 const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
                 return utcDate.toISOString().split('T')[0];
             };
@@ -26,7 +28,6 @@ export default function Product() {
                     persoonsGegevens: naam,
                     email: email,
                     telefoonnummer: telnummer,
-                    autoId: id,
                 })
             })
             if (PostAanvraag.ok) {
@@ -93,7 +94,7 @@ export default function Product() {
 
                         </form>
                    
-                    <button onClick={CloseWindow}>Sluiten</button>
+                        <button onClick={CloseWindow}>Sluiten</button>
                     </div>
                 </div>
             )}

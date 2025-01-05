@@ -43,6 +43,9 @@ namespace WebProjectG.Server.Migrations.Huur
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("Goedgekeurd")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PersoonsGegevens")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
