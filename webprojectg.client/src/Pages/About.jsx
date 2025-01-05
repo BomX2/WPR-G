@@ -6,7 +6,7 @@ const About = () => {
         <AuthorizeView allowedRoles={["ZakelijkeHuurder", "Particulier", "WagenparkBeheerder"]}>
             {({ user }) => (
                 <div>
-                    <h1>Looks like you are a {user?.role} user!</h1>
+                    <h1>Looks like you are a {user?.role}!</h1>
                 </div>
             )}
         </AuthorizeView>

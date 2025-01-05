@@ -98,10 +98,5 @@ app.MapControllers();
 // Ensure the SPA serves on fallback routes
 app.MapFallbackToFile("/index.html");
 
-
-app.MapGet("/", (HuurContext db) => db.klanten.ToList());
-
-app.MapGet("/", (HuurContext db) => db.klanten.ToList());
-
 // Run the application
 app.Run();

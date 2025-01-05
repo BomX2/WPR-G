@@ -48,7 +48,7 @@ const Registratie = () => {
         setLoading(true);
 
         try {
-            const response = await fetch("https://localhost:7065/api/Gebruiker/register", {
+            const response = await fetch("https://localhost:7065/api/gebruikers/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, confirmPassword, adres, phoneNumber, role }),
@@ -62,7 +62,7 @@ const Registratie = () => {
                 setError(data.message || "Registration failed");
             }
         } catch (error) {
-            setError("An error occurred during registration", error);
+            setError("An error occurred during registration");
         } finally {
             setLoading(false);
         }
@@ -134,11 +134,11 @@ const Registratie = () => {
                     <div className="input">
                         <label htmlFor="role">Role:</label>
                         <select
-                            placeholder ="Select your role"
+                            placeholder="Select your role"
                             id="role"
                             name="role"
                             value={role}
-                            onChange={handleChange}     
+                            onChange={handleChange}
                             required
                         >
                             <option value="Particulier">Particulier</option>
@@ -161,7 +161,7 @@ const Registratie = () => {
                 </div>
                 {error && <p className="error">{error}</p>}
             </form>
-            
+
         </div>
     );
 };

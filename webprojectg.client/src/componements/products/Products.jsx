@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import "./Products.css";
 import carImage from "../../image/kever.jpg";
 import { Link } from "react-router-dom";
