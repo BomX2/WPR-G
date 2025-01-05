@@ -7,6 +7,7 @@ using SQLitePCL;
 using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.BedrijfFiles;
+using System.Data;
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     [Route("api/[controller]")]
@@ -35,6 +36,55 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             _huurContext.Aanvragen.Add(aanvraag);
             await _huurContext.SaveChangesAsync();
             return Ok();
+        }
+        [HttpGet("getAanvragen")]
+        public async Task<ActionResult<Aanvraag>> GetAanvraag()
+        {
+            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == false || aanv.Goedgekeurd == null).ToListAsync();
+            return Ok(aanvraag);
+        }
+        [HttpPut("KeurAanvraagGoed/{id}")]
+        public async Task<IActionResult> KeurAanvraagGoed([FromBody] AanvraagDto aanvraagDto,int id)
+        {
+            if (id != aanvraagDto.Id  )
+            {
+                return BadRequest();
+            }
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+
+            if (aanvraag == null)
+            {
+                return NotFound();
+            }
+            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd;
+            _huurContext.Entry(aanvraag).State = EntityState.Modified;
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            }
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.Aanvragen.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }  
+            }
+            return NoContent();
+        }
+        [HttpDelete("verwijderAanvraag/{id}")]
+        public async Task<IActionResult> DeleteAanvraag(int id)
+        {
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+            if (aanvraag == null) {
+                return NotFound();
+            }
+            _huurContext.Aanvragen.Remove(aanvraag);
+            await _huurContext.SaveChangesAsync(); 
+            return NoContent();
         }
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)

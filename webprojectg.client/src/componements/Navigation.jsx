@@ -22,6 +22,9 @@ const Navigation = () => {
                 <li>
                     <Link to="/BedrijfsRegistratie">log in voor bedrijven</Link>
                 </li>
+                <li>
+                    <Link to="/AanvraagBackOffice">bekijk aanvragen</Link>
+                </li>
             </ul>
         </nav>
     )
