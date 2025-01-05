@@ -7,6 +7,7 @@ using SQLitePCL;
 using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.BedrijfFiles;
+using WebProjectG.Server.domain.Voertuig;
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     [Route("api/[controller]")]
@@ -260,6 +261,14 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             return BadRequest(new { message = errors });
+        }
+
+        [HttpGet("autos")]
+        public async Task<ActionResult<Auto>> GetAutos()
+        {
+            var autos = await _huurContext.autos.ToListAsync();
+
+            return Ok(autos);
         }
     }
 }
