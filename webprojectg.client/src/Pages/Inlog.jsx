@@ -33,8 +33,8 @@ function Login() {
             setError("");
 
             const loginurl = rememberme
-                ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
-                : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
+                ? "https://localhost:7065/api/Gebruiker/login?useCookies=true"
+                : "https://localhost:7065/api/Gebruiker/login?useSessionCookies=true";
 
             fetch(loginurl, {
                 method: "POST",

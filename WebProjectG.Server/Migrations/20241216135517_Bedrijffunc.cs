@@ -2,28 +2,27 @@
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations.Huur
+namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class domeinnaamBedrijf : Migration
+    public partial class Bedrijffunc : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "DomeinNaam",
+            migrationBuilder.RenameColumn(
+                name: "Domeinnaam",
                 table: "Bedrijven",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+                newName: "DomeinNaam");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            migrationBuilder.RenameColumn(
                 name: "DomeinNaam",
-                table: "Bedrijven");
+                table: "Bedrijven",
+                newName: "Domeinnaam");
         }
     }
 }

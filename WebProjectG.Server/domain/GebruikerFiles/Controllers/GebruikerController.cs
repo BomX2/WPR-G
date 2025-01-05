@@ -34,9 +34,10 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
         {
+           
             _dbContext.Bedrijven.Add(bedrijf);
             await _dbContext.SaveChangesAsync();
-            return CreatedAtAction("GetGebruiker", new { bedrijf = bedrijf.KvkNummer }, bedrijf);
+            return Ok();
         }
         [HttpPut("putBedrijfsAbonnement/{id}")]
         public async Task<IActionResult> PutBedrijf(String kvkNummer, BedrijfPutDto dto)
