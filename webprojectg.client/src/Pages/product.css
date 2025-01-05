@@ -1,0 +1,57 @@
+.productPage {
+    display: flex;
+    justify-content: center; /* Horizontaal centreren */
+    align-items: center; /* Verticaal centreren */
+    min-height: 100vh; /* Vul de volledige hoogte van de pagina */
+    gap: 20px; /* Ruimte tussen de kolommen */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.auto-info {
+    border: 2px solid #808080;
+}
+
+/* Links: Foto en auto-info */
+.links {
+    display: flex;
+    flex-direction: column; /* Elementen onder elkaar */
+    align-items: center; /* Centraal uitlijnen */
+    gap: 10px; /* Ruimte tussen de foto en info */
+}
+
+.product-image {
+    max-width: 100%; /* Zorg dat de afbeelding responsief blijft */
+    height: auto;
+    border: 2px solid #808080;
+    border-radius: 8px;
+}
+
+/* Rechts: Auto naam en prijs */
+.rechts {
+    display: flex;
+    flex-direction: column; /* Elementen onder elkaar */
+    justify-content: center; /* Centraal uitlijnen */
+    gap: 10px; /* Ruimte tussen naam en prijs */
+}
+
+    .links h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .rechts h2 {
+        font-size: 20px;
+        color: #666;
+        margin: 0;
+    }
+
+/* Info box */
+.auto-info {
+    padding: 10px;
+    border: 2px solid #808080;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    background-color: #f9f9f9;
+}

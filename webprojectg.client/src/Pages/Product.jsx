@@ -3,8 +3,11 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from "react-router-dom";
 import './modal.css';
+import carImage from "../image/kever.jpg";
+import './product.css'
 export default function Product() {
-    const [auto, setAuto] = useState(null);
+    const [auto, setAuto] = useState("");
+    const [autoBestaat, setAutoBestaat] = useState(true);
     const [modalWindow, setModalWindow] = useState(false);
     const [beginDatum, setBeginDatum] = useState(null);
     const [eindDatum, setEindDatum] = useState(null);
@@ -17,10 +20,20 @@ export default function Product() {
         const fetchCar = async () => {
             try {
                 const response = await fetch(`https://localhost:7065/api/gebruiker/getAutoById/${id}`);
+                if (!response.ok) {
+                    setAutoBestaat(false);
+                    return;
+                }
                 const data = await response.json();
+
+                if (!data || Object.keys(data).length === 0) {
+                    setAutoBestaat(false);
+                    return;
+                }
                 setAuto(data);
             } catch (error) {
                 console.error('Error fetching auto', error);
+                setAutoBestaat(false);
             }
         };
         fetchCar();
@@ -66,13 +79,24 @@ export default function Product() {
     const  CloseWindow = () => {
         setModalWindow(false);
     }
+
+    if (!autoBestaat) {
+            return <h2>De auto bestaat niet.</h2>;
+    }
     return (
         <div>
-            <div>
+            <div className="productPage">
+            <div className= "links">
+                    <img src={carImage} alt="auto" className="product-image" />
+                    <div className="auto-info">
 
+                    </div>
+                </div>
+            <div className = "rechts">
+                <h1>{auto.merk} {auto.type}</h1>
+                <h1> {auto.prijsPerDag}</h1>
             </div>
-            <h1>catalogus nr {id}</h1>
-            <h1>De auto is {auto ? auto.merk  : "wordt geladen..."}</h1>
+            </div>
             <DatePicker 
                 selected={beginDatum}
                 onChange={(date) => setBeginDatum(date)}
