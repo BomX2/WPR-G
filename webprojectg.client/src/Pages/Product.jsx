@@ -3,6 +3,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from "react-router-dom";
 import './modal.css';
+import carImage from "../image/kever.jpg";
+import './product.css'
 export default function Product() {
     const [auto, setAuto] = useState("");
     const [autoBestaat, setAutoBestaat] = useState(true);
@@ -19,13 +21,13 @@ export default function Product() {
             try {
                 const response = await fetch(`https://localhost:7065/api/gebruiker/getAutoById/${id}`);
                 if (!response.ok) {
-                    setAutoBestaat(false); // Stel in dat de auto niet bestaat
+                    setAutoBestaat(false);
                     return;
                 }
                 const data = await response.json();
 
                 if (!data || Object.keys(data).length === 0) {
-                    setAutoBestaat(false); // Geen gegevens ontvangen
+                    setAutoBestaat(false);
                     return;
                 }
                 setAuto(data);
@@ -83,11 +85,18 @@ export default function Product() {
     }
     return (
         <div>
-            <div>
+            <div className="productPage">
+            <div className= "links">
+                    <img src={carImage} alt="auto" className="product-image" />
+                    <div className="auto-info">
 
+                    </div>
+                </div>
+            <div className = "rechts">
+                <h1>{auto.merk} {auto.type}</h1>
+                <h1> {auto.prijsPerDag}</h1>
             </div>
-            <h1>catalogus nr {id}</h1>
-            <h1>De auto is {auto.merk}</h1>
+            </div>
             <DatePicker 
                 selected={beginDatum}
                 onChange={(date) => setBeginDatum(date)}
