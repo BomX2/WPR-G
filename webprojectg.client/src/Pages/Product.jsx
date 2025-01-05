@@ -19,7 +19,7 @@ export default function Product() {
     useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruiker/getAutoById/${id}`);
+                const response = await fetch(`https://localhost:7065/api/gebruikers/getAutoById/${id}`);
                 if (!response.ok) {
                     setAutoBestaat(false);
                     return;
@@ -48,7 +48,7 @@ export default function Product() {
                 const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
                 return utcDate.toISOString().split('T')[0];
             };
-            const PostAanvraag = await fetch(`https://localhost:7065/api/gebruiker/postAanvraag`, {
+            const PostAanvraag = await fetch(`https://localhost:7065/api/gebruikers/postAanvraag`, {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({

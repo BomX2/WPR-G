@@ -4,7 +4,7 @@ const BedrijfsSettings = () => {
     const bedrijfsId = sessionStorage.getItem('bedrijfsId')
         const VoegMedewerkersToe = async () => {
         try {
-            const toevoegen = await fetch(`https://localhost:7065/api/Gebruiker/AddGebruikerTo/${bedrijfsId}`, {
+            const toevoegen = await fetch(`https://localhost:7065/api/Gebruikers/AddGebruikerTo/${bedrijfsId}`, {
                 method: 'Post',
                 headers: {
                     'Content-Type': 'application/json',

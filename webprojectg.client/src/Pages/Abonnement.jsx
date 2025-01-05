@@ -14,7 +14,7 @@ const Abonnementen = () => {
     const PutAbonnement = async (choice) => {
     
         try {
-        const wijzig = await fetch(`https://localhost:7065/api/gebruiker/putBedrijfsAbonnement/${bedrijfsId}`, {
+        const wijzig = await fetch(`https://localhost:7065/api/gebruikers/putBedrijfsAbonnement/${bedrijfsId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
