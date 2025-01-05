@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.datetime_converter;
 using WebProjectG.Server.domain.GebruikerFiles;
 using WebProjectG.Server.domain.Huur;
+using WebProjectG.Server.domain.Voertuig;
 namespace WebProjectG.Server.domain
 {
     public class HuurContext : DbContext

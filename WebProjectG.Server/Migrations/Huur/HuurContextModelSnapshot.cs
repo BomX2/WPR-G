@@ -108,7 +108,7 @@ namespace WebProjectG.Server.Migrations.Huur
                     b.HasKey("Id");
 
                     b.ToTable("autos");
-                });
+                }));
 #pragma warning restore 612, 618
         }
     }
