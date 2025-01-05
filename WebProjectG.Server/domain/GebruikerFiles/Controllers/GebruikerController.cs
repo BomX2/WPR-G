@@ -44,7 +44,7 @@ public class GebruikerController : ControllerBase
 
         if (result.Succeeded)
         {
-            // Assign role based on user choice
+            // Assign role based on user choice. defaults to particulier
             if (model.Role == "ZakelijkeHuurder" || model.Role == "WagenparkBeheerder")
             {
                 await _userManager.AddToRoleAsync(user, model.Role);

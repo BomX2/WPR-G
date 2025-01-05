@@ -13,6 +13,5 @@ namespace WebProjectG.Server.domain.GebruikerFiles
         [ForeignKey(nameof(Bedrijf))]
         public string? KvkNummer { get; set; }
 
-        public string? Role { get; set; }
     }
 }

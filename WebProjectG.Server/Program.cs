@@ -21,6 +21,18 @@ builder.Services.AddIdentity<Gebruiker, IdentityRole>()
     .AddEntityFrameworkStores<GebruikerDbContext>()
     .AddDefaultTokenProviders();
 
+// add cookies
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict; 
+    options.ExpireTimeSpan = TimeSpan.FromHours(6); // cookie expiration time
+    options.SlidingExpiration = true; // extend cookie every time the user interacts
+    options.LoginPath = "/account/login"; // Redirect to login page when unauthorized
+    options.AccessDeniedPath = "/account/access-denied"; // Redirect when access is denied
+});
+
 // Add CORS policy for frontend-backend communication
 builder.Services.AddCors(options =>
 {
