@@ -25,8 +25,8 @@ const App = () => {
                 <Route path="/inlog" element={<Inlog/> } />
                 <Route path="/registratie" element={<Registratie />} />
                 <Route path="/AccountSettings" element={<AccSettings />} />
-                  <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf />} />
-                  <Route path="/Abonnement" element={<Abonnementen />} />
+                <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf />} />
+                <Route path="/Abonnement" element={<Abonnementen />} />
             </Routes>
         </div>
     );
