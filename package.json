@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "react-router-dom": "^7.0.1"
+    "react-router-dom": "^7.1.1"
   },
   "dependencies": {
     "date-fns": "^4.1.0",

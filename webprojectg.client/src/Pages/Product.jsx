@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams } from "react-router-dom";
 import './modal.css';
 export default function Product() {
+    const [auto, setAuto] = useState(null);
     const [modalWindow, setModalWindow] = useState(false);
     const [beginDatum, setBeginDatum] = useState(null);
     const [eindDatum, setEindDatum] = useState(null);
     const [naam, setNaam] = useState("");
     const [email, setEmail] = useState("");
-    const [telnummer, setTelNummer] = useState("")
-    const { id } = useParams()
+    const [telnummer, setTelNummer] = useState("");
+    const { id } = useParams();
+
+    useEffect(() => {
+        const fetchCar = async () => {
+            try {
+                const response = await fetch(`https://localhost:7065/api/gebruiker/getAutoById/${id}`);
+                const data = await response.json();
+                setAuto(data);
+            } catch (error) {
+                console.error('Error fetching auto', error);
+            }
+        };
+        fetchCar();
+    }, [id]);
+    
+
     const HandleAanvraag = async () => {
         try {
             const formatDateToUTC = (date) => {
@@ -52,7 +68,11 @@ export default function Product() {
     }
     return (
         <div>
+            <div>
+
+            </div>
             <h1>catalogus nr {id}</h1>
+            <h1>De auto is {auto ? auto.merk  : "wordt geladen..."}</h1>
             <DatePicker 
                 selected={beginDatum}
                 onChange={(date) => setBeginDatum(date)}

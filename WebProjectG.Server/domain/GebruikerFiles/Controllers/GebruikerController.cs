@@ -276,5 +276,18 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(autos);
         }
+
+        [HttpGet("getAutoById/{id}")]
+        public async Task<ActionResult<Auto>> getAutoById(int id)
+        {
+            var auto = await _huurContext.autos.FindAsync(id);
+
+            if (auto == null)
+            {
+                return NotFound(new { message = "Auto not found" });
+            }
+            return Ok(auto);
+        }
+
     }
 }
