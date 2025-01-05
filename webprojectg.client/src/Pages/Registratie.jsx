@@ -8,6 +8,7 @@ const Registratie = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [adres, setAdres] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [role, setRole] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Registratie = () => {
         else if (name === "confirmPassword") setConfirmPassword(value);
         else if (name === "adres") setAdres(value);
         else if (name === "phoneNumber") setPhoneNumber(value);
+        else if (name === "role") setRole(value);
     };
 
     const onSubmit = async (e) => {
@@ -46,10 +48,10 @@ const Registratie = () => {
         setLoading(true);
 
         try {
-            const response = await fetch("https://localhost:7065/api/Gebruiker/register", {
+            const response = await fetch("https://localhost:7065/api/gebruikers/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, confirmPassword, adres, phoneNumber }),
+                body: JSON.stringify({ email, password, confirmPassword, adres, phoneNumber, role }),
             });
 
             if (response.ok) {
@@ -60,7 +62,7 @@ const Registratie = () => {
                 setError(data.message || "Registration failed");
             }
         } catch (error) {
-            setError("An error occurred during registration", error);
+            setError("An error occurred during registration");
         } finally {
             setLoading(false);
         }
@@ -129,6 +131,21 @@ const Registratie = () => {
                             required
                         />
                     </div>
+                    <div className="input">
+                        <label htmlFor="role">Role:</label>
+                        <select
+                            placeholder="Select your role"
+                            id="role"
+                            name="role"
+                            value={role}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="Particulier">Particulier</option>
+                            <option value="ZakelijkeHuurder">ZakelijkeHuurder</option>
+                            <option value="WagenparkBeheerder">WagenparkBeheerder</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="submit-container">
                     <div className="submit">
@@ -144,7 +161,7 @@ const Registratie = () => {
                 </div>
                 {error && <p className="error">{error}</p>}
             </form>
-            
+
         </div>
     );
 };

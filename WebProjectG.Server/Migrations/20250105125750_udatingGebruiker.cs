@@ -5,24 +5,24 @@
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Bedrijffunc : Migration
+    public partial class udatingGebruiker : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Domeinnaam",
-                table: "Bedrijven",
-                newName: "DomeinNaam");
+            migrationBuilder.DropColumn(
+                name: "Role",
+                table: "AspNetUsers");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "DomeinNaam",
-                table: "Bedrijven",
-                newName: "Domeinnaam");
+            migrationBuilder.AddColumn<string>(
+                name: "Role",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true);
         }
     }
 }
