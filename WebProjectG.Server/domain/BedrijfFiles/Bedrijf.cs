@@ -9,22 +9,23 @@ namespace WebProjectG.Server.domain.BedrijfFiles
     {
         public Bedrijf() { }
 
-        public Bedrijf(string bedrijfsNaam, string kvknummer, string domeinnaam, string adres)
+        public Bedrijf(string bedrijfsNaam, string adres,string kvknummer, string domeinNaam, Abonnement? abonnement )
         {
             BedrijfsNaam = bedrijfsNaam;
-            KvkNummer = kvknummer;
-            Domeinnaam = domeinnaam;
             Adres = adres;
-            ZakelijkeHuurders = new List<Gebruiker>();
+            KvkNummer = kvknummer;
+            DomeinNaam = domeinNaam;
+            Abonnement = abonnement;
+
         }
 
         public string BedrijfsNaam { get; set; }
         [Key] public string KvkNummer { get; init; }
-        public string Domeinnaam { get; set; }
+        public string DomeinNaam { get; set; }
         public string Adres { get; set; }
 
-        public List<Gebruiker> ZakelijkeHuurders { get; private set; }
-        private Abonnement? Abonnement { get; set; } = new Abonnement();
+        public List<Gebruiker>? ZakelijkeHuurders { get; private set; }
+        public Abonnement? Abonnement { get; set; } = new Abonnement();
 
     }
 }

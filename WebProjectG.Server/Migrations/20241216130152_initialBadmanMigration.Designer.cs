@@ -12,8 +12,8 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20241216100748_newinitialgebruikDB")]
-    partial class newinitialgebruikDB
+    [Migration("20241216130152_initialBadmanMigration")]
+    partial class initialBadmanMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,6 +163,9 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("AbonnementID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Adres")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,6 +179,8 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("KvkNummer");
+
+                    b.HasIndex("AbonnementID");
 
                     b.ToTable("Bedrijven");
                 });
@@ -259,6 +264,32 @@ namespace WebProjectG.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Property<int>("AbonnementID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AbonnementID"));
+
+                    b.Property<string>("AbonnementType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Prijs")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AbonnementID");
+
+                    b.ToTable("Abonnement");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -308,6 +339,15 @@ namespace WebProjectG.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
+                        .WithMany()
+                        .HasForeignKey("AbonnementID");
+
+                    b.Navigation("Abonnement");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", b =>

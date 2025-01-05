@@ -160,6 +160,9 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("AbonnementID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Adres")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -168,11 +171,13 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Domeinnaam")
+                    b.Property<string>("DomeinNaam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("KvkNummer");
+
+                    b.HasIndex("AbonnementID");
 
                     b.ToTable("Bedrijven");
                 });
@@ -253,6 +258,32 @@ namespace WebProjectG.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Property<int>("AbonnementID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AbonnementID"));
+
+                    b.Property<string>("AbonnementType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Prijs")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AbonnementID");
+
+                    b.ToTable("Abonnement");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -302,6 +333,15 @@ namespace WebProjectG.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
+                        .WithMany()
+                        .HasForeignKey("AbonnementID");
+
+                    b.Navigation("Abonnement");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", b =>

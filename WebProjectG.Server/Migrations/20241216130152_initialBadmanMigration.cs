@@ -6,11 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class newinitialgebruikDB : Migration
+    public partial class initialBadmanMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Abonnement",
+                columns: table => new
+                {
+                    AbonnementID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AbonnementType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Prijs = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Abonnement", x => x.AbonnementID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -32,11 +48,17 @@ namespace WebProjectG.Server.Migrations
                     KvkNummer = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BedrijfsNaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Domeinnaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AbonnementID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bedrijven", x => x.KvkNummer);
+                    table.ForeignKey(
+                        name: "FK_Bedrijven_Abonnement_AbonnementID",
+                        column: x => x.AbonnementID,
+                        principalTable: "Abonnement",
+                        principalColumn: "AbonnementID");
                 });
 
             migrationBuilder.CreateTable(
@@ -221,6 +243,11 @@ namespace WebProjectG.Server.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bedrijven_AbonnementID",
+                table: "Bedrijven",
+                column: "AbonnementID");
         }
 
         /// <inheritdoc />
@@ -249,6 +276,9 @@ namespace WebProjectG.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Bedrijven");
+
+            migrationBuilder.DropTable(
+                name: "Abonnement");
         }
     }
 }

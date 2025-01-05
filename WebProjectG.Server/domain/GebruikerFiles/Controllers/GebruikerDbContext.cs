@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.BedrijfFiles;
-using WebProjectG.Server.domain.GebruikerFiles;
-
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     public class GebruikerDbContext : IdentityDbContext<Gebruiker>
     {
-        public DbSet<Bedrijf> Bedrijven { get; set; } // Include Bedrijf table in the schema
+        public DbSet<Bedrijf> Bedrijven { get; set; } 
 
         public GebruikerDbContext(DbContextOptions<GebruikerDbContext> options)
             : base(options)
@@ -22,7 +20,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 entity.Property(e => e.Adres)
                     .IsRequired()
-                    .HasMaxLength(256); // Adjust length as necessary
+                    .HasMaxLength(256); 
 
                 entity.Property(e => e.PhoneNumber)
                     .IsRequired();

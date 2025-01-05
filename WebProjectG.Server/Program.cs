@@ -45,8 +45,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+//Localstorage, sessionId en cookies
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout = TimeSpan.FromMinutes(30);
+    opt.Cookie.HttpOnly = true;
+    opt.Cookie.IsEssential = true;
+});
+
 // Add controllers and API endpoints
 builder.Services.AddControllers();
+
+
 
 // Add Swagger/OpenAPI for API testing
 builder.Services.AddEndpointsApiExplorer();
@@ -87,6 +98,10 @@ app.MapControllers();
 // Ensure the SPA serves on fallback routes
 app.MapFallbackToFile("/index.html");
 
+
+app.MapGet("/", (HuurContext db) => db.klanten.ToList());
+
+app.MapGet("/", (HuurContext db) => db.klanten.ToList());
 
 // Run the application
 app.Run();
