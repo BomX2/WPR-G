@@ -10,10 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="src\assets\**" />
+    <None Remove="src\Pages\Base Page Structure\**" />
     <TypeScriptConfiguration Remove="src\assets\**" />
+    <TypeScriptConfiguration Remove="src\Pages\Base Page Structure\**" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\NewFolder\" />
-    <Folder Include="src\Pages\Base Page Structure\" />
   </ItemGroup>
 </Project>

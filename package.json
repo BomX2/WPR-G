@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "react-router-dom": "^7.0.1"
+  },
+  "dependencies": {
+    "react-datepicker": "^7.5.0",
+    "react-time-picker": "^7.0.0"
   }
 }
