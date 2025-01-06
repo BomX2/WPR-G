@@ -20,7 +20,7 @@ export default function Product() {
     useEffect(() => {
         const fetchGeboekteDatums = async () => {
             try {
-                const Calldatums = await fetch(`https://localhost:7065/api/gebruiker/GetgeboekteDatums/${id}`, {
+                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${id}`, {
 
                 })
                 if (Calldatums.ok) {
@@ -46,12 +46,7 @@ export default function Product() {
         }
         fetchGeboekteDatums();
     }, [id]);
-    
-
-    const [telnummer, setTelNummer] = useState("");
-    const { id } = useParams();
-
-    useEffect(() => {
+        useEffect(() => {
         const fetchCar = async () => {
             try {
                 const response = await fetch(`https://localhost:7065/api/gebruikers/getAutoById/${id}`);

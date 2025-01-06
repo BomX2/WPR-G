@@ -8,7 +8,7 @@ const AanvraagBackOffice = () => {
     useEffect(() => {
         const fetchAanvragen = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruiker/getAanvragen`);
+                const response = await fetch(`https://localhost:7065/api/gebruikers/getAanvragen`);
                 const data = await response.json();
                 const geupdateData = data.map((item) => ({
                     ...item,
@@ -31,7 +31,7 @@ const AanvraagBackOffice = () => {
     }
     const PasAanvraagAan = async () => {
         try {
-            const keurGoed = await fetch(`https://localhost:7065/api/gebruiker/KeurAanvraagGoed/${activeItem.id}`, {
+            const keurGoed = await fetch(`https://localhost:7065/api/gebruikers/KeurAanvraagGoed/${activeItem.id}`, {
                 method: 'PUT',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
@@ -55,7 +55,7 @@ const AanvraagBackOffice = () => {
     }
     const VerwijderAanvraag = async () => {
         try {
-            const verwijder = await fetch(`https://localhost:7065/api/gebruiker/verwijderAanvraag/${activeItem.id}`, {
+            const verwijder = await fetch(`https://localhost:7065/api/gebruikers/verwijderAanvraag/${activeItem.id}`, {
                 method: 'Delete',
                 headers: { 'content-type': 'application/json' },
              

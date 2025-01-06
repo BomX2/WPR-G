@@ -8,7 +8,7 @@ const FrontOfficeAanvraag = () => {
     useEffect(() => {
         const fetchAanvragen = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruiker/getAanvragenFront`);
+                const response = await fetch(`https://localhost:7065/api/gebruikers/getAanvragenFront`);
                 const data = await response.json();
                 const geupdateData = data.map((item) => ({
                     ...item,
@@ -23,7 +23,7 @@ const FrontOfficeAanvraag = () => {
     }, []);
     const SetUitgaveStatus = async () => {
         try {
-            const keurGoed = await fetch(`https://localhost:7065/api/gebruiker/KeurAanvraagGoed/${activeItem.id}`, {
+            const keurGoed = await fetch(`https://localhost:7065/api/gebruikers/KeurAanvraagGoed/${activeItem.id}`, {
                 method: 'PUT',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
@@ -56,7 +56,7 @@ const FrontOfficeAanvraag = () => {
 
     const HandelInNameAf = async () => {
         try {
-            const verwijder = await fetch(`https://localhost:7065/api/gebruiker/verwijderAanvraag/${activeItem.id}`, {
+            const verwijder = await fetch(`https://localhost:7065/api/gebruikers/verwijderAanvraag/${activeItem.id}`, {
                 method: 'Delete',
                 headers: { 'content-type': 'application/json' },
 
