@@ -11,9 +11,14 @@
         public string PersoonsGegevens { get; set; }
         public string Email { get; set; }
         public int Telefoonnummer { get; set; }
+        public string? Status { get; set; }
         public bool? Goedgekeurd { get; set; } = false;
 
-        public Aanvraag(DateOnly startDatum, DateOnly eindDatum, string persoonsGegevens, string email, int telefoonnummer, bool? goedgekeurd )
+        public int AutoId { get; set; }
+        [ForeignKey("AutoId")]
+        public Auto? Auto { get; set; }
+
+        public Aanvraag(DateOnly startDatum, DateOnly eindDatum, string persoonsGegevens, string email, int telefoonnummer, bool? goedgekeurd, int autoId  )
             {
                 StartDatum = startDatum;
                 EindDatum = eindDatum;
@@ -21,6 +26,7 @@
                 Email = email;
                 Telefoonnummer = telefoonnummer;
                 Goedgekeurd = goedgekeurd;
+                AutoId = autoId; 
             }
-        }
+        } 
     }
