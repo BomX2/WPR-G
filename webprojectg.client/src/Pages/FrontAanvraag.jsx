@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import  './AanvraagItems.css'
+import './AanvraagItems.css'
 import { useEffect } from 'react';
-const AanvraagBackOffice = () => {
-    const [modalWindow, setModalWindow] = useState(false);
+const FrontOfficeAanvraag = () => {
+        const [modalWindow, setModalWindow] = useState(false);
     const [item, setItem] = useState([]);
     const [activeItem, setActiveItem] = useState(null);
     useEffect(() => {
         const fetchAanvragen = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruiker/getAanvragen`);
+                const response = await fetch(`https://localhost:7065/api/gebruiker/getAanvragenFront`);
                 const data = await response.json();
                 const geupdateData = data.map((item) => ({
                     ...item,
-
                 }));
                 setItem(geupdateData);
             } catch (error) {
@@ -22,28 +21,22 @@ const AanvraagBackOffice = () => {
 
         fetchAanvragen();
     }, []);
-    const OnButtonClick = (item) => {
-        setActiveItem(item);
-        setModalWindow(true);
-    }
-    const CloseWindow = () => {
-        setModalWindow(false);
-    }
-    const PasAanvraagAan = async () => {
+    const SetUitgaveStatus = async () => {
         try {
             const keurGoed = await fetch(`https://localhost:7065/api/gebruiker/KeurAanvraagGoed/${activeItem.id}`, {
                 method: 'PUT',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                  
-                    id: activeItem.id,               
-                    goedgekeurd: true, 
+
+                    id: activeItem.id,
+                    goedgekeurd: true,
+                    status: "uitgegeven",
                 })
             })
             if (keurGoed.ok) {
-                alert("Aanvraag goedgekeurd");
+                alert("Voertuig uitgegeven!");
                 CloseWindow();
- 
+
             }
             else {
                 alert("Er is iets fout gegaan");
@@ -53,15 +46,23 @@ const AanvraagBackOffice = () => {
             console.log(error);
         }
     }
-    const VerwijderAanvraag = async () => {
+    const OnButtonClick = (item) => {
+        setActiveItem(item);
+        setModalWindow(true);
+    }
+    const CloseWindow = () => {
+        setModalWindow(false);
+    }
+
+    const HandelInNameAf = async () => {
         try {
             const verwijder = await fetch(`https://localhost:7065/api/gebruiker/verwijderAanvraag/${activeItem.id}`, {
                 method: 'Delete',
                 headers: { 'content-type': 'application/json' },
-             
+
             })
             if (verwijder.ok) {
-                alert("Aanvraag verwijderd.");
+                alert("Voertuig ingenomen en transactie is gelogd.");
                 setItem(prevItems => prevItems.filter(a => a.id !== activeItem.id));
                 CloseWindow();
             }
@@ -73,10 +74,9 @@ const AanvraagBackOffice = () => {
             console.log("error: ", error)
         }
     }
-
     return (
         <div>
-            <h1>Onbehandelde huur aanvragen BackOffice:</h1>
+            <h1>Onbehandelde huur aanvragen FrontOffice: </h1>
             <div className="aanvraagItems-layout">
                 {item.map(item => (
                     <div key={item.id} className="aanvraagItems-box">
@@ -86,13 +86,15 @@ const AanvraagBackOffice = () => {
                             onClick={() => OnButtonClick(item)}>
                             bekijk deze huuraanvraag
                         </button>
-                        {modalWindow &&  (
+                        {modalWindow && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
                                     <h2>Huuraanvraag</h2>
                                     <p>De klant: {activeItem.persoonsGegevens} </p>
-                                    <p>Wil een {activeItem.merk} {activeItem.type} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
-                                    <button onClick={() => PasAanvraagAan()}>accepteer aanvraag</button> <button onClick={() => VerwijderAanvraag()}> verwijder aanvraag</button>
+                                    <p>wil een {activeItem.merk}  {activeItem.type} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
+                                    <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
+                                    <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
+                                    <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button> <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                     <button onClick={CloseWindow}>Sluiten</button>
                                 </div>
                             </div>
@@ -102,6 +104,5 @@ const AanvraagBackOffice = () => {
             </div>
         </div>
     );
-};
-
-export default AanvraagBackOffice;
+}
+export default FrontOfficeAanvraag;

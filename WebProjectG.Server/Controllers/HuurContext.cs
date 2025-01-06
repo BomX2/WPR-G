@@ -21,6 +21,12 @@ namespace WebProjectG.Server.domain
             modelBuilder.Entity<Aanvraag>()
                 .Property(a => a.EindDatum)
                 .HasConversion<TijdConverter>();
+
+            modelBuilder.Entity<Aanvraag>()
+        .HasOne(a => a.Auto)          
+        .WithMany()                   
+        .HasForeignKey(a => a.AutoId) 
+        .OnDelete(DeleteBehavior.Restrict);
         }
         public void OnConfiguring() 
         { 

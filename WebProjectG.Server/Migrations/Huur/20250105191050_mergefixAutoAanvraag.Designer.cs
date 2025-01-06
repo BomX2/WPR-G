@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations.Huur
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250105161726_autos")]
-    partial class autos
+    [Migration("20250105191050_mergefixAutoAanvraag")]
+    partial class mergefixAutoAanvraag
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace WebProjectG.Server.Migrations.Huur
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AutoId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EindDatum")
                         .HasColumnType("datetime2");
 
@@ -50,10 +53,15 @@ namespace WebProjectG.Server.Migrations.Huur
                     b.Property<DateTime>("StartDatum")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Telefoonnummer")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AutoId");
 
                     b.ToTable("Aanvragen");
                 });
@@ -118,6 +126,17 @@ namespace WebProjectG.Server.Migrations.Huur
                     b.HasKey("Id");
 
                     b.ToTable("autos");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Aanvraag", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Voertuig.Auto", "Auto")
+                        .WithMany()
+                        .HasForeignKey("AutoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Auto");
                 });
 #pragma warning restore 612, 618
         }

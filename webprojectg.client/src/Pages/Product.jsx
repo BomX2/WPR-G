@@ -13,6 +13,41 @@ export default function Product() {
     const [eindDatum, setEindDatum] = useState(null);
     const [naam, setNaam] = useState("");
     const [email, setEmail] = useState("");
+    const [telnummer, setTelNummer] = useState("")
+    const [geboektedatums, setGeBoekteDatums] = useState([]);
+    const { id } = useParams()
+
+    useEffect(() => {
+        const fetchGeboekteDatums = async () => {
+            try {
+                const Calldatums = await fetch(`https://localhost:7065/api/gebruiker/GetgeboekteDatums/${id}`, {
+
+                })
+                if (Calldatums.ok) {
+                    const data = await Calldatums.json();
+                    const geboektedatums = [];
+                    data.forEach(({ beginDatum, eindDatum }) => {
+                        const current = new Date(beginDatum);
+                        while (current <= new Date(eindDatum)) {
+                            geboektedatums.push(new Date(current));
+                            current.setDate(current.getDate() + 1);
+                        }
+                    });
+                    setGeBoekteDatums(geboektedatums);
+                }
+                else {
+                    alert("Pagina incorrect geladen");
+                }
+            }
+
+            catch (error) {
+                console.log("error:", error)
+            }
+        }
+        fetchGeboekteDatums();
+    }, [id]);
+    
+
     const [telnummer, setTelNummer] = useState("");
     const { id } = useParams();
 
@@ -57,11 +92,16 @@ export default function Product() {
                     persoonsGegevens: naam,
                     email: email,
                     telefoonnummer: telnummer,
+                    autoId: id,
                 })
             })
             if (PostAanvraag.ok) {
                 alert("Aanvraag succesvol aangemaakt");
                 CloseWindow();
+                setGeBoekteDatums((prev) => [
+                    ...prev,
+                    ...getDatesInRange(new Date(beginDatum), new Date(eindDatum))
+                ]);
             }
             else {
                 alert("Er is iets fout gegaan");
@@ -73,6 +113,15 @@ export default function Product() {
         }
 
     }
+    const getDatesInRange = (start, end) => {
+        const dates = [];
+        const current = new Date(start);
+        while (current <= end) {
+            dates.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+        }
+        return dates;
+    };
     const OnButtonClick = () => {   
         setModalWindow(true);
     }
@@ -108,6 +157,7 @@ export default function Product() {
                 startDate={beginDatum}
                 endDate={eindDatum}
                 dateFormat="dd/MM/yyyy"
+                excludeDates={geboektedatums}
             />
             <DatePicker
                 selected={eindDatum}
@@ -117,7 +167,8 @@ export default function Product() {
                 endDate={eindDatum}
                 minDate={beginDatum}
                 dateFormat="dd/MM/yyyy"
-                disabled={!beginDatum }
+                disabled={!beginDatum}
+                excludeDates={geboektedatums}
             />
             <button onClick={OnButtonClick} disabled={!beginDatum || !eindDatum} >klik hier om een huuraanvraag te maken voor deze auto</button>
             {modalWindow && (

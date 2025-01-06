@@ -1,17 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace WebProjectG.Server.Migrations.Huur
 {
     /// <inheritdoc />
-    public partial class mergeAutoAanvraag : Migration
+    public partial class autos : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-<<<<<<<< HEAD:WebProjectG.Server/Migrations/Huur/20250105155419_mergeAutoAanvraag.cs
-========
             migrationBuilder.CreateTable(
                 name: "Aanvragen",
                 columns: table => new
@@ -30,7 +29,6 @@ namespace WebProjectG.Server.Migrations.Huur
                     table.PrimaryKey("PK_Aanvragen", x => x.Id);
                 });
 
->>>>>>>> ce91d9ce67cdeaa14127d4d44916fab2849c77bd:WebProjectG.Server/Migrations/Huur/20250105161726_autos.cs
             migrationBuilder.CreateTable(
                 name: "autos",
                 columns: table => new
@@ -62,12 +60,9 @@ namespace WebProjectG.Server.Migrations.Huur
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:WebProjectG.Server/Migrations/Huur/20250105155419_mergeAutoAanvraag.cs
-========
                 name: "Aanvragen");
 
             migrationBuilder.DropTable(
->>>>>>>> ce91d9ce67cdeaa14127d4d44916fab2849c77bd:WebProjectG.Server/Migrations/Huur/20250105161726_autos.cs
                 name: "autos");
         }
     }

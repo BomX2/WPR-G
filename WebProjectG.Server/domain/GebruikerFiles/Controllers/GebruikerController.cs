@@ -6,6 +6,9 @@ using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.BedrijfFiles;
 using WebProjectG.Server.domain.Voertuig;
+<<<<<<<<< Temporary merge branch 1
+using System.Data;
+=========
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -28,8 +31,177 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             _dbContext = dbContext;
             _huurContext = huurContext;
             _userManager = userManager;
-            _signInManager = signInManager;
+        [HttpPost("postAanvraag")]
+        public async Task<ActionResult<Aanvraag>> PostAanvraag(Aanvraag aanvraag)
+        {
+            _huurContext.Aanvragen.Add(aanvraag);
+            await _huurContext.SaveChangesAsync();
+            return Ok();
         }
+        [HttpGet("getAanvragen")]
+        public async Task<ActionResult<Aanvraag>> GetAanvragen()
+        {
+            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == null).Include(aanv => aanv.Auto).Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum , aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Auto.Type, aanv.Auto.Merk }).ToListAsync();
+            if (aanvraag.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(aanvraag);
+        }
+        [HttpGet("getAanvragenFront")]
+        public async Task<ActionResult<Aanvraag>> GetAanvrageFront()
+        {
+            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == true).Include(aanv => aanv.Auto).Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Status, aanv.Auto.Type, aanv.Auto.Merk }).ToListAsync();
+            if (aanvraag.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(aanvraag);
+        }
+
+        [HttpPut("KeurAanvraagGoed/{id}")]
+        public async Task<IActionResult> KeurAanvraagGoed(AanvraagDto aanvraagDto, int id)
+        {
+            if (id != aanvraagDto.Id)
+            {
+                return BadRequest(); 
+            }
+
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+            if (aanvraag == null)
+            {
+                return NotFound();
+            }
+
+            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd;
+            aanvraag.Status = aanvraagDto.Status;
+
+            _huurContext.Entry(aanvraag).State = EntityState.Modified;
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            }
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.Aanvragen.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        [HttpDelete("verwijderAanvraag/{id}")]
+        public async Task<IActionResult> DeleteAanvraag(int id)
+        {
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+            if (aanvraag == null)
+            {
+                return NotFound();
+            }
+            _huurContext.Aanvragen.Remove(aanvraag);
+            await _huurContext.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpGet("GetgeboekteDatums/{id}")]
+        public async Task<IActionResult> getAanvraagdatums(int id)
+        {
+          
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).ToListAsync();
+            if (aanvragen == null)
+            {
+                return NotFound();
+            }    
+            return Ok(aanvragen);
+        }
+        [HttpPost("postbedrijf")]
+        public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
+        {
+           
+            _dbContext.Bedrijven.Add(bedrijf);
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+        [HttpPut("putBedrijfsAbonnement/{id}")]
+        public async Task<IActionResult> PutBedrijf(String kvkNummer, BedrijfPutDto dto)
+        {
+            {
+                if (kvkNummer != dto.KvkNummer)
+                {
+                    return BadRequest();
+                }
+                var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+                if (bedrijf == null)
+                {
+                    return NotFound();
+                }
+                if (bedrijf.Abonnement == null)
+                {
+                    bedrijf.Abonnement = new Abonnement();
+                }
+                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+                _dbContext.Entry(bedrijf).State = EntityState.Modified;
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_dbContext.Bedrijven.Any(e => e.KvkNummer == kvkNummer))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return NoContent();
+            }
+        }
+        //Voegt een medewerker toe aan een bedrijfsaccount
+        [HttpPost("AddGebruikerTo")]
+        public async Task<ActionResult<Bedrijf>> VoegMedewerkerToe(string kvkNummer, string email)
+        {
+
+            var gebruiker = await _userManager.FindByEmailAsync(email);
+            if (gebruiker == null)
+            {
+                return BadRequest("gebruiker is niet gevonden");
+            }
+            var bedrijf = await _dbContext.Bedrijven.Include(g => g.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+            if (bedrijf == null)
+            {
+                return BadRequest("bedrijfsid is niet gevonden");
+            }
+            if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
+            {
+                return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
+            }
+
+            bedrijf.ZakelijkeHuurders.Add(gebruiker);
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+       
+
+      
+
+        
+
+     
+
+
+
+
+
+=========
+>>>>>>>>> Temporary merge branch 2
         //Register a new user
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] GebruikerDto model)
