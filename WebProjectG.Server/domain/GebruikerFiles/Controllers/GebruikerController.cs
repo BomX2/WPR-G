@@ -41,19 +41,30 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("getAanvragen")]
         public async Task<ActionResult<Aanvraag>> GetAanvragen()
         {
-            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == null).ToListAsync();
+            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == null).Include(aanv => aanv.Auto).Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum , aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Auto.Type, aanv.Auto.Merk }).ToListAsync();
             if (aanvraag.Count == 0)
             {
                 return NotFound();
             }
             return Ok(aanvraag);
         }
+        [HttpGet("getAanvragenFront")]
+        public async Task<ActionResult<Aanvraag>> GetAanvrageFront()
+        {
+            var aanvraag = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == true).Include(aanv => aanv.Auto).Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Status, aanv.Auto.Type, aanv.Auto.Merk }).ToListAsync();
+            if (aanvraag.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(aanvraag);
+        }
+
         [HttpPut("KeurAanvraagGoed/{id}")]
         public async Task<IActionResult> KeurAanvraagGoed(AanvraagDto aanvraagDto, int id)
         {
             if (id != aanvraagDto.Id)
             {
-                return BadRequest(); // Make sure the id matches
+                return BadRequest(); 
             }
 
             var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
@@ -62,7 +73,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return NotFound();
             }
 
-            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd; // Update logic for "goedgekeurd"
+            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd;
+            aanvraag.Status = aanvraagDto.Status;
 
             _huurContext.Entry(aanvraag).State = EntityState.Modified;
             try
@@ -94,6 +106,17 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             _huurContext.Aanvragen.Remove(aanvraag);
             await _huurContext.SaveChangesAsync();
             return NoContent();
+        }
+        [HttpGet("GetgeboekteDatums/{id}")]
+        public async Task<IActionResult> getAanvraagdatums(int id)
+        {
+          
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).ToListAsync();
+            if (aanvragen == null)
+            {
+                return NotFound();
+            }    
+            return Ok(aanvragen);
         }
         [HttpPost("postbedrijf")]
         public async Task<ActionResult<Bedrijf>> PostBedrijf(Bedrijf bedrijf)
