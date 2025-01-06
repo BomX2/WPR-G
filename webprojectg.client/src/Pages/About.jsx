@@ -1,9 +1,16 @@
-import React from 'react';
+import React from "react";
+import AuthorizeView from "../componements/AuthorizeView";
 
 const About = () => {
-    return <h1>
-        CarAndAll is een bedrijf dat zich specialiseert in het verhuren van voertuigen zoals: auto`s caravans en camper. deze verhuren ze aan particulieren en zakelijke medewerkers
-    </h1>;
+    return (
+        <AuthorizeView allowedRoles={["ZakelijkeHuurder", "Particulier", "WagenparkBeheerder"]}>
+            {({ user }) => (
+                <div>
+                    <h1>Looks like you are a {user?.role}!</h1>
+                </div>
+            )}
+        </AuthorizeView>
+    );
 };
 
 export default About;

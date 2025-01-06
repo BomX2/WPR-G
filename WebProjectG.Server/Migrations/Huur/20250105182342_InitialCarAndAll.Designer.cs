@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain;
 
@@ -11,9 +12,11 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations.Huur
 {
     [DbContext(typeof(HuurContext))]
-    partial class HuurContextModelSnapshot : ModelSnapshot
+    [Migration("20250105182342_InitialCarAndAll")]
+    partial class InitialCarAndAll
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace WebProjectG.Server.Migrations.Huur
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AutoId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("EindDatum")
                         .HasColumnType("datetime2");
@@ -50,15 +50,10 @@ namespace WebProjectG.Server.Migrations.Huur
                     b.Property<DateTime>("StartDatum")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Telefoonnummer")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AutoId");
 
                     b.ToTable("Aanvragen");
                 });
@@ -124,19 +119,6 @@ namespace WebProjectG.Server.Migrations.Huur
 
                     b.ToTable("autos");
                 });
-
-
-            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Aanvraag", b =>
-                {
-                    b.HasOne("WebProjectG.Server.domain.Voertuig.Auto", "Auto")
-                        .WithMany()
-                        .HasForeignKey("AutoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Auto");
-                });
-
 #pragma warning restore 612, 618
         }
     }

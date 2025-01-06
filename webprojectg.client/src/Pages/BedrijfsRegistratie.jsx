@@ -10,7 +10,7 @@ const RegistreerBedrijf = () => {
 
     const BedrijfToevoegen = async () => {
         try { 
-            const Toevoegen = await fetch('https://localhost:7065/api/Gebruiker/postbedrijf', {
+            const Toevoegen = await fetch('https://localhost:7065/api/Gebruikers/postbedrijf', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     BedrijfsNaam,
