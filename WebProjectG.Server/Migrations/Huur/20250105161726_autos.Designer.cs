@@ -12,8 +12,13 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations.Huur
 {
     [DbContext(typeof(HuurContext))]
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/Huur/20250105155419_mergeAutoAanvraag.Designer.cs
     [Migration("20250105155419_mergeAutoAanvraag")]
     partial class mergeAutoAanvraag
+========
+    [Migration("20250105161726_autos")]
+    partial class autos
+>>>>>>>> ce91d9ce67cdeaa14127d4d44916fab2849c77bd:WebProjectG.Server/Migrations/Huur/20250105161726_autos.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

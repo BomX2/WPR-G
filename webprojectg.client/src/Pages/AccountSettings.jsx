@@ -7,7 +7,7 @@ const AccSettings = () => {
   const DeleteAccount = async () => {
           
         try {
-            const verwijdering = await fetch('https://localhost:7065/api/gebruiker/delete', {
+            const verwijdering = await fetch('https://localhost:7065/api/gebruikers/delete', {
                 
                 method: 'DELETE',
                 headers: {

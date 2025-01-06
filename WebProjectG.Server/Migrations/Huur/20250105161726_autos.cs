@@ -10,6 +10,27 @@ namespace WebProjectG.Server.Migrations.Huur
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/Huur/20250105155419_mergeAutoAanvraag.cs
+========
+            migrationBuilder.CreateTable(
+                name: "Aanvragen",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PersoonsGegevens = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefoonnummer = table.Column<int>(type: "int", nullable: false),
+                    Goedgekeurd = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Aanvragen", x => x.Id);
+                });
+
+>>>>>>>> ce91d9ce67cdeaa14127d4d44916fab2849c77bd:WebProjectG.Server/Migrations/Huur/20250105161726_autos.cs
             migrationBuilder.CreateTable(
                 name: "autos",
                 columns: table => new
@@ -41,6 +62,12 @@ namespace WebProjectG.Server.Migrations.Huur
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/Huur/20250105155419_mergeAutoAanvraag.cs
+========
+                name: "Aanvragen");
+
+            migrationBuilder.DropTable(
+>>>>>>>> ce91d9ce67cdeaa14127d4d44916fab2849c77bd:WebProjectG.Server/Migrations/Huur/20250105161726_autos.cs
                 name: "autos");
         }
     }

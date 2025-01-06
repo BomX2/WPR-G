@@ -8,7 +8,7 @@ export default function Catalogus() {
     useEffect(() => {
         const fetchAutos = async () => {
             try {
-                const response = await fetch("https://localhost:7065/api/gebruiker/autos");
+                const response = await fetch("https://localhost:7065/api/gebruikers/autos");
                 const data = await response.json();
                 setautos(data);
             } catch (error) {
