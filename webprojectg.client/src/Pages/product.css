@@ -1,10 +1,20 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+}
+
 .productPage {
+    margin-top: 60px;
     display: flex;
-    justify-content: center; /* Horizontaal centreren */
-    align-items: center; /* Verticaal centreren */
-    min-height: 100vh; /* Vul de volledige hoogte van de pagina */
-    gap: 20px; /* Ruimte tussen de kolommen */
-    padding: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: calc(100vh - 60px);
+    width: 60%;
+    margin: 0 auto;
+    padding: 0px;
+    border: 2px solid #808080;
     box-sizing: border-box;
 }
 
@@ -12,27 +22,30 @@
     border: 2px solid #808080;
 }
 
-/* Links: Foto en auto-info */
+
 .links {
     display: flex;
-    flex-direction: column; /* Elementen onder elkaar */
-    align-items: center; /* Centraal uitlijnen */
-    gap: 10px; /* Ruimte tussen de foto en info */
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 10px; 
+    padding: 10px;
 }
 
 .product-image {
-    max-width: 100%; /* Zorg dat de afbeelding responsief blijft */
+    width: 100%;
+    max-width: 400px; 
     height: auto;
-    border: 2px solid #808080;
-    border-radius: 8px;
+    margin: 10px;
+
 }
 
-/* Rechts: Auto naam en prijs */
+
 .rechts {
     display: flex;
-    flex-direction: column; /* Elementen onder elkaar */
-    justify-content: center; /* Centraal uitlijnen */
-    gap: 10px; /* Ruimte tussen naam en prijs */
+    flex-direction: column; 
+    justify-content: center; 
+    gap: 10px; 
+    padding: 10px;
 }
 
     .links h1 {
@@ -40,18 +53,35 @@
         margin: 0;
     }
 
+    .rechts h1{
+        font-size: 24px;
+        color: #666;
+        margin: 0;
+    }
     .rechts h2 {
-        font-size: 20px;
+        font-size: 18px;
         color: #666;
         margin: 0;
     }
 
-/* Info box */
+
 .auto-info {
     padding: 10px;
     border: 2px solid #808080;
-    border-radius: 8px;
+    border-radius: 3px;
     text-align: center;
     width: 100%;
     background-color: #f9f9f9;
 }
+
+.date-picker-container {
+    display: flex;
+    flex-direction: column; /* Zet de inhoud onder elkaar */
+    gap: 15px; /* Ruimte tussen de elementen */
+    width: 100%; /* Zorgt ervoor dat de breedte gelijk is aan de container */
+    margin-top: 20px; /* Ruimte boven de DatePickers */
+}
+    .date-picker-container button {
+        
+    }
+

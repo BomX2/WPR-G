@@ -88,15 +88,19 @@ export default function Product() {
             <div className="productPage">
             <div className= "links">
                     <img src={carImage} alt="auto" className="product-image" />
-                    <div className="auto-info">
-
+                    <div className="auto-info"> 
+                        <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
+                        <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
+                        <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
+                        <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
                     </div>
                 </div>
             <div className = "rechts">
-                <h1>{auto.merk} {auto.type}</h1>
-                <h1> {auto.prijsPerDag}</h1>
-            </div>
-            </div>
+                    <h1>{auto.merk} {auto.type}</h1>
+                    <h2>{auto.kleur}</h2>
+                <h2> {auto.prijsPerDag} euro per dag</h2>
+            
+            <div className="date-picker-container">
             <DatePicker 
                 selected={beginDatum}
                 onChange={(date) => setBeginDatum(date)}
@@ -141,7 +145,10 @@ export default function Product() {
                         <button onClick={CloseWindow}>Sluiten</button>
                     </div>
                 </div>
-            )}
+                    )}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
