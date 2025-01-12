@@ -4,25 +4,24 @@ import { useNavigate } from 'react-router-dom';
 const Abonnementen = () => {
     const [keuze, setKeuze] = useState('');
     const navigeren = useNavigate();
-    const bedrijfsId = sessionStorage.getItem('bedrijfsId');
-    if (isNaN(bedrijfsId)) {
-        console.error("Invalid bedrijfsId retrieved from sessionStorage.");
-    } else {
-        console.log("Sending bedrijfsId to the backend:", bedrijfsId);
-    }
-
+    const bedrijfsKvknummer = sessionStorage.getItem('bedrijfsKvknummer');
+  
     const PutAbonnement = async (choice) => {
     
         try {
-        const wijzig = await fetch(`https://localhost:7065/api/gebruikers/putBedrijfsAbonnement/${bedrijfsId}`, {
+        const wijzig = await fetch(`https://localhost:7065/api/gebruikers/putBedrijfsAbonnement/${bedrijfsKvknummer}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                Id: bedrijfsId,
-                AbonnementType: choice,      
+                Kvknummer: bedrijfsKvknummer,
+                    AbonnementType: choice,
+               
             }),
         });
-            
+            console.log(JSON.stringify({
+                Kvknummer: bedrijfsKvknummer,
+                AbonnementType: choice,
+            }));
         if (wijzig.ok) {
             alert("abonnementkeuze succesvol opgeslagen");
         }

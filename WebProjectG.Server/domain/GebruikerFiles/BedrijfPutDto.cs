@@ -1,4 +1,6 @@
-﻿namespace WebProjectG.Server.domain.GebruikerFiles
+﻿using WebProjectG.Server.domain.Huur;
+
+namespace WebProjectG.Server.domain.GebruikerFiles
 {
     public class BedrijfPutDto
     {

@@ -42,6 +42,7 @@ const AanvraagBackOffice = () => {
             })
             if (keurGoed.ok) {
                 alert("Aanvraag goedgekeurd");
+                setItem(prevItems => prevItems.filter(a => a.id !== activeItem.id));
                 CloseWindow();
  
             }
@@ -91,7 +92,7 @@ const AanvraagBackOffice = () => {
                                 <div className="modal-content">
                                     <h2>Huuraanvraag</h2>
                                     <p>De klant: {activeItem.persoonsGegevens} </p>
-                                    <p>Wil een {activeItem.merk} {activeItem.type} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
+                                    <p>Wil een {activeItem.autoMerk} {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
                                     <button onClick={() => PasAanvraagAan()}>accepteer aanvraag</button> <button onClick={() => VerwijderAanvraag()}> verwijder aanvraag</button>
                                     <button onClick={CloseWindow}>Sluiten</button>
                                 </div>

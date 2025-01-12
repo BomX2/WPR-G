@@ -8,7 +8,7 @@ const Registratie = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [adres, setAdres] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("Particulier");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const Registratie = () => {
                 setError(data.message || "Registration failed");
             }
         } catch (error) {
-            setError("An error occurred during registration");
+            setError("An error occurred during registration", error);
         } finally {
             setLoading(false);
         }

@@ -10,7 +10,7 @@ const RegistreerBedrijf = () => {
 
     const BedrijfToevoegen = async () => {
         try { 
-            const Toevoegen = await fetch('https://localhost:7065/api/Gebruikers/postbedrijf', {
+            const Toevoegen = await fetch('https://localhost:7065/api/gebruikers/postbedrijf', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     BedrijfsNaam,
@@ -19,14 +19,12 @@ const RegistreerBedrijf = () => {
                     domeinNaam,
                 }),
 
-
             });
             if (Toevoegen.ok) {
                 alert("Bedrijfs account succesvol toegevoegd.");
                 const data = await Toevoegen.json();
-                const bedrijfsKvknummer = data.Kvknummer;
-           
-                sessionStorage.setItem('bedrijfsId', bedrijfsKvknummer);
+                const bedrijfsKvknummer = data.kvkNummer 
+                sessionStorage.setItem('bedrijfsKvknummer', bedrijfsKvknummer);
                 navigeren('/Abonnement');
             }
             else {
@@ -35,7 +33,7 @@ const RegistreerBedrijf = () => {
         }
 
         catch (error) {
-            console.log("Houston we have a problem: ", error)
+            console.log("Houston we have a problem: ", error);
         }
     }
     return (
