@@ -35,9 +35,7 @@ export default function Product() {
                     });
                     setGeBoekteDatums(geboektedatums);
                 }
-                else {
-                    alert("Pagina incorrect geladen");
-                }
+                
             }
 
             catch (error) {

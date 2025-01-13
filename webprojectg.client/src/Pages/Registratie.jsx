@@ -8,7 +8,7 @@ const Registratie = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [adres, setAdres] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("Particulier");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

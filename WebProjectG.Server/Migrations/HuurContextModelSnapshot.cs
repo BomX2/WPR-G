@@ -8,7 +8,7 @@ using WebProjectG.Server.domain;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations.Huur
+namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
     partial class HuurContextModelSnapshot : ModelSnapshot
@@ -125,7 +125,6 @@ namespace WebProjectG.Server.Migrations.Huur
                     b.ToTable("autos");
                 });
 
-
             modelBuilder.Entity("WebProjectG.Server.domain.Huur.Aanvraag", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.Voertuig.Auto", "Auto")
@@ -136,7 +135,6 @@ namespace WebProjectG.Server.Migrations.Huur
 
                     b.Navigation("Auto");
                 });
-
 #pragma warning restore 612, 618
         }
     }

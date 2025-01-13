@@ -3,32 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations.Huur
+namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class autos : Migration
+    public partial class newinitialCarandAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Aanvragen",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PersoonsGegevens = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Telefoonnummer = table.Column<int>(type: "int", nullable: false),
-                    Goedgekeurd = table.Column<bool>(type: "bit", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Aanvragen", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "autos",
                 columns: table => new
@@ -54,6 +36,37 @@ namespace WebProjectG.Server.Migrations.Huur
                 {
                     table.PrimaryKey("PK_autos", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Aanvragen",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PersoonsGegevens = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefoonnummer = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Goedgekeurd = table.Column<bool>(type: "bit", nullable: true),
+                    AutoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Aanvragen", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Aanvragen_autos_AutoId",
+                        column: x => x.AutoId,
+                        principalTable: "autos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Aanvragen_AutoId",
+                table: "Aanvragen",
+                column: "AutoId");
         }
 
         /// <inheritdoc />
