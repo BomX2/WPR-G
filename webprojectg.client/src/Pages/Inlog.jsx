@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../componements/userContext';
 
 function Login() {
     // State variables
@@ -8,6 +9,7 @@ function Login() {
     const [rememberme, setRememberme] = useState(false);
     const [error, setError] = useState("");
 
+    const { setUser } = useUser(); // Access UserContext to set user data
     const navigate = useNavigate();
 
     // Handles changes in the input fields
@@ -26,40 +28,50 @@ function Login() {
     // Handles the form submission
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log("from submitted") //debug log
 
         if (!email || !password) {
             setError("Please fill in all fields.");
-        } else {
-            setError("");
-
-            const loginurl = rememberme
-                ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
-                : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
-
-            console.log("calling api:", loginurl);
-            fetch(loginurl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({ email, password }),
-            })
-                .then((response) => {
-                    console.log(response);
-                    if (response.ok) {
-                        setError("Successful Login.");
-                        window.location.href = '/';
-                    } else {
-                        setError("Error Logging In.");
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    setError("Error Logging in.");
-                });
+            return;
         }
+
+        setError("");
+
+        const loginurl = rememberme
+            ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
+            : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
+
+        fetch(loginurl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ email, password }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data && data.success) {
+                    // Assume the API returns user role in the response (e.g., data.role)
+                    const loggedInUser = {
+                        id: data.id,
+                        name: data.name,
+                        email: data.email,
+                        role: data.role, // e.g., 'Particulier', 'ZakelijkeHuurder', or 'WagenparkBeheerder'
+                    };
+
+                    // Set the user in the context
+                    setUser(loggedInUser);
+
+                    // Navigate to the home page or dashboard
+                    navigate('/');
+                } else {
+                    setError(data.message || "Error Logging In.");
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setError("Error Logging in.");
+            });
     };
 
     return (

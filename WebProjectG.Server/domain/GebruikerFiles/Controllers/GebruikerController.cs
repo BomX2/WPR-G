@@ -77,27 +77,42 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return BadRequest(new { message = errors });
         }
 
-        //Login a user
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+       //Login a user
+[HttpPost("login")]
+public async Task<IActionResult> Login([FromBody] LoginDto model)
+{
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(new { message = "Invalid data provided." });
+    }
+
+    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+    if (result.Succeeded)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        // Ensure the user exists
+        if (user != null)
         {
-            if (!ModelState.IsValid)
+            var roles = await _userManager.GetRolesAsync(user); // Fetch roles for the user
+
+            await _signInManager.SignInAsync(user, model.RememberMe);
+
+            return Ok(new
             {
-                return BadRequest(new { message = "Invalid data provided." });
-            }
-
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-
-            if (result.Succeeded)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                await _signInManager.SignInAsync(user, model.RememberMe);
-
-                return Ok(new { message = "Login successful" });
-            }
-
-            return Unauthorized(new { message = "Invalid email or password." });
+                message = "Login successful",
+                id = user.Id,
+                name = user.UserName, // Assuming UserName holds the user's name
+                email = user.Email,
+                role = roles.FirstOrDefault() // Return the first role, if any
+            });
         }
+    }
+
+    return Unauthorized(new { message = "Invalid email or password." });
+}
+
 
         //Logout a user
         [HttpPost("logout")]
