@@ -147,19 +147,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return Ok();
         }
 
-        [HttpGet("autos")]
-        public async Task<ActionResult> GetAutos()
-        {
-            var autos = await _huurContext.autos.ToListAsync();
-            return Ok(autos);
-        }
-
-        [HttpGet("getAutoById/{id}")]
-        public async Task<ActionResult> GetAutoById(int id)
-        {
-            var auto = await _huurContext.autos.FindAsync(id);
-            if (auto == null) return NotFound(new { message = "Auto not found" });
-            return Ok(auto);
-        }
+        
     }
 }
