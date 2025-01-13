@@ -24,7 +24,7 @@ export default function Catalogus() {
             <div className="content">
                 <h1>catalogus nr </h1>
                 {autos.map(auto => (
-                    <Products auto={auto} />
+                    <Products key={auto.kenteken} auto={auto} />
                 ))}
             </div>
         </div>

@@ -46,7 +46,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == null)
                 .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -59,7 +59,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == true)
                 .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
