@@ -28,6 +28,9 @@ const Navigation = () => {
                 <li>
                     <Link to="/FrontAanvraag">Front Aanvragen</Link>
                 </li>
+                <li>
+                    <Link to="/BedrijfsInstellingen">BedrijfsInstellingen</Link>
+                </li>
             </ul>
         </nav>
     )
