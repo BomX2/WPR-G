@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 const BedrijfsSettings = () => {
     const [emailg, setEmailg] = useState("");
-    const bedrijfsId = sessionStorage.getItem('bedrijfsId')
+    const [kvknummer, setKvknummer] = useState("");
+    const [domeinNaam, setDomeinNaam] = useState("");
         const VoegMedewerkersToe = async () => {
         try {
-            const toevoegen = await fetch(`https://localhost:7065/api/Gebruikers/AddGebruikerTo/${bedrijfsId}`, {
+            const toevoegen = await fetch(`https://localhost:7065/api/Gebruikers/AddGebruikerTo/${kvknummer}`, {
                 method: 'Post',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    Id:  bedrijfsId,
+                    kvknummer:kvknummer,
                     email: emailg,
+                    domeinNaam: domeinNaam,
                 })
             })
             if (toevoegen.ok) {
@@ -37,7 +39,11 @@ const BedrijfsSettings = () => {
                     e.preventDefault
                     VoegMedewerkersToe();
                 }}>
-                    <input type="text" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >  
+                    <input type="text" value={kvknummer} onChange={(e) => setKvknummer(e.target.value)} placeholder="Voer hier het kvknummer van uw bedrijf in:">
+                    </input>
+                    <input type="email" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >  
+                    </input>
+                    <input type="text" value={domeinNaam} onChange={(e) => setDomeinNaam(e.target.value)} placeholder="Voer hier het domeinnaam van uw bedrijf in:">
                     </input>
                     <button type="submit" label="knop: Voeg medewerker toe">
                         Voeg medewerker toe

@@ -133,38 +133,48 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return NotFound();
             }
 
-            bedrijf.Abonnement ??= new Abonnement();
-            bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
-
-            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
-            if (bedrijf.Abonnement != null)
+            if (bedrijf.Abonnement == null)
             {
+                bedrijf.Abonnement = new Abonnement
+                {
+                    AbonnementType = dto.AbonnementType,
+                };
                 _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
             }
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
 
             return NoContent();
+
         }
 
-        [HttpPost("AddGebruikerTo")]
-        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email)
+        [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
+        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
         {
             var gebruiker = await _userManager.FindByEmailAsync(email);
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
 
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
-
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
-
-            bedrijf.ZakelijkeHuurders.Add(gebruiker);
-            await _dbContext.SaveChangesAsync();
-            return Ok();
+            var emailDomein = email.Split('@').LastOrDefault();
+            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
+            if (bedrijf.DomeinNaam == emailDomein)
+            {
+                bedrijf.ZakelijkeHuurders.Add(gebruiker);
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return NotFound();
         }
-
         [HttpGet("autos")]
         public async Task<ActionResult> GetAutos()
         {

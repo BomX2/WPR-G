@@ -45,10 +45,6 @@ const RegistreerBedrijf = () => {
                     alert("Alle velden dienen worden ingevuld");
                     return;
                 }
-                if (!domeinNaam.includes("@")) {
-                    alert("dit is geen geldig domeinNaam");
-                    return;
-                }
                 BedrijfToevoegen();
             }} >
                 <div>
