@@ -121,17 +121,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
 
-        [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
-        public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
-        {
-            if (kvkNummer != dto.KvkNummer) return BadRequest();
-
-            var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-            if (bedrijf == null)
+            [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
+            public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
             {
-                Console.WriteLine($"Bedrijf met KvkNummer {kvkNummer} niet gevonden.");
+              var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+             if (bedrijf == null) {
                 return NotFound();
-            }
+             }
 
             if (bedrijf.Abonnement == null)
             {
@@ -139,20 +135,34 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 {
                     AbonnementType = dto.AbonnementType,
                 };
-                _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
+                _dbContext.Abonnementen.Add(bedrijf.Abonnement);
+
             }
-            try
+            else
             {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
+                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
             }
 
-            return NoContent();
+            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if(!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
-        }
+                return NoContent();
+
+            }
 
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)

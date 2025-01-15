@@ -12,7 +12,7 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20250114103556_initalbadman")]
+    [Migration("20250114133226_initalbadman")]
     partial class initalbadman
     {
         /// <inheritdoc />

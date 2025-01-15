@@ -1,0 +1,81 @@
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.form-content {
+    background-color: #fff;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+    .form-content input[type="text"],
+    .form-content input[type="email"],
+    .form-content input[type="password"],
+    .form-content textarea,
+    .form-content select {
+        width: 100%;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        color: #333;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-content input[type="text"]:focus,
+        .form-content input[type="email"]:focus,
+        .form-content input[type="password"]:focus,
+        .form-content textarea:focus,
+        .form-content select:focus {
+            outline: none;
+            border-color: dodgerblue;
+            box-shadow: 0 0 5px rgba(32, 32, 180, 0.5);
+        }
+
+    .form-content button[type="submit"] {
+        width: 100%;
+        background-color: dodgerblue;
+        color: white;
+        padding: 1rem;
+        border-radius: 6px;
+        border: unset;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+        .form-content button[type="submit"]:hover {
+            background-color: #2874bf; /* Donkerdere kleur bij hover */
+            transform: scale(1.05); /* Lichte vergroting voor een aantrekkelijker effect */
+        }
+
+        .form-content button[type="submit"]:focus {
+            outline: none;
+            border-color: black;
+            box-shadow: 0 0 5px rgba(180, 0, 0, 0.5);
+        }
+
+        .form-content button[type="submit"]:disabled {
+            background-color: #cccccc;
+            color: #888888;
+            cursor: not-allowed;
+            transform: none;
+        }

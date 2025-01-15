@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './forms.css'
 const BedrijfsSettings = () => {
     const [emailg, setEmailg] = useState("");
     const [kvknummer, setKvknummer] = useState("");
@@ -31,24 +32,29 @@ const BedrijfsSettings = () => {
     }
         return (
             <div>
-                <h1>BedrijfsInstellingen</h1>
-                <p>
-                    voer hieronder het emailadres van uw medewerkers in die u wilt toevoegen aan uw bedrijfsAbonnement:
-                </p>
-                <form onSubmit={(e) => {
-                    e.preventDefault
-                    VoegMedewerkersToe();
-                }}>
-                    <input type="text" value={kvknummer} onChange={(e) => setKvknummer(e.target.value)} placeholder="Voer hier het kvknummer van uw bedrijf in:">
-                    </input>
-                    <input type="email" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >  
-                    </input>
-                    <input type="text" value={domeinNaam} onChange={(e) => setDomeinNaam(e.target.value)} placeholder="Voer hier het domeinnaam van uw bedrijf in:">
-                    </input>
-                    <button type="submit" label="knop: Voeg medewerker toe">
-                        Voeg medewerker toe
-                    </button>
-                </form>
+                <div className="form-overlay">
+                    <div className="form-content">
+                        <h1>BedrijfsInstellingen</h1>
+                        <p>
+                            voer hieronder het emailadres van uw medewerkers in die u wilt toevoegen aan uw bedrijfsAbonnement:
+                        </p>
+                        <form onSubmit={(e) => {
+                            e.preventDefault
+                            VoegMedewerkersToe();
+                        }}>
+                            <input type="text" value={kvknummer} onChange={(e) => setKvknummer(e.target.value)} placeholder="Voer hier het kvknummer van uw bedrijf in:">
+                            </input>
+                            <input type="email" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >
+                            </input>
+                            <input type="text" value={domeinNaam} onChange={(e) => setDomeinNaam(e.target.value)} placeholder="Voer hier het domeinnaam van uw bedrijf in:">
+                            </input>
+                            <button type="submit" label="knop: Voeg medewerker toe">
+                                Voeg medewerker toe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
             </div>
         );
     };
