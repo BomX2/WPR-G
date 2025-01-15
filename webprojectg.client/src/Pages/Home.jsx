@@ -5,13 +5,27 @@ import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import './Home.css';
 import heroImage from '../image/CARNAL_LOGO.png';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const [vehicleType, setVehicleType] = useState("");
     const [ophaalDatum, setOphaalDatum] = useState(null);
     const [inleverDatum, setInleverDatum] = useState(null);
-    const [ophaalTime, setOphaalTime] = useState('10:00');
-    const [inleverTime, setInleverTime] = useState('10:00');
+    const [ophaalTime, setOphaalTime] = useState(null);
+    const [inleverTime, setInleverTime] = useState(null);
+
+    const navigate = useNavigate();
+
+    const handelsubmit = (e) => {
+        e.preventDefault();
+
+        if (!ophaalDatum || !inleverDatum) {
+            alert("vul alle velden in");
+            return;
+        }
+
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&inleverdatum=${encodeURIComponent(inleverDatum)}`);
+    }
 
     return (
 
@@ -27,7 +41,7 @@ const Home = () => {
             </section>
 
             {/* Search and Filter Options */}
-            <section className="search-filter">
+            <form className="search-filter" onSubmit={handelsubmit }>
                 <input type="text" placeholder="Search for vehicles..." className="search-bar" />
                 <div className="filters">
                     <select value={vehicleType}
@@ -52,12 +66,7 @@ const Home = () => {
                     </div>
                     <div className="react-time-picker">
                         <label htmlFor="ophaal-time-picker">Kies ophaaltijd:</label>
-                        <TimePicker
-                            id="ophaal-time-picker"
-                            value={ophaalTime}
-                            onChange={setOphaalTime}
-                            disableClock={true} // Disable the clock mode for a simpler dropdown-style picker
-                        />
+                        
                     </div>
                     <div className="date-picker">
                         <label htmlFor="inleverdatum">Inleverdatum:</label>
@@ -76,15 +85,11 @@ const Home = () => {
                     </div>
                     <div className="react-time-picker">
                         <label htmlFor="inlever-time-picker">Kies inlevertijd:</label>
-                        <TimePicker
-                            id="inlever-time-picker"
-                            value={inleverTime}
-                            onChange={setInleverTime}
-                            disableClock={true} // Disable the clock mode for a simpler dropdown-style picker
-                        />
+                        
                     </div>
+                    <button className="cta-button" type= {onsubmit}>Rent Now</button>
                 </div>
-            </section>
+            </form>
 
             {/* Customer Testimonials */}
             <section className="testimonials">
