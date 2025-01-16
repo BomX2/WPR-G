@@ -12,8 +12,13 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/20250106100727_newinitialCarandAll.Designer.cs
     [Migration("20250106100727_newinitialCarandAll")]
     partial class newinitialCarandAll
+========
+    [Migration("20250115134342_initialHuur")]
+    partial class initialHuur
+>>>>>>>> origin/BedrijfUitwerking:WebProjectG.Server/Migrations/20250115134342_initialHuur.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -9,6 +9,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
     {
         public DbSet<Bedrijf> Bedrijven { get; set; } 
         public DbSet<Abonnement> Abonnementen { get; set; }
+
         public GebruikerDbContext(DbContextOptions<GebruikerDbContext> options)
             : base(options)
         {

@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navigation from './componements/Navigation';
 import Home from './Pages/Home';
-import About from './pages/About';
 import Registratie from './Pages/Registratie';
 import Inlog from './Pages/Inlog';
 import Catalogus from './Pages/Catalogus';

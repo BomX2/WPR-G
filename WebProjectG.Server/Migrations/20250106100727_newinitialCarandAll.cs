@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/20250106100727_newinitialCarandAll.cs
     public partial class newinitialCarandAll : Migration
+========
+    public partial class initialHuur : Migration
+>>>>>>>> origin/BedrijfUitwerking:WebProjectG.Server/Migrations/20250115134342_initialHuur.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -80,6 +80,16 @@ function Navigation() {
                         </li>
                     </>
                 )}
+                
+                <li>
+                    <Link to="/BedrijfsRegistratie">log in voor bedrijven</Link>
+                </li>
+                <li>
+                    <Link to="/AanvraagBackOffice">bekijk aanvragen</Link>
+                </li>
+                <li>
+                    <Link to="/FrontAanvraag">Front Aanvragen</Link>
+                </li>
             </ul>
         </nav>
     );

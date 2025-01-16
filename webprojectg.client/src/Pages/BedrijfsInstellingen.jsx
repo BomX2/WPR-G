@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
-
+import './forms.css'
 const BedrijfsSettings = () => {
     const [emailg, setEmailg] = useState("");
-    const [bDomein, setBDomein] = useState("");
-    const [kvknummer, setKvknummer] = useState("")
+    const [kvknummer, setKvknummer] = useState("");
+    const [domeinNaam, setDomeinNaam] = useState("");
         const VoegMedewerkersToe = async () => {
         try {
-            const toevoegen = await fetch(`https://localhost:7065/api/gebruikers/AddGebruikerToBedrijf/${kvknummer}`, {
+            const toevoegen = await fetch(`https://localhost:7065/api/Gebruikers/AddGebruikerTo/${kvknummer}`, {
                 method: 'Post',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    kvknummer:  kvknummer,
+                    kvknummer:kvknummer,
                     email: emailg,
-                    domeinNaam: bDomein,
+                    domeinNaam: domeinNaam,
                 })
             })
             if (toevoegen.ok) {
@@ -33,34 +33,29 @@ const BedrijfsSettings = () => {
     }
         return (
             <div>
-                <h1>BedrijfsInstellingen</h1>
-                <p>
-                    voer hieronder het emailadres van uw medewerkers in die u wilt toevoegen aan uw bedrijfsAbonnement:
-                </p>
                 <div className="form-overlay">
                     <div className="form-content">
+                        <h1>BedrijfsInstellingen</h1>
+                        <p>
+                            voer hieronder het emailadres van uw medewerkers in die u wilt toevoegen aan uw bedrijfsAbonnement:
+                        </p>
                         <form onSubmit={(e) => {
-                            e.preventDefault();
-                            if (bDomein == null || emailg == null || kvknummer == null) {
-                                alert("Voer alle velden in");
-                                return;
-                            }
+                            e.preventDefault
                             VoegMedewerkersToe();
-                         
                         }}>
-                            <input type="text" value={kvknummer} onChange={(e) => setKvknummer(e.target.value)} placeholder="Voer hier het kvknummer van uw Bedrijf in:">
+                            <input type="text" value={kvknummer} onChange={(e) => setKvknummer(e.target.value)} placeholder="Voer hier het kvknummer van uw bedrijf in:">
                             </input>
-                            <input type="text" value={bDomein} onChange={(e) => setBDomein(e.target.value)} placeholder="Voer hier het domeinnaam van uw Bedrijf in:">
+                            <input type="email" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >
                             </input>
-                            <input type="text" value={emailg} onChange={(e) => setEmailg(e.target.value)} placeholder="Voer hier het emailadres van uw medewerker in:" >
+                            <input type="text" value={domeinNaam} onChange={(e) => setDomeinNaam(e.target.value)} placeholder="Voer hier het domeinnaam van uw bedrijf in:">
                             </input>
                             <button type="submit" label="knop: Voeg medewerker toe">
                                 Voeg medewerker toe
                             </button>
                         </form>
                     </div>
-                    </div>
-              
+                </div>
+                
             </div>
         );
     };

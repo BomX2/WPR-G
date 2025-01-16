@@ -76,33 +76,74 @@ const FrontOfficeAanvraag = () => {
     }
     return (
         <div>
-            <h1>Onbehandelde huur aanvragen FrontOffice: </h1>
-            <div className="aanvraagItems-layout">
-                {item.map(item => (
-                    <div key={item.id} className="aanvraagItems-box">
-                        <h3>Aanvraag: {item.id}</h3>
-                        <p>De klant: {item.persoonsGegevens}</p>
-                        <button
-                            onClick={() => OnButtonClick(item)}>
-                            bekijk deze huuraanvraag
-                        </button>
-                        {modalWindow && (
-                            <div className="modal-overlay">
-                                <div className="modal-content">
-                                    <h2>Huuraanvraag</h2>
-                                    <p>De klant: {activeItem.persoonsGegevens} </p>
-                                    <p>wil een {activeItem.merk}  {activeItem.type} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
-                                    <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
-                                    <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
-                                    <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button> <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
-                                    <button onClick={CloseWindow}>Sluiten</button>
-                                </div>
-                            </div>
-                        )}
+            <h1>Onbehandelde huuraanvragen</h1>
+            <h2>Uitgaves en innames voor vandaag</h2>
+            <div className="scherm-layout">
+                <div className="huidigeDatums-balk">
+                    <div className="aanvraagItems-layout">
+
+                        {item.filter(
+                            item => 
+                                new Date(item.startDatum).toDateString() === new Date().toDateString() || new Date(item.eindDatum).toDateString() === new Date().toDateString()
+                    ).map(gefilterdeItem => (
+                        <div key={gefilterdeItem.id} className="aanvraagItems-box">
+                            <h3>Aanvraag: {gefilterdeItem.id}</h3>
+                            <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                            <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
+                        </div>
+                        
+                    ))}
                     </div>
-                ))}
+                </div>     
+                <h2>nieuwe aanvragen:</h2>
+                <div className="middel-sectie">
+                    <div className="linker-balk">
+                        <div className="aanvraagItems-layout">
+                            {item.filter(
+                                gefilterdeItem => gefilterdeItem.status === null
+                            ).map(gefilterdeItem => (
+                                <div key={gefilterdeItem.id} className="aanvraagItems-box">
+                                    <h3>Aanvraag: {gefilterdeItem.id}</h3>
+                                    <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                                    <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
+                                </div>
+
+                            ))}
+                        </div>
+                    </div>
+                    <div className="rechter-balk">
+                        <div className="aanvraagItems-layout">
+                            {item.filter(
+                                item => item.status === "uitgegeven" 
+                            ).map(gefilterdeItem => (
+                                <div key={gefilterdeItem.id} className="aanvraagItems-box">
+                                    <h3>Aanvraag: {gefilterdeItem.id}</h3>
+                                    <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                                    <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>  
+                </div>
+               
+                            {modalWindow && (
+                                <div className="modal-overlay">
+                                    <div className="modal-content">
+                                        <h2>Huuraanvraag</h2>
+                                        <p>De klant: {activeItem.persoonsGegevens} </p>
+                                        <p>wil een {activeItem.autoMerk}  {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
+                                        <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
+                                        <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
+                                        <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button> <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
+                                        <button onClick={CloseWindow}>Sluiten</button>
+                                    </div>
+                                </div>
+                            )}
             </div>
-        </div>
+            
+            </div>
+
     );
+
 }
 export default FrontOfficeAanvraag;
