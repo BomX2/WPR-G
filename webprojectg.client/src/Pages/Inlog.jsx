@@ -44,13 +44,18 @@ function Login() {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({email, password }),
             })
-                .then((response) => {
+                .then(async(response) => {
                     console.log(response);
                     if (response.ok) {
                         setError("Successful Login.");
-                        window.location.href = '/';
+                       
+                        const data =  await response.json();
+                        const UserId = data.userId;
+                        sessionStorage.setItem("UserId", UserId);
+                        console.log(UserId);
+                         window.location.href = '/';
                     } else {
                         setError("Error Logging In.");
                     }

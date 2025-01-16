@@ -9,6 +9,7 @@ using WebProjectG.Server.domain.Voertuig;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
+using System;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -256,13 +257,26 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
             if (result.Succeeded)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                await _signInManager.SignInAsync(user, model.RememberMe);
+            {    
+             var user = await _userManager.Users
+             .Where(u => u.Email == model.Email)
+             .Select(u => new { u.Id, u.Email })
+             .FirstOrDefaultAsync();
 
-                return Ok(new { message = "Login successful" });
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Invalid email or password." });
+                }
+
+                Console.WriteLine("User found: " + user.Id);
+                await _signInManager.SignInAsync(await _userManager.FindByEmailAsync(model.Email), model.RememberMe);
+
+                return Ok(new
+                {
+                    message = "Login successful",
+                    userId = user.Id
+                });
             }
-
             return Unauthorized(new { message = "Invalid email or password." });
         }
 
@@ -295,7 +309,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Update user details
-        [HttpPut("{id}")]
+        [HttpPut("updateGebruiker/{id}")]
         public async Task<IActionResult> UpdateUserDetails(string id, [FromBody] UpdateGebruikerDto model)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -343,7 +357,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Delete a user
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
