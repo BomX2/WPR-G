@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../componements/UserContext';
 
 function Login() {
-    const [email, setEmail] = useState("");
+    const [emailOrUsername, setEmailOrUsername] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
@@ -20,19 +20,19 @@ function Login() {
         e.preventDefault();
         setError("");
 
-        if (!email || !password) {
+        if (!emailOrUsername || !password) {
             setError("Please fill in all fields.");
             return;
         }
 
         try {
-            console.log('Attempting to log in with email:', email); // Debug log for login attempt
+            console.log('Attempting to log in with : ', emailOrUsername); // Debug log for login attempt
 
             const response = await fetch("https://localhost:7065/api/gebruikers/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ email, password, rememberMe }),
+                body: JSON.stringify({ emailOrUsername, password, rememberMe }),
             });
 
             const data = await response.json();
@@ -68,12 +68,12 @@ function Login() {
                 <div className="inputs">
                     <div className="input">
                         <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
+                            type="text"
+                            id="emailOrUsername"
+                            name="emailOrUsername"
+                            value={emailOrUsername}
+                            onChange={(e) => setEmailOrUsername(e.target.value)}
+                            placeholder="Email or Username"
                         />
                     </div>
                     <div className="input">

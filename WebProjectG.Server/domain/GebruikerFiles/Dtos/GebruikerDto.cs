@@ -5,7 +5,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Dtos
     public class GebruikerDto
     {
         [Required]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [Required]
         [EmailAddress]

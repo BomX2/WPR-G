@@ -58,7 +58,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             var user = new Gebruiker
             {
-                UserName = model.Email,
+                UserName = model.Username,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Adres = model.Adres,
@@ -77,41 +77,46 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return BadRequest(new { message = errors });
         }
 
-       //Login a user
-[HttpPost("login")]
-public async Task<IActionResult> Login([FromBody] LoginDto model)
-{
-    if (!ModelState.IsValid)
-    {
-        return BadRequest(new { message = "Invalid data provided." });
-    }
-
-    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-
-    if (result.Succeeded)
-    {
-        var user = await _userManager.FindByEmailAsync(model.Email);
-
-        // Ensure the user exists
-        if (user != null)
+        //Login a user
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            var roles = await _userManager.GetRolesAsync(user); // Fetch roles for the user
-
-            await _signInManager.SignInAsync(user, model.RememberMe);
-
-            return Ok(new
+            if (!ModelState.IsValid)
             {
-                message = "Login successful",
-                id = user.Id,
-                name = user.UserName, // Assuming UserName holds the user's name
-                email = user.Email,
-                role = roles.FirstOrDefault() // Return the first role, if any
-            });
-        }
-    }
+                return BadRequest(new { message = "Invalid data provided." });
+            }
 
-    return Unauthorized(new { message = "Invalid email or password." });
-}
+            // Determine if input is an email or username
+            var user = model.EmailOrUsername.Contains("@")
+                ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
+                : await _userManager.FindByNameAsync(model.EmailOrUsername);
+
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Invalid email/username or password." });
+            }
+
+            // Perform password sign-in
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+            if (result.Succeeded)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                await _signInManager.SignInAsync(user, model.RememberMe);
+
+                return Ok(new
+                {
+                    message = "Login successful",
+                    id = user.Id,
+                    name = user.UserName,
+                    email = user.Email,
+                    role = roles.FirstOrDefault()
+                });
+            }
+
+            return Unauthorized(new { message = "Invalid email/username or password." });
+        }
 
 
         //Logout a user
