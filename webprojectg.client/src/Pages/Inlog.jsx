@@ -1,77 +1,62 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../componements/userContext';
+import { useUser } from '../componements/UserContext';
 
 function Login() {
-    // State variables
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [rememberme, setRememberme] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
 
-    const { setUser } = useUser(); // Access UserContext to set user data
+    const { setUser } = useUser(); 
     const navigate = useNavigate();
 
-    // Handles changes in the input fields
-    const onChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        if (name === "email") setEmail(value);
-        if (name === "password") setPassword(value);
-        if (name === "rememberme") setRememberme(type === "checkbox" ? checked : value);
-    };
-
-    // Redirects to the Register page
     const onRegisterClick = () => {
         navigate("/Registratie");
     };
 
-    // Handles the form submission
-    const onSubmit = (e) => {
+    // Handle form submission
+    const onSubmit = async (e) => {
         e.preventDefault();
+        setError("");
 
         if (!email || !password) {
             setError("Please fill in all fields.");
             return;
         }
 
-        setError("");
+        try {
+            console.log('Attempting to log in with email:', email); // Debug log for login attempt
 
-        const loginurl = rememberme
-            ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
-            : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
-
-        fetch(loginurl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({ email, password }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data && data.success) {
-                    // Assume the API returns user role in the response (e.g., data.role)
-                    const loggedInUser = {
-                        id: data.id,
-                        name: data.name,
-                        email: data.email,
-                        role: data.role, // e.g., 'Particulier', 'ZakelijkeHuurder', or 'WagenparkBeheerder'
-                    };
-
-                    // Set the user in the context
-                    setUser(loggedInUser);
-
-                    // Navigate to the home page or dashboard
-                    navigate('/');
-                } else {
-                    setError(data.message || "Error Logging In.");
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                setError("Error Logging in.");
+            const response = await fetch("https://localhost:7065/api/gebruikers/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ email, password, rememberMe }),
             });
+
+            const data = await response.json();
+
+            if (response.ok && data) {
+                console.log('Login successful:', data); // Debug log for successful login
+
+                // Update context with user data from the API response
+                setUser({
+                    id: data.id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role,
+                });
+
+                navigate("/");
+            } else {
+                console.error('Login failed:', data); // Debug log for failed login
+                setError(data.message || "Login failed."); // Display error from API
+            }
+        } catch (err) {
+            console.error('Unexpected error during login:', err); // Debug log for unexpected errors
+            setError("An unexpected error occurred.");
+        }
     };
 
     return (
@@ -87,7 +72,7 @@ function Login() {
                             id="email"
                             name="email"
                             value={email}
-                            onChange={onChange}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email"
                         />
                     </div>
@@ -97,7 +82,7 @@ function Login() {
                             id="password"
                             name="password"
                             value={password}
-                            onChange={onChange}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Wachtwoord"
                         />
                     </div>
@@ -106,8 +91,8 @@ function Login() {
                             type="checkbox"
                             id="rememberme"
                             name="rememberme"
-                            checked={rememberme}
-                            onChange={onChange}
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
                         />
                         <span>Remember Me</span>
                     </div>
