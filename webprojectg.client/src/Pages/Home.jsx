@@ -24,7 +24,7 @@ const Home = () => {
             return;
         }
 
-        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&inleverdatum=${encodeURIComponent(inleverDatum)}`);
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&inleverDatum=${encodeURIComponent(inleverDatum)}`);
     }
 
     return (
@@ -87,7 +87,7 @@ const Home = () => {
                         <label htmlFor="inlever-time-picker">Kies inlevertijd:</label>
                         
                     </div>
-                    <button className="cta-button" type= {onsubmit}>Rent Now</button>
+                    <button className="cta-button" type= "submit">Rent Now</button>
                 </div>
             </form>
 

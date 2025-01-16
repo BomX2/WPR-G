@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.VoertuigFiles;
+using WebProjectG.Server.domain.Huur;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -19,24 +20,21 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("autos")]
         public async Task<ActionResult> GetAutos([FromQuery] GetVoertuigenDto queryParams)
         {
-            // var autos = await _huurContext.autos.ToListAsync();
-
-            // query bouwer aanmaken
             var query = _huurContext.autos.AsQueryable();
-
-            if (queryParams.MinPrijs != null && queryParams.MaxPrijs != null) {
-                query = query.Where(v => queryParams.MinPrijs >= v.PrijsPerDag && v.PrijsPerDag <= queryParams.MaxPrijs);
-            }
 
             if (queryParams.StartDatum != null && queryParams.EindDatum != null)
             {
-                // we hebben aanvragen nodig context om te te kijken op startdatum en eindatum
-                // om namelijk te kijken of een voertuig beschikbaar is moet je kunnen kijken
-                // of er aanvragen zijn de overlappen met de begindatum en einddatum
+                var startDatum = queryParams.StartDatum.Value;
+                var eindDatum = queryParams.EindDatum.Value;
 
-                // als dit is gelukt zijn de stappen:
-                // 1. aanvragen ophalen waar geld: aanvraag.StartDatum <= queryParams.EindDatum && aanvraag.EindDatm >= queryParams.StartDatum
-                // 2. query = query.where(v => !bezetteKentekens}.Contains(v.Kenteken));
+                var bezetteAuto = await _huurContext.Aanvragen
+                    .Where(a => a.StartDatum <= eindDatum &&
+                                a.EindDatum >= startDatum)
+                    .Select(a => a.AutoId)
+                    .Distinct()
+                    .ToListAsync();
+
+                query = query.Where(v => !bezetteAuto.Contains(v.Id));
             }
 
             var voertuigen = await query.ToListAsync();
