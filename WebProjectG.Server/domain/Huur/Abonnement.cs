@@ -1,4 +1,7 @@
-﻿namespace WebProjectG.Server.domain.Huur
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebProjectG.Server.domain.BedrijfFiles;
+
+namespace WebProjectG.Server.domain.Huur
 {
     public class Abonnement
     {
@@ -7,6 +10,9 @@
         public decimal Prijs { get; set; }
         public DateTime StartTime { get; set; } // Start datum abonnement
         public DateTime? EndTime { get; set; } // Eind datum, nullable voor maandelijks/onbepaald abbo
+
+        public List<Bedrijf> Bedrijven { get; set; } = new();
+
         public TimeSpan? Duur
         {
             get

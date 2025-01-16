@@ -8,6 +8,9 @@ using WebProjectG.Server.domain.BedrijfFiles;
 using WebProjectG.Server.domain.Voertuig;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
+using System.Data;
+using Microsoft.Extensions.FileProviders;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -330,35 +333,57 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             if (kvkNummer != dto.KvkNummer) return BadRequest();
 
-            var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-            if (bedrijf == null) return NotFound();
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer.ToLower() == kvkNummer.ToLower());
+            if (bedrijf == null)
+            {
+                return NotFound($"Bedrijf with KvkNummer '{kvkNummer}' was not found.");
+            }
+            if(bedrijf.Abonnement == null)
+            {
+                bedrijf.Abonnement = new Abonnement
+                {
+                    AbonnementType = dto.AbonnementType,
 
-            bedrijf.Abonnement ??= new Abonnement();
-            bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
-
-            _dbContext.Entry(bedrijf).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
-
+                };  
+            }
+            else
+            {
+                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+            }
+             _dbContext.Entry(bedrijf).State = EntityState.Modified;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DBConcurrencyException)
+            {
+                return Conflict();
+            }
             return NoContent();
         }
 
-        [HttpPost("AddGebruikerTo")]
-        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email)
+        [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
+        public async Task<ActionResult> VoekgMedewerkerToe(string kvkNummer, string email, string domeinNaam)
         {
             var gebruiker = await _userManager.FindByEmailAsync(email);
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
 
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
-
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
-
-            bedrijf.ZakelijkeHuurders.Add(gebruiker);
-            await _dbContext.SaveChangesAsync();
-            return Ok();
+            var emailDomein = email.Split('@').LastOrDefault();
+            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
+            if (bedrijf.DomeinNaam == emailDomein)
+            {
+                bedrijf.ZakelijkeHuurders.Add(gebruiker);
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return NotFound();
+                
+  
         }
 
         [HttpGet("autos")]

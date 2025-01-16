@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel.DataAnnotations;
 using WebProjectG.Server.domain.GebruikerFiles;
 using WebProjectG.Server.domain.Huur;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace WebProjectG.Server.domain.BedrijfFiles
 {
     public class Bedrijf
@@ -20,12 +21,15 @@ namespace WebProjectG.Server.domain.BedrijfFiles
         }
 
         public string BedrijfsNaam { get; set; }
+        
         [Key] public string KvkNummer { get; init; }
         public string DomeinNaam { get; set; }
         public string Adres { get; set; }
 
         public List<Gebruiker>? ZakelijkeHuurders { get; private set; }
-        public Abonnement? Abonnement { get; set; } = new Abonnement();
+
+        public int? AbonnementId { get; set; }
+        public Abonnement? Abonnement { get; set; }
 
     }
 }

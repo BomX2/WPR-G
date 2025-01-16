@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import './Buttons.css';
 const Abonnementen = () => {
     const [keuze, setKeuze] = useState('');
     const navigeren = useNavigate();
-    const bedrijfsId = sessionStorage.getItem('bedrijfsId');
-    if (isNaN(bedrijfsId)) {
-        console.error("Invalid bedrijfsId retrieved from sessionStorage.");
-    } else {
-        console.log("Sending bedrijfsId to the backend:", bedrijfsId);
-    }
-
+    const bedrijfsKvknummer = sessionStorage.getItem('bedrijfsKvknummer');
+  
     const PutAbonnement = async (choice) => {
     
         try {
-        const wijzig = await fetch(`https://localhost:7065/api/gebruikers/putBedrijfsAbonnement/${bedrijfsId}`, {
+        const wijzig = await fetch(`https://localhost:7065/api/gebruikers/putBedrijfsAbonnement/${bedrijfsKvknummer}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                Id: bedrijfsId,
-                AbonnementType: choice,      
+                Kvknummer: bedrijfsKvknummer,
+                    AbonnementType: choice,
+                  
             }),
         });
-            
+            console.log(JSON.stringify({
+                Kvknummer: bedrijfsKvknummer,
+                AbonnementType: choice,
+            }));
         if (wijzig.ok) {
             alert("abonnementkeuze succesvol opgeslagen");
         }
@@ -42,20 +41,24 @@ const Abonnementen = () => {
         <div>
             <h1>Abonnement pagina</h1>
             <h2>kies een abonnement voor uw bedrijfsabonnement</h2>
-            <button onClick={() => Update('pay-as-you-go')}>
-               pay as you go
-            </button>
-            <button onClick={() => Update('pre-paid')}>
-                    pre-paid
-                </button>
-                <p> U heeft gekozen voor: {keuze}</p>
-                <div>
-                <button onClick={() => navigeren('/Catalogus')} disabled={!keuze } >
-                  Ga naar de catalogus pagina
-                </button>
-                <button onClick={() => navigeren('/BedrijfsInstellingen')} disabled={!keuze} >
-                 Voeg medewerkers toe aan uw BedrijfsAccount
-                </button>
+            <div className="buttons-overlay">
+                <div className="buttons-content">
+                    <button onClick={() => Update('pay-as-you-go')}>
+                        pay as you go
+                    </button>
+                    <button onClick={() => Update('pre-paid')}>
+                        pre-paid
+                    </button>
+                    <p> U heeft gekozen voor: {keuze}</p>
+                    <div>
+                        <button onClick={() => navigeren('/Catalogus')} disabled={!keuze} >
+                            Ga naar de catalogus pagina
+                        </button>
+                        <button onClick={() => navigeren('/BedrijfsInstellingen')} disabled={!keuze} >
+                            Voeg medewerkers toe aan uw BedrijfsAccount
+                        </button>
+                </div>
+            </div>
             </div>
         </div>  
     );

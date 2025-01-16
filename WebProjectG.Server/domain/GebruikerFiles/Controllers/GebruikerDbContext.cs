@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.BedrijfFiles;
+using WebProjectG.Server.domain.Huur;
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
     public class GebruikerDbContext : IdentityDbContext<Gebruiker>
     {
         public DbSet<Bedrijf> Bedrijven { get; set; } 
-
+        public DbSet<Abonnement> Abonnementen { get; set; }
         public GebruikerDbContext(DbContextOptions<GebruikerDbContext> options)
             : base(options)
         {
@@ -15,6 +17,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Bedrijf>()
+          .HasOne(b => b.Abonnement) 
+          .WithMany(a => a.Bedrijven)
+          .HasForeignKey(b => b.AbonnementId);
 
             builder.Entity<Gebruiker>(entity =>
             {
