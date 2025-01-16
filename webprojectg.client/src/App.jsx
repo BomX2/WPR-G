@@ -7,6 +7,7 @@ import Inlog from './Pages/Inlog';
 import Catalogus from './Pages/Catalogus';
 import AccSettings from './Pages/AccountSettings';
 import Product from './Pages/Product';
+import About from './Pages/About';
 import RegistreerBedrijf from './Pages/BedrijfsRegistratie';
 import Abonnementen from './Pages/Abonnement';
 import BedrijfsSettings from './Pages/BedrijfsInstellingen';

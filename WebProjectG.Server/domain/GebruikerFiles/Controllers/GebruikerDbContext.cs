@@ -19,11 +19,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Bedrijf>()
-          .HasOne(b => b.Abonnement) 
-          .WithMany(a => a.Bedrijven)
-          .HasForeignKey(b => b.AbonnementId);
-
             builder.Entity<Gebruiker>(entity =>
             {
                 entity.Property(e => e.Adres)
