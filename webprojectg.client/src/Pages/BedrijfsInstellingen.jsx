@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './forms.css'
 
 const BedrijfsSettings = () => {
     const [emailg, setEmailg] = useState("");

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Buttons.css';
+
 const Abonnementen = () => {
     const [keuze, setKeuze] = useState('');
     const navigeren = useNavigate();
@@ -25,7 +25,7 @@ const Abonnementen = () => {
         if (wijzig.ok) {
             alert("abonnementkeuze succesvol opgeslagen");
         }
-        else {
+        else {  
             alert("iets ging fout")
         }
     }
