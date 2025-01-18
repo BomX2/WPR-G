@@ -9,11 +9,11 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations
+namespace WebProjectG.Server.Migrations.GebruikerDb
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20241216130152_initialBadmanMigration")]
-    partial class initialBadmanMigration
+    [Migration("20250116174205_intialBadmanDB")]
+    partial class intialBadmanDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,7 +163,7 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AbonnementID")
+                    b.Property<int?>("AbonnementId")
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
@@ -174,13 +174,13 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Domeinnaam")
+                    b.Property<string>("DomeinNaam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("KvkNummer");
 
-                    b.HasIndex("AbonnementID");
+                    b.HasIndex("AbonnementId");
 
                     b.ToTable("Bedrijven");
                 });
@@ -236,9 +236,6 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -287,7 +284,7 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasKey("AbonnementID");
 
-                    b.ToTable("Abonnement");
+                    b.ToTable("Abonnementen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -344,8 +341,8 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
-                        .WithMany()
-                        .HasForeignKey("AbonnementID");
+                        .WithMany("Bedrijven")
+                        .HasForeignKey("AbonnementId");
 
                     b.Navigation("Abonnement");
                 });
@@ -362,6 +359,11 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.Navigation("ZakelijkeHuurders");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Navigation("Bedrijven");
                 });
 #pragma warning restore 612, 618
         }

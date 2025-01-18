@@ -9,7 +9,7 @@ export default function Product() {
     const [auto, setAuto] = useState("");
     const [autoBestaat, setAutoBestaat] = useState(true);
     const [modalWindow, setModalWindow] = useState(false);
-    const [beginDatum, setBeginDatum] = useState(null);
+    const [startDatum, setStartDatum] = useState(null);
     const [eindDatum, setEindDatum] = useState(null);
     const [naam, setNaam] = useState("");
     const [email, setEmail] = useState("");
@@ -26,17 +26,33 @@ export default function Product() {
                 if (Calldatums.ok) {
                     const data = await Calldatums.json();
                     const geboektedatums = [];
-                    data.forEach(({ beginDatum, eindDatum }) => {
-                        const current = new Date(beginDatum);
-                        while (current <= new Date(eindDatum)) {
+                    console.log("Data ontvangen van API:", data);
+
+                    data.forEach(({ startDatum, eindDatum }) => {
+                        console.log(`Oorspronkelijke data - Begin: ${startDatum}, Eind: ${eindDatum}`);
+
+                        const current = new Date(startDatum);
+                        const end = new Date(eindDatum);
+                        console.log(`Verwerken: Startdatum=${current}, Einddatum=${end}`);
+                        if (isNaN(current)) {
+                            console.error(`Parsing error: Ongeldige datum voor startDatum - ${startDatum}`);
+                        }
+                        if (!isNaN(current)) {
+                            while (current <= end) {
+                                geboektedatums.push(new Date(current));
+                                current.setDate(current.getDate() + 1);
+                            }
+                        }
+                        while (current <= end) {
                             geboektedatums.push(new Date(current));
                             current.setDate(current.getDate() + 1);
                         }
                     });
+                    console.log("Geformatteerde geboektedatums:", geboektedatums);
                     setGeBoekteDatums(geboektedatums);
                 }
                 else {
-                    alert("Pagina incorrect geladen");
+                    console.log("pagina incorrect geladen");
                 }
             }
 
@@ -49,7 +65,7 @@ export default function Product() {
         useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruikers/getAutoById/${id}`);
+                const response = await fetch(`https://localhost:7065/api/voertuigen/getAutoById/${id}`);
                 if (!response.ok) {
                     setAutoBestaat(false);
                     return;
@@ -82,7 +98,7 @@ export default function Product() {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                    startDatum: formatDateToUTC(beginDatum),
+                    startDatum: formatDateToUTC(startDatum),
                     eindDatum: formatDateToUTC(eindDatum),
                     persoonsGegevens: naam,
                     email: email,
@@ -90,12 +106,13 @@ export default function Product() {
                     autoId: id,
                 })
             })
+           
             if (PostAanvraag.ok) {
                 alert("Aanvraag succesvol aangemaakt");
                 CloseWindow();
                 setGeBoekteDatums((prev) => [
                     ...prev,
-                    ...getDatesInRange(new Date(beginDatum), new Date(eindDatum))
+                    ...getDatesInRange(new Date(startDatum), new Date(eindDatum))
                 ]);
             }
             else {
@@ -146,10 +163,10 @@ export default function Product() {
             
             <div className="date-picker-container">
             <DatePicker 
-                selected={beginDatum}
-                onChange={(date) => setBeginDatum(date)}
+                selected={startDatum}
+                onChange={(date) => setStartDatum(date)}
                 selectsStart
-                startDate={beginDatum}
+                startDate={startDatum}
                 endDate={eindDatum}
                 dateFormat="dd/MM/yyyy"
                 excludeDates={geboektedatums}
@@ -158,14 +175,14 @@ export default function Product() {
                 selected={eindDatum}
                 onChange={(date) => setEindDatum(date)}
                 selectsEnd
-                startDate={beginDatum}
+                startDate={startDatum}
                 endDate={eindDatum}
-                minDate={beginDatum}
+                minDate={startDatum}
                 dateFormat="dd/MM/yyyy"
-                disabled={!beginDatum}
+                disabled={!startDatum}
                 excludeDates={geboektedatums}
             />
-            <button onClick={OnButtonClick} disabled={!beginDatum || !eindDatum} >klik hier om een huuraanvraag te maken voor deze auto</button>
+            <button onClick={OnButtonClick} disabled={!startDatum || !eindDatum} >klik hier om een huuraanvraag te maken voor deze auto</button>
             {modalWindow && (
                 <div className="modal-overlay">
                 <div className="modal-content" >

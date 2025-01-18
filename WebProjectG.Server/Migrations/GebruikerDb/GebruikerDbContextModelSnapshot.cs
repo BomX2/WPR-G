@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations
+namespace WebProjectG.Server.Migrations.GebruikerDb
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20250105125750_udatingGebruiker")]
-    partial class udatingGebruiker
+    partial class GebruikerDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,6 +160,9 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("AbonnementId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Adres")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -171,11 +171,13 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Domeinnaam")
+                    b.Property<string>("DomeinNaam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("KvkNummer");
+
+                    b.HasIndex("AbonnementId");
 
                     b.ToTable("Bedrijven");
                 });
@@ -256,6 +258,32 @@ namespace WebProjectG.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Property<int>("AbonnementID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AbonnementID"));
+
+                    b.Property<string>("AbonnementType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Prijs")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AbonnementID");
+
+                    b.ToTable("Abonnementen");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -307,6 +335,15 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
+                        .WithMany("Bedrijven")
+                        .HasForeignKey("AbonnementId");
+
+                    b.Navigation("Abonnement");
+                });
+
             modelBuilder.Entity("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", "Bedrijf")
@@ -319,6 +356,11 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.Navigation("ZakelijkeHuurders");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Navigation("Bedrijven");
                 });
 #pragma warning restore 612, 618
         }
