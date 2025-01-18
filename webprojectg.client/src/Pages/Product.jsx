@@ -65,7 +65,7 @@ export default function Product() {
         useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/gebruikers/getAutoById/${id}`);
+                const response = await fetch(`https://localhost:7065/api/voertuigen/getAutoById/${id}`);
                 if (!response.ok) {
                     setAutoBestaat(false);
                     return;

@@ -302,7 +302,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == null)
                 .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -315,7 +315,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == true)
                 .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -442,19 +442,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NotFound();
         }
 
-        [HttpGet("autos")]
-        public async Task<ActionResult> GetAutos()
-        {
-            var autos = await _huurContext.autos.ToListAsync();
-            return Ok(autos);
-        }
-
-        [HttpGet("getAutoById/{id}")]
-        public async Task<ActionResult> GetAutoById(int id)
-        {
-            var auto = await _huurContext.autos.FindAsync(id);
-            if (auto == null) return NotFound(new { message = "Auto not found" });
-            return Ok(auto);
-        }
+        
     }
 }
