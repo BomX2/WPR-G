@@ -289,7 +289,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Fetch user details
-        [HttpGet("{id}")]
+        [HttpGet("getUser/{id}")]
         public async Task<IActionResult> GetUserDetails(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -377,8 +377,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             return BadRequest(new { message = errors });
         }
-
-        [HttpGet("pingauth")]
+            [HttpGet("pingauth")]
         [Authorize] // Ensure only authenticated users can access this endpoint
         public async Task<IActionResult> GetAuthenticatedUserRole()
         {

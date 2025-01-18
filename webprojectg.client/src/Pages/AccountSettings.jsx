@@ -6,7 +6,31 @@ const AccSettings = () => {
     const [telefoonnummer, setTelefoonnummer] = useState('');
     const userId = sessionStorage.getItem("UserId");
 
-    useEffect => 
+    useEffect(() => {
+        const RoepGegevensOp = async () => {
+            try {
+                const getGegevens = await fetch(`https://localhost:7065/api/gebruikers/getUser/${userId}`, {
+
+                })
+                if (getGegevens.ok) {    
+                    const data = await getGegevens.json();     
+                    setAdres(data.adres || "");
+                    setEmail(data.email || "");
+                    setTelefoonnummer(data.phoneNumber || "");
+                }
+                else {
+                    alert("De pagina is niet correct geladen");
+                }
+            }
+            catch (error) {
+                console.log("error: ", error)
+            }
+        }
+        if (userId) {
+            RoepGegevensOp();
+        }
+    }, [userId]);
+
   const DeleteAccount = async () => {
           
         try {
@@ -80,7 +104,7 @@ const AccSettings = () => {
                                 type="text"
                                 value={adres}
                                 onChange={(e) => setAdres(e.target.value)}
-                                placeholder="verander uw adres"
+                                placeholder={adres}
                             >
 
                             </input>
@@ -91,7 +115,7 @@ const AccSettings = () => {
                                 type="text"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="verander uw email adres"
+                                placeholder={email }
                             >
 
                             </input>
@@ -102,7 +126,7 @@ const AccSettings = () => {
                                 type="text"
                                 value={telefoonnummer}
                                 onChange={(e) => setTelefoonnummer(e.target.value)}
-                                placeholder="verander uw telefoonnummer"
+                                placeholder={telefoonnummer}
                             />
 
 
