@@ -11,6 +11,8 @@ using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
 using System.Data;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -84,41 +86,59 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(new { message = "Invalid data provided." });
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { message = "Invalid data provided." });
+                }
 
-            // Determine if input is an email or username
-            var user = model.EmailOrUsername.Contains("@")
-                ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
-                : await _userManager.FindByNameAsync(model.EmailOrUsername);
+                var user = model.EmailOrUsername.Contains("@")
+                    ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
+                    : await _userManager.FindByNameAsync(model.EmailOrUsername);
 
-            if (user == null)
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Invalid email/username or password." });
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+                if (result.Succeeded)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
+                new Claim("UserId", user.Id)
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = model.RememberMe
+                    };
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    return Ok(new { message = "Login successful" });
+                }
+
                 return Unauthorized(new { message = "Invalid email/username or password." });
             }
-
-            // Perform password sign-in
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-
-            if (result.Succeeded)
+            catch (Exception ex)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
-
-                return Ok(new
+                return StatusCode(500, new
                 {
-                    message = "Login successful",
-                    id = user.Id,
-                    name = user.UserName,
-                    email = user.Email,
-                    role = roles.FirstOrDefault()
+                    message = "An unexpected error occurred during login.",
+                    details = ex.Message 
                 });
             }
-
-            return Unauthorized(new { message = "Invalid email/username or password." });
         }
 
 
@@ -128,6 +148,25 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Logout successful" });
+        }
+
+        //Get current user with claims
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult GetCurrentUser()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var username = User.Identity.Name;
+
+            return Ok(new
+            {
+                id = userId,
+                email = email,
+                role = role,
+                name = username
+            });
         }
 
         //Fetch user details
@@ -402,6 +441,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
             return NotFound();
         }
+
         [HttpGet("autos")]
         public async Task<ActionResult> GetAutos()
         {

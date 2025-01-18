@@ -36,27 +36,39 @@ function Login() {
                 body: JSON.stringify({ emailOrUsername, password, rememberMe }),
             });
 
-            const data = await response.json();
+            // Log the raw response text (to inspect error)
+            const responseText = await response.text();
+            console.log("Raw response text:", responseText);
 
-            if (response.ok && data) {
-                console.log('Login successful:', data); // Debug log for successful login
 
-                // Update context with user data from the API response
-                setUser({
-                    id: data.id,
-                    name: data.name,
-                    email: data.email,
-                    role: data.role,
+            if (response.ok) {
+                console.log("Login successful. Waiting for session establishment...");
+
+                // Optional: Add a small delay to ensure session cookie is established
+                await new Promise((resolve) => setTimeout(resolve, 200)); // Wait 200ms
+
+                // Fetch user details after successful login
+                const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
+                    credentials: "include", // Include session cookie
                 });
 
-                navigate("/");
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser(userData); // Update UserContext
+                    console.log("User context updated:", userData);
+                    navigate("/"); // Redirect to home
+                } else {
+                    console.error("Failed to fetch user details after login.");
+                    setError("Failed to retrieve user information.");
+                }
             } else {
-                console.error('Login failed:', data); // Debug log for failed login
-                setError(data.message || "Login failed."); // Display error from API
+                const errorData = JSON.parse(responseText);
+                console.error("Login failed:", errorData);
+                setError(errorData.message || "Login failed.");
             }
         } catch (err) {
-            console.error('Unexpected error during login:', err); // Debug log for unexpected errors
-            setError("An unexpected error occurred.");
+            console.error("Unexpected error during login:", err);
+            setError("An unexpected error occurred. Please try again.");
         }
     };
 
