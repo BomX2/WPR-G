@@ -106,7 +106,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 var roles = await _userManager.GetRolesAsync(user);
 
-                await _signInManager.SignInAsync(user, model.RememberMe);
+                await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
 
                 return Ok(new
                 {

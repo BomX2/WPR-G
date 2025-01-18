@@ -27,6 +27,7 @@ function Login() {
 
         try {
             console.log('Attempting to log in with : ', emailOrUsername); // Debug log for login attempt
+            console.log("Remember Me:", rememberMe);
 
             const response = await fetch("https://localhost:7065/api/gebruikers/login", {
                 method: "POST",
