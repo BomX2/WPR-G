@@ -27,8 +27,6 @@ namespace WebProjectG.Server.domain.BedrijfFiles
         public string Adres { get; set; }
 
         public List<Gebruiker>? ZakelijkeHuurders { get; private set; }
-
-        public int? AbonnementId { get; set; }
         public Abonnement? Abonnement { get; set; }
 
     }

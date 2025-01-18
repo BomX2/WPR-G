@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,21 +17,26 @@ builder.Services.AddDbContext<GebruikerDbContext>(options =>
 builder.Services.AddDbContext<HuurContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// add identity services
+// Add identity services
 builder.Services.AddIdentity<Gebruiker, IdentityRole>()
     .AddEntityFrameworkStores<GebruikerDbContext>()
     .AddDefaultTokenProviders();
 
-// add cookies
-builder.Services.ConfigureApplicationCookie(options =>
+// Add Authentication and Cookie Configuration
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Set the default scheme
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict; 
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromHours(6); // cookie expiration time
     options.SlidingExpiration = true; // extend cookie every time the user interacts
-    options.LoginPath = "/account/login"; // Redirect to login page when unauthorized
-    options.AccessDeniedPath = "/account/access-denied"; // Redirect when access is denied
+    options.LoginPath = "/Pages/login"; // Redirect to login page when unauthorized
+    options.AccessDeniedPath = "/Pages/access-denied"; // Redirect when access is denied
 });
 
 // Add CORS policy for frontend-backend communication
@@ -45,7 +51,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-//Localstorage, sessionId en cookies
+// Localstorage, sessionId, and cookies
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(opt =>
 {
@@ -56,8 +62,6 @@ builder.Services.AddSession(opt =>
 
 // Add controllers and API endpoints
 builder.Services.AddControllers();
-
-
 
 // Add Swagger/OpenAPI for API testing
 builder.Services.AddEndpointsApiExplorer();
@@ -89,7 +93,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Configure Authentication and Authorization
-app.UseAuthentication();
+app.UseAuthentication();  
 app.UseAuthorization();
 
 // Map API routes

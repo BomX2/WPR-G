@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Buttons.css';
+import './buttons.css'
 const Abonnementen = () => {
     const [keuze, setKeuze] = useState('');
     const navigeren = useNavigate();
@@ -13,9 +13,7 @@ const Abonnementen = () => {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                Kvknummer: bedrijfsKvknummer,
-                    AbonnementType: choice,
-                  
+                    AbonnementType: choice,   
             }),
         });
             console.log(JSON.stringify({
@@ -25,7 +23,7 @@ const Abonnementen = () => {
         if (wijzig.ok) {
             alert("abonnementkeuze succesvol opgeslagen");
         }
-        else {
+        else {  
             alert("iets ging fout")
         }
     }
@@ -39,10 +37,10 @@ const Abonnementen = () => {
     }
     return (
         <div>
-            <h1>Abonnement pagina</h1>
-            <h2>kies een abonnement voor uw bedrijfsabonnement</h2>
             <div className="buttons-overlay">
-                <div className="buttons-content">
+                <div className="buttons-content" >
+                    <h1>Abonnement pagina</h1>
+                    <h2>kies een abonnement voor uw bedrijfsabonnement</h2>
                     <button onClick={() => Update('pay-as-you-go')}>
                         pay as you go
                     </button>
@@ -57,9 +55,10 @@ const Abonnementen = () => {
                         <button onClick={() => navigeren('/BedrijfsInstellingen')} disabled={!keuze} >
                             Voeg medewerkers toe aan uw BedrijfsAccount
                         </button>
+                    </div>
                 </div>
             </div>
-            </div>
+        
         </div>  
     );
 }
