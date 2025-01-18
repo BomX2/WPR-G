@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './forms.css'
 const AccSettings = () => {
     const [adres, setAdres] = useState('');
     const [email, setEmail] = useState('');
     const [telefoonnummer, setTelefoonnummer] = useState('');
     const userId = sessionStorage.getItem("UserId");
+
+    useEffect => 
   const DeleteAccount = async () => {
           
         try {
