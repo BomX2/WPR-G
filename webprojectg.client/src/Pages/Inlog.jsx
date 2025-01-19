@@ -36,7 +36,6 @@ function Login() {
                 body: JSON.stringify({ emailOrUsername, password, rememberMe }),
             });
 
-            // Log the raw response text (to inspect error)
             const responseText = await response.text();
             console.log("Raw response text:", responseText);
 
@@ -44,10 +43,8 @@ function Login() {
             if (response.ok) {
                 console.log("Login successful. Waiting for session establishment...");
 
-                // Optional: Add a small delay to ensure session cookie is established: 
                 await new Promise((resolve) => setTimeout(resolve, 200)); // Wait 200ms
 
-                // Fetch user details after successful login
                 const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
                     credentials: "include",
                 });
