@@ -401,28 +401,26 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
             }
+                    try
+                    {
+                        await _dbContext.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
 
-            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
-                {
-                    return NotFound();
+                    return NoContent();
+
                 }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-
-        }
-
+            
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
         {
