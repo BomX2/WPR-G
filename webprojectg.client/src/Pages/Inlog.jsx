@@ -51,6 +51,8 @@ function Login() {
 
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
+                    const UserId = userData.UserId;
+                    sessionStorage.setItem("UserId", UserId);
                     setUser(userData); // Update UserContext
                     console.log("User context updated:", userData);
                     navigate("/");

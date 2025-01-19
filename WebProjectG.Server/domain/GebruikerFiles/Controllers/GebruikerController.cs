@@ -118,9 +118,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
+                new Claim("UserId", user.Id),
 
+            };
+                    foreach (var claim in User.Claims)
+                    {
+                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                    }
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
                     {
@@ -141,7 +145,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return StatusCode(500, new
                 {
                     message = "An unexpected error occurred during login.",
-                    details = ex.Message 
+                    details = ex.Message
                 });
             }
         }
@@ -160,7 +164,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst("UserId")?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -263,7 +267,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             return BadRequest(new { message = errors });
         }
-            [HttpGet("pingauth")]
+        [HttpGet("pingauth")]
         [Authorize] // Ensure only authenticated users can access this endpoint
         public async Task<IActionResult> GetAuthenticatedUserRole()
         {
@@ -402,8 +406,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
             }
-
-            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
             try
             {
                 await _dbContext.SaveChangesAsync();
@@ -446,6 +448,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NotFound();
         }
 
-        
+
     }
 }

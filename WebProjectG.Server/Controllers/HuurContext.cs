@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using WebProjectG.Server.datetime_converter;
 using WebProjectG.Server.domain.GebruikerFiles;
 using WebProjectG.Server.domain.Huur;
@@ -28,9 +29,12 @@ namespace WebProjectG.Server.domain
         .HasForeignKey(a => a.AutoId) 
         .OnDelete(DeleteBehavior.Restrict);
         }
-        public void OnConfiguring() 
-        { 
-          
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarAndAll_database;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
         }
     }
 }

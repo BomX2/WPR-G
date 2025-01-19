@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:WebProjectG.Server/Migrations/20250119141655_newRoles.cs
     public partial class newRoles : Migration
+========
+    public partial class initialBadman : Migration
+>>>>>>>> FinalDevelopment:WebProjectG.Server/Migrations/20250119101808_initialBadman.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
