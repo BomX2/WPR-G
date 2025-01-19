@@ -92,7 +92,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 {
                     return BadRequest(new { message = "Invalid data provided." });
                 }
-
+                
                 var user = model.EmailOrUsername.Contains("@")
                     ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
                     : await _userManager.FindByNameAsync(model.EmailOrUsername);
