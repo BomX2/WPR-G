@@ -146,7 +146,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
 
-        //Logout a user
+      //Logout a user
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
