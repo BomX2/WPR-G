@@ -38,7 +38,9 @@ function Navigation() {
                 <li>
                     <Link to="/About">About</Link>
                 </li>
-
+                <li>
+                    <Link to="/BedrijfsInstellingen">bedrijfs-instellingen</Link>
+                </li>
                 {!user ? (
                     <li>
                         <Link to="/Inlog">Log In</Link>
@@ -54,7 +56,9 @@ function Navigation() {
                                 <Link to="/Bedrijf">Bedrijf</Link>
                             </li>
                         )}
-
+                            
+                              
+                            
                         {user.role === 'WagenparkBeheerder' && (
                             <li>
                                 <Link to="/BedrijfsRegistratie">Bedrijf Registratie</Link>
