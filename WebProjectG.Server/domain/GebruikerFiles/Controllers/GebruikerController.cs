@@ -56,7 +56,12 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return BadRequest(new { message = "Role is required." });
             }
 
-            if (model.Role != "ZakelijkeHuurder" && model.Role != "WagenparkBeheerder" && model.Role != "Particulier")
+            if (model.Role != "ZakelijkeHuurder" 
+                && model.Role != "WagenparkBeheerder" 
+                && model.Role != "Particulier" 
+                && model.Role != "BackOffice"
+                && model.Role != "FrontOffice"
+                && model.Role != "Admin")
             {
                 return BadRequest(new { message = "Invalid role specified." });
             }
@@ -162,7 +167,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var userId = User.FindFirst("UserId")?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
-            var username = User.Identity.Name;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
 
             return Ok(new
             {
@@ -402,26 +407,27 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
             }
-                    try
-                    {
-                        await _dbContext.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-
-                    return NoContent();
-
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
+                {
+                    return NotFound();
                 }
-           
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+
+        }
+
+
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {
@@ -451,6 +457,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NotFound();
         }
 
-        
+
     }
 }

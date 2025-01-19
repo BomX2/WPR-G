@@ -36,19 +36,17 @@ function Login() {
                 body: JSON.stringify({ emailOrUsername, password, rememberMe }),
             });
 
-            // Log the raw response text (to inspect error)
             const responseText = await response.text();
             console.log("Raw response text:", responseText);
 
 
             if (response.ok) {
                 console.log("Login successful. Waiting for session establishment...");
-                // Optional: Add a small delay to ensure session cookie is established
+
                 await new Promise((resolve) => setTimeout(resolve, 200)); // Wait 200ms
 
-                // Fetch user details after successful login
                 const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
-                    credentials: "include", // Include session cookie
+                    credentials: "include",
                 });
 
                 if (userResponse.ok) {
@@ -57,7 +55,7 @@ function Login() {
                     sessionStorage.setItem("UserId", UserId);
                     setUser(userData); // Update UserContext
                     console.log("User context updated:", userData);
-                 //   navigate("/"); // Redirect to home
+                    navigate("/");
                 } else {
                     console.error("Failed to fetch user details after login.");
                     setError("Failed to retrieve user information.");
