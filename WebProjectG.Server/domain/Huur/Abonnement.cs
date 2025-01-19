@@ -8,7 +8,6 @@ namespace WebProjectG.Server.domain.Huur
     public class Abonnement
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AbonnementID { get; set; }
         public string AbonnementType { get; set; }
         public decimal Prijs { get; set; }
