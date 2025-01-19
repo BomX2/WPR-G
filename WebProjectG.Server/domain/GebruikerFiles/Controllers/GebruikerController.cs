@@ -92,7 +92,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 {
                     return BadRequest(new { message = "Invalid data provided." });
                 }
-
+                
                 var user = model.EmailOrUsername.Contains("@")
                     ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
                     : await _userManager.FindByNameAsync(model.EmailOrUsername);
@@ -113,9 +113,16 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
+
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
+
+            };
+                    foreach (var claim in User.Claims)
+                    {
+                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                    }
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
                     {
@@ -397,28 +404,26 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
             }
+                    try
+                    {
+                        await _dbContext.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
 
-            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
-                {
-                    return NotFound();
+                    return NoContent();
+
                 }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-
-        }
-
+            
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
         {
