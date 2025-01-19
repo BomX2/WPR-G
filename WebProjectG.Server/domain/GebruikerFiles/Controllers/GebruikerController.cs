@@ -113,7 +113,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim("UserId", user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -155,7 +155,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
-            var userId = User.FindFirst("UserId")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.Identity.Name;
