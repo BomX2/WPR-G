@@ -44,6 +44,7 @@
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
 	  <Folder Include="Migrations\GebruikerDb\" />
+	  <Folder Include="Migrations\HuurContextMigrations\" />
 	</ItemGroup>
 
 </Project>
