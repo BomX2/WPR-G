@@ -12,8 +12,8 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20250118164736_initialBadMan")]
-    partial class initialBadMan
+    [Migration("20250119101808_initialBadman")]
+    partial class initialBadman
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -341,7 +341,7 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
-                        .WithMany()
+                        .WithMany("Bedrijven")
                         .HasForeignKey("AbonnementID");
 
                     b.Navigation("Abonnement");
@@ -359,6 +359,11 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.Navigation("ZakelijkeHuurders");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Navigation("Bedrijven");
                 });
 #pragma warning restore 612, 618
         }

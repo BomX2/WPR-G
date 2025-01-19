@@ -43,7 +43,6 @@ function Login() {
 
             if (response.ok) {
                 console.log("Login successful. Waiting for session establishment...");
-
                 // Optional: Add a small delay to ensure session cookie is established
                 await new Promise((resolve) => setTimeout(resolve, 200)); // Wait 200ms
 
@@ -54,9 +53,11 @@ function Login() {
 
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
+                    const UserId = userData.UserId;
+                    sessionStorage.setItem("UserId", UserId);
                     setUser(userData); // Update UserContext
                     console.log("User context updated:", userData);
-                    navigate("/"); // Redirect to home
+                 //   navigate("/"); // Redirect to home
                 } else {
                     console.error("Failed to fetch user details after login.");
                     setError("Failed to retrieve user information.");

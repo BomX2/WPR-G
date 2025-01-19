@@ -8,7 +8,7 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations.GebruikerDb
+namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
     partial class GebruikerDbContextModelSnapshot : ModelSnapshot
@@ -160,7 +160,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AbonnementId")
+                    b.Property<int?>("AbonnementID")
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
@@ -177,7 +177,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
 
                     b.HasKey("KvkNummer");
 
-                    b.HasIndex("AbonnementId");
+                    b.HasIndex("AbonnementID");
 
                     b.ToTable("Bedrijven");
                 });
@@ -339,7 +339,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
                         .WithMany("Bedrijven")
-                        .HasForeignKey("AbonnementId");
+                        .HasForeignKey("AbonnementID");
 
                     b.Navigation("Abonnement");
                 });
