@@ -8,7 +8,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.RoleFiles
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roleNames = { "Particulier", "ZakelijkeHuurder", "WagenparkBeheerder" };
+            string[] roleNames = { "Particulier", "ZakelijkeHuurder", "WagenparkBeheerder", "FrontOffice", "BackOffice", "Admin" };
             foreach (var roleName in roleNames)
             {
                 var roleExist = await roleManager.RoleExistsAsync(roleName);

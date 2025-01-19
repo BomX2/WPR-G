@@ -9,7 +9,7 @@ function Navigation() {
 
     const handleLogout = async () => {
         try {
-            console.log('Attempting to log out.'); // Debug log for logout attempt
+            console.log('Attempting to log out.');
 
             const response = await fetch("https://localhost:7065/api/gebruikers/logout", {
                 method: "POST",
@@ -17,14 +17,14 @@ function Navigation() {
             });
 
             if (response.ok) {
-                console.log('Logout successful.'); // Debug log for successful logout
+                console.log('Logout successful.');
                 setUser(null);
                 navigate("/inlog");
             } else {
-                console.error('Logout failed:', response.statusText); // Debug log for failed logout
+                console.error('Logout failed:', response.statusText);
             }
         } catch (err) {
-            console.error('Unexpected error during logout:', err); // Debug log for unexpected errors
+            console.error('Unexpected error during logout:', err);
         }
     };
 
@@ -49,47 +49,55 @@ function Navigation() {
                             <Link to="/AccountSettings">Account Settings</Link>
                         </li>
 
-                        {['ZakelijkeHuurder', 'WagenparkBeheerder'].includes(user.role) && (
+                        {['ZakelijkeHuurder', 'WagenparkBeheerder', 'Admin'].includes(user.role) && (
                             <li>
                                 <Link to="/Bedrijf">Bedrijf</Link>
                             </li>
                         )}
 
-                        {user.role === 'WagenparkBeheerder' && (
+                        {['WagenparkBeheerder', 'Admin'].includes(user.role) && (
                             <li>
                                 <Link to="/BedrijfsRegistratie">Bedrijf Registratie</Link>
                             </li>
                         )}
 
+                        {['BackOffice', 'Admin'].includes(user.role) && (
+                            <li>
+                                <Link to="/AanvraagBackOffice">Aanvragen(B)</Link>
+                            </li>
+                        )}
+
+                        {['FrontOffice', 'Admin'].includes(user.role) && (
+                            <li>
+                                <Link to="/FrontAanvraag">Aanvragen(F)</Link>
+                            </li>
+                        )}
+
+                        {['Admin'].includes(user.role) && (
+                            <li>
+                                <Link to="/MedewerkerRegistratie">MedewerkerRegistratie</Link>
+                            </li>
+                        )}
+
                         <li>
-                                <button
-                                    onClick={handleLogout}
-                                    style={{
-                                        all: 'unset',
-                                        display: 'block',
-                                        textDecoration: 'none',
-                                        color: 'white',
-                                        padding: '0.5rem',
-                                        margin: '0 0.5rem',
-                                        borderRadius: '0.5rem',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Uitloggen
-                                </button>
+                            <button
+                                onClick={handleLogout}
+                                style={{
+                                    all: 'unset',
+                                    display: 'block',
+                                    textDecoration: 'none',
+                                    color: 'white',
+                                    padding: '0.5rem',
+                                    margin: '0 0.5rem',
+                                    borderRadius: '0.5rem',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Uitloggen
+                            </button>
                         </li>
                     </>
                 )}
-                
-                <li>
-                    <Link to="/BedrijfsRegistratie">log in voor bedrijven</Link>
-                </li>
-                <li>
-                    <Link to="/AanvraagBackOffice">bekijk aanvragen</Link>
-                </li>
-                <li>
-                    <Link to="/FrontAanvraag">Front Aanvragen</Link>
-                </li>
             </ul>
         </nav>
     );

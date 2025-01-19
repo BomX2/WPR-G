@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
@@ -12,11 +11,9 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    [Migration("20250118164736_initialBadMan")]
-    partial class initialBadMan
+    partial class GebruikerDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -341,7 +338,7 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
-                        .WithMany()
+                        .WithMany("Bedrijven")
                         .HasForeignKey("AbonnementID");
 
                     b.Navigation("Abonnement");
@@ -359,6 +356,11 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.Navigation("ZakelijkeHuurders");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Navigation("Bedrijven");
                 });
 #pragma warning restore 612, 618
         }

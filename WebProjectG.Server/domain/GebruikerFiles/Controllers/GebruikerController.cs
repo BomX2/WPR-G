@@ -56,7 +56,12 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return BadRequest(new { message = "Role is required." });
             }
 
-            if (model.Role != "ZakelijkeHuurder" && model.Role != "WagenparkBeheerder" && model.Role != "Particulier")
+            if (model.Role != "ZakelijkeHuurder" 
+                && model.Role != "WagenparkBeheerder" 
+                && model.Role != "Particulier" 
+                && model.Role != "BackOffice"
+                && model.Role != "FrontOffice"
+                && model.Role != "Admin")
             {
                 return BadRequest(new { message = "Invalid role specified." });
             }
@@ -158,7 +163,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
-            var username = User.Identity.Name;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
 
             return Ok(new
             {

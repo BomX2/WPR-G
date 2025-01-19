@@ -12,7 +12,8 @@ import RegistreerBedrijf from './Pages/BedrijfsRegistratie';
 import Abonnementen from './Pages/Abonnement';
 import BedrijfsSettings from './Pages/BedrijfsInstellingen';
 import AanvraagBackOffice from './Pages/AanvraagBackOffice';
-import FrontOfficeAanvraag from './Pages/FrontAanvraag'
+import FrontOfficeAanvraag from './Pages/FrontAanvraag';
+import MedewerkerRegistratie from './Pages/MedewerkerRegistratie';
 import { UserProvider } from './componements/UserContext';
 const App = () => {
 
@@ -33,6 +34,7 @@ const App = () => {
                     <Route path="/BedrijfsInstellingen" element={<BedrijfsSettings />} />
                     <Route path="/AanvraagBackOffice" element={<AanvraagBackOffice />} />
                     <Route path="/FrontAanvraag" element={<FrontOfficeAanvraag />} />
+                    <Route path="/MedewerkerRegistratie" element={<MedewerkerRegistratie />} />
                 </Routes>
             </div>
         </UserProvider>

@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations.GebruikerDb
+namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(GebruikerDbContext))]
-    partial class GebruikerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250119141655_newRoles")]
+    partial class newRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,7 +163,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AbonnementId")
+                    b.Property<int?>("AbonnementID")
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
@@ -177,7 +180,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
 
                     b.HasKey("KvkNummer");
 
-                    b.HasIndex("AbonnementId");
+                    b.HasIndex("AbonnementID");
 
                     b.ToTable("Bedrijven");
                 });
@@ -339,7 +342,7 @@ namespace WebProjectG.Server.Migrations.GebruikerDb
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
                         .WithMany("Bedrijven")
-                        .HasForeignKey("AbonnementId");
+                        .HasForeignKey("AbonnementID");
 
                     b.Navigation("Abonnement");
                 });
