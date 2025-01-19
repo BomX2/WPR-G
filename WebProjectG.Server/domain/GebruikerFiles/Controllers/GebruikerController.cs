@@ -384,6 +384,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
 
+
         [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
         public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
         {
@@ -426,17 +427,25 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
         }
 
+
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
-        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
+        public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {
+            if (gebruikerToevoegen == null)
+            {
+                return BadRequest();
+            }
+            var email = gebruikerToevoegen.Email;
             var gebruiker = await _userManager.FindByEmailAsync(email);
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
-
+            
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
+ 
+             
             var emailDomein = email.Split('@').LastOrDefault();
             if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
             if (bedrijf.DomeinNaam == emailDomein)
