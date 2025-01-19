@@ -92,7 +92,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 {
                     return BadRequest(new { message = "Invalid data provided." });
                 }
-                
+
                 var user = model.EmailOrUsername.Contains("@")
                     ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
                     : await _userManager.FindByNameAsync(model.EmailOrUsername);
@@ -118,26 +118,27 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             };
 
 
-            };
-                    foreach (var claim in User.Claims)
-                    {
-                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-                    }
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe
-                    };
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    return Ok(new { message = "Login successful" });
+                };
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
                 }
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                return Ok(new { message = "Login successful" });
+            }
 
                 return Unauthorized(new { message = "Invalid email/username or password." });
-            }
+        }
+    
             catch (Exception ex)
             {
                 return StatusCode(500, new
