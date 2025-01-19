@@ -21,6 +21,7 @@ namespace WebProjectG.Server.domain.BedrijfFiles
         }
 
         public string BedrijfsNaam { get; set; }
+        
         [Key] public string KvkNummer { get; init; }
         public string DomeinNaam { get; set; }
         public string Adres { get; set; }

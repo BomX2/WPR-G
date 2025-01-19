@@ -23,7 +23,7 @@ const Abonnementen = () => {
         if (wijzig.ok) {
             alert("abonnementkeuze succesvol opgeslagen");
         }
-        else {
+        else {  
             alert("iets ging fout")
         }
     }

@@ -9,7 +9,10 @@ using WebProjectG.Server.domain.Voertuig;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
-using System;
+using System.Data;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -34,173 +37,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("postAanvraag")]
-        public async Task<ActionResult> PostAanvraag(Aanvraag aanvraag)
-        {
-            _huurContext.Aanvragen.Add(aanvraag);
-            await _huurContext.SaveChangesAsync();
-            return Ok();
-        }
-
-        [HttpGet("getAanvragen")]
-        public async Task<ActionResult> GetAanvragen()
-        {
-            var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == null)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
-                .ToListAsync();
-
-            if (!aanvragen.Any()) return NotFound();
-            return Ok(aanvragen);
-        }
-
-        [HttpGet("getAanvragenFront")]
-        public async Task<ActionResult> GetAanvragenFront()
-        {
-            var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == true)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.PersoonsGegevens, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
-                .ToListAsync();
-
-            if (!aanvragen.Any()) return NotFound();
-            return Ok(aanvragen);
-        }
-
-        [HttpPut("KeurAanvraagGoed/{id}")]
-        public async Task<IActionResult> KeurAanvraagGoed(int id, [FromBody] AanvraagDto aanvraagDto)
-        {
-            if (id != aanvraagDto.Id) return BadRequest();
-
-            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
-            if (aanvraag == null) return NotFound();
-
-            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd;
-            aanvraag.Status = aanvraagDto.Status;
-
-            _huurContext.Entry(aanvraag).State = EntityState.Modified;
-            await _huurContext.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpDelete("verwijderAanvraag/{id}")]
-        public async Task<IActionResult> DeleteAanvraag(int id)
-        {
-            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
-            if (aanvraag == null) return NotFound();
-
-            _huurContext.Aanvragen.Remove(aanvraag);
-            await _huurContext.SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpGet("GetgeboekteDatums/{id}")]
-        public async Task<IActionResult> GetAanvraagDatums(int id)
-        {
-
-            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).Select(aanv => new {aanv.StartDatum, aanv.EindDatum}).ToListAsync();
-            if (!aanvragen.Any()) return NotFound();
-
-            return Ok(aanvragen);
-        }
-
-        [HttpPost("postbedrijf")]
-        public async Task<ActionResult> PostBedrijf(Bedrijf bedrijf)
-        {
-            _dbContext.Bedrijven.Add(bedrijf);
-            await _dbContext.SaveChangesAsync();
-            return CreatedAtAction("getBedrijf", new { kvknummer = bedrijf.KvkNummer }, bedrijf);
-        }
-        [HttpGet("getBedrijf{kvknummer}")]
-   public async Task<ActionResult<Bedrijf>> GetBedrijf(string kvknummer) 
-        { 
-            var bedrijf = await _dbContext.Bedrijven.FindAsync(kvknummer); if ( bedrijf == null) 
-            { return NotFound(); } 
-            return bedrijf; 
-        }
-
-
-            [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
-            public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
-            {
-              var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-             if (bedrijf == null) {
-                return NotFound();
-             }
-
-            if (bedrijf.Abonnement == null)
-            {
-                bedrijf.Abonnement = new Abonnement
-                {
-                    AbonnementType = dto.AbonnementType,
-                };
-                _dbContext.Abonnementen.Add(bedrijf.Abonnement);
-
-            }
-            else
-            {
-                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
-            }
-
-            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
-                try
-                {
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if(!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();
-
-            }
-
-        [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
-        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
-        {
-            var gebruiker = await _userManager.FindByEmailAsync(email);
-            if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
-
-            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
-            if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
-            {
-                return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
-            }
-            var emailDomein = email.Split('@').LastOrDefault();
-            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
-            if (bedrijf.DomeinNaam == emailDomein)
-            {
-                bedrijf.ZakelijkeHuurders.Add(gebruiker);
-                await _dbContext.SaveChangesAsync();
-                return Ok();
-            }
-            return NotFound();
-        }
-        [HttpGet("autos")]
-        public async Task<ActionResult> GetAutos()
-        {
-            var autos = await _huurContext.autos.ToListAsync();
-            return Ok(autos);
-        }
-
-        [HttpGet("getAutoById/{id}")]
-        public async Task<ActionResult> GetAutoById(int id)
-        {
-            var auto = await _huurContext.autos.FindAsync(id);
-            if (auto == null) return NotFound(new { message = "Auto not found" });
-            return Ok(auto);
-        }
-         //Register a new user
+        //Register a new user
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] GebruikerDto model)
         {
@@ -226,7 +63,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             var user = new Gebruiker
             {
-                UserName = model.Email,
+                UserName = model.Username,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Adres = model.Adres,
@@ -249,36 +86,61 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(new { message = "Invalid data provided." });
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { message = "Invalid data provided." });
+                }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-
-            if (result.Succeeded)
-            {    
-             var user = await _userManager.Users
-             .Where(u => u.Email == model.Email)
-             .Select(u => new { u.Id, u.Email })
-             .FirstOrDefaultAsync();
+                var user = model.EmailOrUsername.Contains("@")
+                    ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
+                    : await _userManager.FindByNameAsync(model.EmailOrUsername);
 
                 if (user == null)
                 {
-                    return Unauthorized(new { message = "Invalid email or password." });
+                    return Unauthorized(new { message = "Invalid email/username or password." });
                 }
 
-                Console.WriteLine("User found: " + user.Id);
-                await _signInManager.SignInAsync(await _userManager.FindByEmailAsync(model.Email), model.RememberMe);
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
 
-                return Ok(new
+                if (result.Succeeded)
                 {
-                    message = "Login successful",
-                    userId = user.Id
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
+                new Claim("UserId", user.Id)
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = model.RememberMe
+                    };
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    return Ok(new { message = "Login successful" });
+                }
+
+                return Unauthorized(new { message = "Invalid email/username or password." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred during login.",
+                    details = ex.Message 
                 });
             }
-            return Unauthorized(new { message = "Invalid email or password." });
         }
+
 
         //Logout a user
         [HttpPost("logout")]
@@ -286,6 +148,25 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Logout successful" });
+        }
+
+        //Get current user with claims
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult GetCurrentUser()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var username = User.Identity.Name;
+
+            return Ok(new
+            {
+                id = userId,
+                email = email,
+                role = role,
+                name = username
+            });
         }
 
         //Fetch user details
@@ -309,7 +190,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Update user details
-        [HttpPut("updateGebruiker/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUserDetails(string id, [FromBody] UpdateGebruikerDto model)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -357,7 +238,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Delete a user
-        [HttpDelete("deleteUser/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -405,5 +286,161 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 Role = roles.FirstOrDefault() // Adjust for multiple roles if needed
             });
         }
+
+        [HttpPost("postAanvraag")]
+        public async Task<ActionResult> PostAanvraag(Aanvraag aanvraag)
+        {
+            _huurContext.Aanvragen.Add(aanvraag);
+            await _huurContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("getAanvragen")]
+        public async Task<ActionResult> GetAanvragen()
+        {
+            var aanvragen = await _huurContext.Aanvragen
+                .Where(aanv => aanv.Goedgekeurd == null)
+                .Include(aanv => aanv.Auto)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .ToListAsync();
+
+            if (!aanvragen.Any()) return NotFound();
+            return Ok(aanvragen);
+        }
+
+        [HttpGet("getAanvragenFront")]
+        public async Task<ActionResult> GetAanvragenFront()
+        {
+            var aanvragen = await _huurContext.Aanvragen
+                .Where(aanv => aanv.Goedgekeurd == true)
+                .Include(aanv => aanv.Auto)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .ToListAsync();
+
+            if (!aanvragen.Any()) return NotFound();
+            return Ok(aanvragen);
+        }
+
+        [HttpPut("KeurAanvraagGoed/{id}")]
+        public async Task<IActionResult> KeurAanvraagGoed(int id, [FromBody] AanvraagDto aanvraagDto)
+        {
+            if (id != aanvraagDto.Id) return BadRequest();
+
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+            if (aanvraag == null) return NotFound();
+
+            aanvraag.Goedgekeurd = aanvraagDto.Goedgekeurd;
+            aanvraag.Status = aanvraagDto.Status;
+
+            _huurContext.Entry(aanvraag).State = EntityState.Modified;
+            await _huurContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("verwijderAanvraag/{id}")]
+        public async Task<IActionResult> DeleteAanvraag(int id)
+        {
+            var aanvraag = await _huurContext.Aanvragen.FindAsync(id);
+            if (aanvraag == null) return NotFound();
+
+            _huurContext.Aanvragen.Remove(aanvraag);
+            await _huurContext.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpGet("GetgeboekteDatums/{id}")]
+        public async Task<IActionResult> GetAanvraagDatums(int id)
+        {
+
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).Select(aanv => new { aanv.StartDatum, aanv.EindDatum }).ToListAsync();
+            if (!aanvragen.Any()) return NotFound();
+
+            return Ok(aanvragen);
+        }
+
+        [HttpPost("postbedrijf")]
+        public async Task<ActionResult> PostBedrijf(Bedrijf bedrijf)
+        {
+            _dbContext.Bedrijven.Add(bedrijf);
+            await _dbContext.SaveChangesAsync();
+            return CreatedAtAction("getBedrijf", new { kvknummer = bedrijf.KvkNummer }, bedrijf);
+        }
+        [HttpGet("getBedrijf{kvknummer}")]
+        public async Task<ActionResult<Bedrijf>> GetBedrijf(string kvknummer)
+        {
+            var bedrijf = await _dbContext.Bedrijven.FindAsync(kvknummer); if (bedrijf == null)
+            { return NotFound(); }
+            return bedrijf;
+        }
+
+
+        [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
+        public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
+        {
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.Abonnement).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+            if (bedrijf == null)
+            {
+                return NotFound();
+            }
+
+            if (bedrijf.Abonnement == null)
+            {
+                bedrijf.Abonnement = new Abonnement
+                {
+                    AbonnementType = dto.AbonnementType,
+                };
+                _dbContext.Abonnementen.Add(bedrijf.Abonnement);
+
+            }
+            else
+            {
+                bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+            }
+
+            _dbContext.Entry(bedrijf.Abonnement).State = EntityState.Modified;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_dbContext.Bedrijven.Any(e => kvkNummer == e.KvkNummer))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+
+        }
+
+        [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
+        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, string email, string domeinNaam)
+        {
+            var gebruiker = await _userManager.FindByEmailAsync(email);
+            if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
+
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+            if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
+            {
+                return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
+            }
+            var emailDomein = email.Split('@').LastOrDefault();
+            if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
+            if (bedrijf.DomeinNaam == emailDomein)
+            {
+                bedrijf.ZakelijkeHuurders.Add(gebruiker);
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return NotFound();
+        }
+
+        
     }
 }

@@ -8,7 +8,7 @@ using WebProjectG.Server.domain.GebruikerFiles.Controllers;
 
 #nullable disable
 
-namespace WebProjectG.Server.Migrations
+namespace WebProjectG.Server.Migrations.GebruikerDb
 {
     [DbContext(typeof(GebruikerDbContext))]
     partial class GebruikerDbContextModelSnapshot : ModelSnapshot
@@ -160,7 +160,7 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("KvkNummer")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AbonnementID")
+                    b.Property<int?>("AbonnementId")
                         .HasColumnType("int");
 
                     b.Property<string>("Adres")
@@ -177,7 +177,7 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasKey("KvkNummer");
 
-                    b.HasIndex("AbonnementID");
+                    b.HasIndex("AbonnementId");
 
                     b.ToTable("Bedrijven");
                 });
@@ -338,8 +338,8 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.HasOne("WebProjectG.Server.domain.Huur.Abonnement", "Abonnement")
-                        .WithMany()
-                        .HasForeignKey("AbonnementID");
+                        .WithMany("Bedrijven")
+                        .HasForeignKey("AbonnementId");
 
                     b.Navigation("Abonnement");
                 });
@@ -356,6 +356,11 @@ namespace WebProjectG.Server.Migrations
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
                 {
                     b.Navigation("ZakelijkeHuurders");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.Abonnement", b =>
+                {
+                    b.Navigation("Bedrijven");
                 });
 #pragma warning restore 612, 618
         }

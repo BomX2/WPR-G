@@ -4,9 +4,10 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
-    "react-datepicker": "^7.5.0",
+    "react-datepicker": "^7.6.0",
     "react-dom": "^19.0.0",
     "react-time-picker": "^7.0.0"
   }

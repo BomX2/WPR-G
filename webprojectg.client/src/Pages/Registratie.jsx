@@ -3,6 +3,7 @@ import "./Registratie.css";
 import { useNavigate } from "react-router-dom";
 
 const Registratie = () => {
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +20,8 @@ const Registratie = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === "email") setEmail(value);
+        if (name === "username") setUsername(value);
+        else if (name === "email") setEmail(value);
         else if (name === "password") setPassword(value);
         else if (name === "confirmPassword") setConfirmPassword(value);
         else if (name === "adres") setAdres(value);
@@ -51,7 +53,7 @@ const Registratie = () => {
             const response = await fetch("https://localhost:7065/api/gebruikers/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, confirmPassword, adres, phoneNumber, role }),
+                body: JSON.stringify({ username, email, password, confirmPassword, adres, phoneNumber, role }),
             });
 
             if (response.ok) {
@@ -76,6 +78,17 @@ const Registratie = () => {
 
             <form onSubmit={onSubmit}>
                 <div className="inputs">
+                    <div className="input">
+                        <input
+                            placeholder="username"
+                            type="username"
+                            id="username"
+                            name="username"
+                            value={username}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
                     <div className="input">
                         <input
                             placeholder="email"

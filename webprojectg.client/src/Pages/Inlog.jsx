@@ -1,69 +1,74 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../componements/UserContext';
 
 function Login() {
-    // State variables
-    const [email, setEmail] = useState("");
+    const [emailOrUsername, setEmailOrUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [rememberme, setRememberme] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
 
+    const { setUser } = useUser(); 
     const navigate = useNavigate();
 
-    // Handles changes in the input fields
-    const onChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        if (name === "email") setEmail(value);
-        if (name === "password") setPassword(value);
-        if (name === "rememberme") setRememberme(type === "checkbox" ? checked : value);
-    };
-
-    // Redirects to the Register page
     const onRegisterClick = () => {
         navigate("/Registratie");
     };
 
-    // Handles the form submission
-    const onSubmit = (e) => {
+    // Handle form submission
+    const onSubmit = async (e) => {
         e.preventDefault();
-        console.log("from submitted") //debug log
+        setError("");
 
-        if (!email || !password) {
+        if (!emailOrUsername || !password) {
             setError("Please fill in all fields.");
-        } else {
-            setError("");
+            return;
+        }
 
-            const loginurl = rememberme
-                ? "https://localhost:7065/api/gebruikers/login?useCookies=true"
-                : "https://localhost:7065/api/gebruikers/login?useSessionCookies=true";
+        try {
+            console.log('Attempting to log in with : ', emailOrUsername); // Debug log for login attempt
+            console.log("Remember Me:", rememberMe);
 
-            console.log("calling api:", loginurl);
-            fetch(loginurl, {
+            const response = await fetch("https://localhost:7065/api/gebruikers/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({email, password }),
-            })
-                .then(async(response) => {
-                    console.log(response);
-                    if (response.ok) {
-                        setError("Successful Login.");
-                       
-                        const data =  await response.json();
-                        const UserId = data.userId;
-                        sessionStorage.setItem("UserId", UserId);
-                        console.log(UserId);
-                         window.location.href = '/';
-                    } else {
-                        setError("Error Logging In.");
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    setError("Error Logging in.");
+                body: JSON.stringify({ emailOrUsername, password, rememberMe }),
+            });
+
+            // Log the raw response text (to inspect error)
+            const responseText = await response.text();
+            console.log("Raw response text:", responseText);
+
+
+            if (response.ok) {
+                console.log("Login successful. Waiting for session establishment...");
+
+                // Optional: Add a small delay to ensure session cookie is established
+                await new Promise((resolve) => setTimeout(resolve, 200)); // Wait 200ms
+
+                // Fetch user details after successful login
+                const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
+                    credentials: "include", // Include session cookie
                 });
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser(userData); // Update UserContext
+                    console.log("User context updated:", userData);
+                    navigate("/"); // Redirect to home
+                } else {
+                    console.error("Failed to fetch user details after login.");
+                    setError("Failed to retrieve user information.");
+                }
+            } else {
+                const errorData = JSON.parse(responseText);
+                console.error("Login failed:", errorData);
+                setError(errorData.message || "Login failed.");
+            }
+        } catch (err) {
+            console.error("Unexpected error during login:", err);
+            setError("An unexpected error occurred. Please try again.");
         }
     };
 
@@ -76,12 +81,12 @@ function Login() {
                 <div className="inputs">
                     <div className="input">
                         <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={email}
-                            onChange={onChange}
-                            placeholder="Email"
+                            type="text"
+                            id="emailOrUsername"
+                            name="emailOrUsername"
+                            value={emailOrUsername}
+                            onChange={(e) => setEmailOrUsername(e.target.value)}
+                            placeholder="Email or Username"
                         />
                     </div>
                     <div className="input">
@@ -90,7 +95,7 @@ function Login() {
                             id="password"
                             name="password"
                             value={password}
-                            onChange={onChange}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Wachtwoord"
                         />
                     </div>
@@ -99,8 +104,8 @@ function Login() {
                             type="checkbox"
                             id="rememberme"
                             name="rememberme"
-                            checked={rememberme}
-                            onChange={onChange}
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
                         />
                         <span>Remember Me</span>
                     </div>

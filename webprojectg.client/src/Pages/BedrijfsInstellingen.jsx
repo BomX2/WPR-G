@@ -18,9 +18,10 @@ const BedrijfsSettings = () => {
                 })
             })
             if (toevoegen.ok) {
-                alert("Medewerker succesvol toegevoegd");
+                alert("Medewerker succesvoltoegevoegd");
             }
             else {
+                console.log(kvknummer, emailg, bDomein);
                 alert("er is een fout opgetreden");
                 console.log("lichte fout geen catch");
             }
