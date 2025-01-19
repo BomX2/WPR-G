@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\Huurmap\" />
+	  <Folder Include="Migrations\HuurMigrations\" />
 	</ItemGroup>
 
 </Project>
