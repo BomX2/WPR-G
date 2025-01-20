@@ -13,6 +13,7 @@ using System.Data;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -426,7 +427,20 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
         }
 
-
+        [HttpGet("LaatGebruikerszien/{kvknummer}")] 
+        public async Task<ActionResult<Bedrijf>> GetMedewerkers(string kvknummer)
+        {
+             var bedrijf = await _dbContext.Bedrijven.FirstOrDefaultAsync(bedr => bedr.KvkNummer == kvknummer);
+            if (bedrijf == null)
+            {
+                return BadRequest();
+            }
+            if (bedrijf.ZakelijkeHuurders.Count == 0) {
+                return NoContent();
+            }
+         var zakelijkehuurders =   bedrijf.ZakelijkeHuurders.ToList();
+            return Ok(zakelijkehuurders);
+        }
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {

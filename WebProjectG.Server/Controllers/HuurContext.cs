@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebProjectG.Server.datetime_converter;
@@ -11,7 +12,7 @@ namespace WebProjectG.Server.domain
     {
        public DbSet<Aanvraag> Aanvragen { get; set; }
         public DbSet<Auto> autos { get; set;}
-              public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
+        public HuurContext(DbContextOptions<HuurContext> options) : base(options) { }
         public HuurContext() { }
       protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
