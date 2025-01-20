@@ -112,15 +112,17 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 if (result.Succeeded)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
-
+                  
                     var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.StreetAddress, user.Adres),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
             };
-                    foreach (var claim in User.Claims)
+                    foreach (var claim in claims)
                     {
                         Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
                     }
@@ -163,17 +165,21 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
-            var userId = User.FindFirst("UserId")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var adres = User.FindFirst(ClaimTypes.StreetAddress)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            var phonenumber = User.FindFirst(ClaimTypes.MobilePhone)?.Value;
 
             return Ok(new
             {
                 id = userId,
                 email = email,
+                adres = adres,
                 role = role,
-                name = username
+                name = username,
+                phonenumber = phonenumber
             });
         }
 
