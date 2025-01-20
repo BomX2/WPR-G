@@ -64,15 +64,15 @@ function Navigation() {
                             </li>
                         )}
 
-                        {['BackOffice', 'Admin'].includes(user.role) && (
+                        {['WagenparkBeheerder', 'Admin'].includes(user.role) && (
                             <li>
-                                <Link to="/AanvraagBackOffice">Aanvragen(B)</Link>
+                                <Link to="/BedrijfsInstellingen">bedrijfs-instellingen</Link>
                             </li>
                         )}
 
                         {['BackOffice', 'Admin'].includes(user.role) && (
                             <li>
-                                <Link to="/BedrijfsInstellingen">bedrijfs-instellingen</Link>
+                                <Link to="/AanvraagBackOffice">Aanvragen(B)</Link>
                             </li>
                         )}
 
