@@ -100,7 +100,7 @@ export default function Product() {
                 body: JSON.stringify({
                     startDatum: formatDateToUTC(startDatum),
                     eindDatum: formatDateToUTC(eindDatum),
-                    persoonsGegevens: naam,
+                    persoonsgegevens: naam,
                     email: email,
                     telefoonnummer: telnummer,
                     autoId: id,

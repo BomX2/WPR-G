@@ -11,8 +11,8 @@ namespace WebProjectG.Server.domain.Huur
         public DateOnly EindDatum { get; set; }
         public string? Status { get; set; }
         public bool? Goedgekeurd { get; set; } = false;
-
-        public String Gebruikerid { get; set; }
+        public string persoonsgegevens { get; set; }
+        public string? Gebruikerid { get; set; }
         [ForeignKey("Gebruikerid")]
         public Gebruiker? Gebruiker { get; set; }
 
@@ -20,7 +20,7 @@ namespace WebProjectG.Server.domain.Huur
         [ForeignKey("AutoId")]
         public Auto? Auto { get; set; }
 
-        public Aanvraag(DateOnly startDatum, DateOnly eindDatum,String gebruikerid, bool? goedgekeurd, int autoId)
+        public Aanvraag(DateOnly startDatum, DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, int autoId)
         {
             StartDatum = startDatum;
             EindDatum = eindDatum;
