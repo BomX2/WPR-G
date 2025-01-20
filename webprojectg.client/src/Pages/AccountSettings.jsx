@@ -1,83 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import './forms.css'
+import React, { useState } from 'react';
+import './forms.css';
+import { useUser } from '../componements/userContext';
+
 const AccSettings = () => {
-    const [adres, setAdres] = useState('');
-    const [email, setEmail] = useState('');
-    const [telefoonnummer, setTelefoonnummer] = useState('');
-    const userId = sessionStorage.getItem("UserId");
+    const { user, setUser } = useUser(); // Access user from context
+    const [adres, setAdres] = useState(user?.adres || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [phonenumber, setPhonenumber] = useState(user?.phonenumber || '');
 
-    useEffect(() => {
-        const RoepGegevensOp = async () => {
-            try {
-                const getGegevens = await fetch(`https://localhost:7065/api/gebruikers/getUser/${userId}`, {
 
-                })
-                if (getGegevens.ok) {    
-                    const data = await getGegevens.json();     
-                    setAdres(data.adres || "");
-                    setEmail(data.email || "");
-                    setTelefoonnummer(data.phoneNumber || "");
-                }
-                else {
-                    alert("De pagina is niet correct geladen");
-                }
-            }
-            catch (error) {
-                console.log("error: ", error)
-            }
-        }
-        if (userId) {
-            RoepGegevensOp();
-        }
-    }, [userId]);
+    const DeleteAccount = async () => {
+        if (!user) return;
 
-  const DeleteAccount = async () => {
-          
         try {
-            const verwijdering = await fetch(`https://localhost:7065/api/gebruikers/deleteUser/${userId}`,{
-                
+            const verwijdering = await fetch(`https://localhost:7065/api/gebruikers/deleteUser/${user.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: userId,
+                    id: user.id,  // Use user.id directly
                 }),
             });
+
             if (verwijdering.ok) {
                 alert("Account verwijdering succesvol");
                 window.location.href = '/';
-            }
-            else {
+            } else {
                 alert("Er is een fout opgetreden bij het verwijderen van uw account");
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error("try is mislukt", error);
             alert("Er is een fout opgetreden");
         }
     };
 
     const SaveOnSubmit = async () => {
+        if (!user) return;
+
         try {
-            const verwerking = await fetch(`https://localhost:7065/api/gebruikers/updateGebruiker/${userId}`, {
+            const verwerking = await fetch(`https://localhost:7065/api/gebruikers/updateGebruiker/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    Adres: adres, 
-                    Email: email, 
-                    PhoneNumber: telefoonnummer,
-                        
+                    Adres: adres,
+                    Email: email,
+                    PhoneNumber: phonenumber,
                 }),
             });
 
             if (verwerking.ok) {
                 alert('Account succesvol bijgewerkt');
-                console.log(userId);    
+                setUser({ ...user, adres, email, phonenumber }); // Update context
             } else {
-                console.log(userId);
                 alert('Er is een fout opgetreden bij het bijwerken van uw account');
             }
         } catch (error) {
@@ -85,6 +62,11 @@ const AccSettings = () => {
             alert("Er is een fout opgetreden");
         }
     };
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div>
             <div className="form-overlay">
@@ -92,7 +74,7 @@ const AccSettings = () => {
                     <h1>Account Settings</h1>
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        if (!adres || !email || !telefoonnummer) {
+                        if (!adres || !email || !phonenumber) {
                             alert("Voer  alle velden in");
                             return;
                         }
@@ -115,7 +97,7 @@ const AccSettings = () => {
                                 type="text"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder={email }
+                                placeholder={email}
                             >
 
                             </input>
@@ -124,11 +106,11 @@ const AccSettings = () => {
 
                             <input
                                 type="text"
-                                value={telefoonnummer}
-                                onChange={(e) => setTelefoonnummer(e.target.value)}
-                                placeholder={telefoonnummer}
-                            />
-
+                                value={phonenumber}
+                                onChange={(e) => setPhonenumber(e.target.value)}
+                                placeholder={phonenumber}
+                            >
+                            </input>
 
                         </div>
                         <button type="submit">submit</button>

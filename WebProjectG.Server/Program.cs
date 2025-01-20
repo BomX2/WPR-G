@@ -67,6 +67,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//add custom claims
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<Gebruiker>, CustomClaimsPrincipalFactory>();
+
 var app = builder.Build();
 
 // Configure middleware
