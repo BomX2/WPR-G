@@ -30,11 +30,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 var bezetteAuto = await _huurContext.Aanvragen
                     .Where(a => a.StartDatum <= eindDatum &&
                                 a.EindDatum >= startDatum)
-                    .Select(a => a.AutoId)
+                    .Select(a => a.Kenteken)
                     .Distinct()
                     .ToListAsync();
 
-                query = query.Where(v => !bezetteAuto.Contains(v.Id));
+                query = query.Where(v => !bezetteAuto.Contains(v.Kenteken));
             }
 
             var voertuigen = await query.ToListAsync();

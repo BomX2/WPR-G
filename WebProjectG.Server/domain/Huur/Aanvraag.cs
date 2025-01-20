@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using WebProjectG.Server.domain.GebruikerFiles;
-using WebProjectG.Server.domain.Voertuig;
+using WebProjectG.Server.domain.VoertuigFiles;
 
 namespace WebProjectG.Server.domain.Huur
 {
@@ -9,6 +9,8 @@ namespace WebProjectG.Server.domain.Huur
         public int Id { get; set; }
         public DateOnly StartDatum { get; set; }
         public DateOnly EindDatum { get; set; }
+        public String ophaaltijd {  get; set; }
+        public String inlevertijd { get; set; }
         public string? Status { get; set; }
         public bool? Goedgekeurd { get; set; } = false;
         public string persoonsgegevens { get; set; }
@@ -16,17 +18,17 @@ namespace WebProjectG.Server.domain.Huur
         [ForeignKey("Gebruikerid")]
         public Gebruiker? Gebruiker { get; set; }
 
-        public int AutoId { get; set; }
-        [ForeignKey("AutoId")]
-        public Auto? Auto { get; set; }
+        public String Kenteken { get; set; }
+        [ForeignKey("Kenteken")]
+        public Voertuig? voertuig { get; set; }
 
-        public Aanvraag(DateOnly startDatum, DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, int autoId)
+        public Aanvraag(DateOnly startDatum, DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, String kenteken)
         {
             StartDatum = startDatum;
             EindDatum = eindDatum;
             Gebruikerid = gebruikerid;
             Goedgekeurd = goedgekeurd;
-            AutoId = autoId;
+            Kenteken = kenteken;
         }
     }
 }
