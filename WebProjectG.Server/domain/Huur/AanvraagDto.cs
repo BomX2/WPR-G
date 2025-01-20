@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography.Xml;
-using WebProjectG.Server.domain.Voertuig;
+using WebProjectG.Server.domain.VoertuigFiles;
 
 namespace WebProjectG.Server.domain.Huur
 {

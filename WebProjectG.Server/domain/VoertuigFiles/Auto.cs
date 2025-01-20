@@ -1,8 +1,16 @@
-﻿namespace WebProjectG.Server.domain.Voertuig
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebProjectG.Server.domain.VoertuigFiles
 {
-    public class Auto : Voertuig
+    public class Auto
     {
-        public int Id { get; set; }
+        [Key]
+        public String Kenteken { get; set; }
+
+        [ForeignKey("Kenteken")]
+        public Voertuig Voertuig { get; set; } = null!;
+
         public int AantalDeuren { get; set; }
         public string BrandstofType { get; set; }
         public bool HeeftAirco { get; set; }
@@ -10,10 +18,11 @@
         public string TransmissieType { get; set; }
         public int Bagageruimte { get; set; } // in liters
 
-        public Auto(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering,
-            int aantalDeuren, string brandstofType, bool heeftAirco, double brandstofVerbruik, string transmissieType, int bagageruimte)
-            : base(huurStatus, merk, type, kenteken, kleur, aanschafJaar, prijsPerDag, inclusiefVerzekering)
+        public Auto() { }
+        public Auto(string kenteken, Voertuig voertuig, int aantalDeuren, string brandstofType, bool heeftAirco, double brandstofVerbruik, string transmissieType, int bagageruimte)
         {
+            Kenteken = kenteken;
+            Voertuig = voertuig;
             AantalDeuren = aantalDeuren;
             BrandstofType = brandstofType;
             HeeftAirco = heeftAirco;

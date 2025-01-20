@@ -118,9 +118,6 @@ namespace WebProjectG.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AutoId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EindDatum")
                         .HasColumnType("datetime2");
 
@@ -130,10 +127,22 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool?>("Goedgekeurd")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Kenteken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("StartDatum")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("inlevertijd")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ophaaltijd")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("persoonsgegevens")
@@ -142,9 +151,9 @@ namespace WebProjectG.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AutoId");
-
                     b.HasIndex("Gebruikerid");
+
+                    b.HasIndex("Kenteken");
 
                     b.ToTable("Aanvragen");
                 });
@@ -175,16 +184,10 @@ namespace WebProjectG.Server.Migrations
                     b.ToTable("Abonnement");
                 });
 
-            modelBuilder.Entity("WebProjectG.Server.domain.Voertuig.Auto", b =>
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Auto", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AanschafJaar")
-                        .HasColumnType("int");
+                    b.Property<string>("Kenteken")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AantalDeuren")
                         .HasColumnType("int");
@@ -202,16 +205,100 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool>("HeeftAirco")
                         .HasColumnType("bit");
 
+                    b.Property<string>("TransmissieType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Kenteken");
+
+                    b.ToTable("autos");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Camper", b =>
+                {
+                    b.Property<string>("Kenteken")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("AfvalTankCapaciteit")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BrandstofVerbruik")
+                        .HasColumnType("float");
+
+                    b.Property<int>("FietsRekCapaciteit")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HeeftBadkamer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HeeftKeuken")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HeeftLuifel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HeeftZonnepanelen")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Hoogte")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Lengte")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Slaapplaatsen")
+                        .HasColumnType("int");
+
+                    b.Property<double>("WaterTankCapaciteit")
+                        .HasColumnType("float");
+
+                    b.HasKey("Kenteken");
+
+                    b.ToTable("campers");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Caravan", b =>
+                {
+                    b.Property<string>("Kenteken")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("AfvalTankCapaciteit")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("HeeftKeuken")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HeeftLuifel")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Lengte")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Slaapplaatsen")
+                        .HasColumnType("int");
+
+                    b.Property<double>("WaterTankCapaciteit")
+                        .HasColumnType("float");
+
+                    b.HasKey("Kenteken");
+
+                    b.ToTable("caravans");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Voertuig", b =>
+                {
+                    b.Property<string>("Kenteken")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AanschafJaar")
+                        .HasColumnType("int");
+
                     b.Property<string>("HuurStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("InclusiefVerzekering")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Kenteken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Kleur")
                         .IsRequired()
@@ -224,17 +311,17 @@ namespace WebProjectG.Server.Migrations
                     b.Property<decimal>("PrijsPerDag")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TransmissieType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("soort")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("autos");
+                    b.HasKey("Kenteken");
+
+                    b.ToTable("Voertuigen");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
@@ -257,19 +344,52 @@ namespace WebProjectG.Server.Migrations
 
             modelBuilder.Entity("WebProjectG.Server.domain.Huur.Aanvraag", b =>
                 {
-                    b.HasOne("WebProjectG.Server.domain.Voertuig.Auto", "Auto")
-                        .WithMany()
-                        .HasForeignKey("AutoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("WebProjectG.Server.domain.GebruikerFiles.Gebruiker", "Gebruiker")
                         .WithMany()
                         .HasForeignKey("Gebruikerid");
 
-                    b.Navigation("Auto");
+                    b.HasOne("WebProjectG.Server.domain.VoertuigFiles.Voertuig", "voertuig")
+                        .WithMany()
+                        .HasForeignKey("Kenteken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Gebruiker");
+
+                    b.Navigation("voertuig");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Auto", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.VoertuigFiles.Voertuig", "Voertuig")
+                        .WithOne()
+                        .HasForeignKey("WebProjectG.Server.domain.VoertuigFiles.Auto", "Kenteken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Voertuig");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Camper", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.VoertuigFiles.Voertuig", "Voertuig")
+                        .WithOne()
+                        .HasForeignKey("WebProjectG.Server.domain.VoertuigFiles.Camper", "Kenteken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Voertuig");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Caravan", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.VoertuigFiles.Voertuig", "Voertuig")
+                        .WithOne()
+                        .HasForeignKey("WebProjectG.Server.domain.VoertuigFiles.Caravan", "Kenteken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Voertuig");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.BedrijfFiles.Bedrijf", b =>
