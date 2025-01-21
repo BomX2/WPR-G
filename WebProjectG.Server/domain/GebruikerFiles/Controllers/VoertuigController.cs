@@ -20,7 +20,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("autos")]
         public async Task<ActionResult> GetAutos([FromQuery] GetVoertuigenDto queryParams)
         {
-            var query = _huurContext.autos.AsQueryable();
+            var query = _huurContext.Voertuigen.AsQueryable();
 
             if (queryParams.StartDatum != null && queryParams.EindDatum != null)
             {
@@ -42,10 +42,10 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return Ok(voertuigen);
         }
 
-        [HttpGet("getAutoById/{id}")]
-        public async Task<ActionResult> GetAutoById(int id)
+        [HttpGet("getByKenteken/{Kenteken}")]
+        public async Task<ActionResult> GetAutoById(String Kenteken)
         {
-            var auto = await _huurContext.autos.FindAsync(id);
+            var auto = await _huurContext.Voertuigen.FindAsync(Kenteken);
             if (auto == null) return NotFound(new { message = "Auto not found" });
             return Ok(auto);
         }

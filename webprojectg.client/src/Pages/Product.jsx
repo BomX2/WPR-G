@@ -15,12 +15,12 @@ export default function Product() {
     const [email, setEmail] = useState("");
     const [telnummer, setTelNummer] = useState("")
     const [geboektedatums, setGeBoekteDatums] = useState([]);
-    const { id } = useParams()
+    const { Kenteken } = useParams();
 
     useEffect(() => {
         const fetchGeboekteDatums = async () => {
             try {
-                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${id}`, {
+                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${Kenteken}`, {
 
                 })
                 if (Calldatums.ok) {
@@ -61,11 +61,11 @@ export default function Product() {
             }
         }
         fetchGeboekteDatums();
-    }, [id]);
+    }, [Kenteken]);
         useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/voertuigen/getAutoById/${id}`);
+                const response = await fetch(`https://localhost:7065/api/voertuigen/getByKenteken/${Kenteken}`);
                 if (!response.ok) {
                     setAutoBestaat(false);
                     return;
@@ -83,7 +83,7 @@ export default function Product() {
             }
         };
         fetchCar();
-    }, [id]);
+    }, [Kenteken]);
     
 
     const HandleAanvraag = async () => {
