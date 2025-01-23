@@ -45,9 +45,30 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("getByKenteken/{Kenteken}")]
         public async Task<ActionResult> GetAutoById(String Kenteken)
         {
-            var auto = await _huurContext.Voertuigen.FindAsync(Kenteken);
-            if (auto == null) return NotFound(new { message = "Auto not found" });
-            return Ok(auto);
+            var voertuig = await _huurContext.Voertuigen.FindAsync(Kenteken);
+            if (voertuig == null) return NotFound(new { message = "Auto not found" });
+
+            object extraInfo = null;
+
+            switch (voertuig.soort.ToLower())
+            {
+                case "auto":
+                    extraInfo = await _huurContext.autos.FirstOrDefaultAsync(a => a.Kenteken == Kenteken);
+                    break;
+
+                case "camper":
+                    extraInfo = await _huurContext.campers.FirstOrDefaultAsync(a => a.Kenteken == Kenteken);
+                    break;
+
+                case "caravan":
+                    extraInfo = await _huurContext.caravans.FirstOrDefaultAsync(a => a.Kenteken== Kenteken);
+                    break;
+
+                default:
+                    return BadRequest(new { message = "invalid voertuig type" });
+            }
+
+            return Ok(extraInfo);
         }
     }
 }
