@@ -35,7 +35,6 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromHours(6); // cookie expiration time
     options.SlidingExpiration = true; // extend cookie every time the user interacts
-    options.LoginPath = "/Pages/login"; // Redirect to login page when unauthorized
     options.AccessDeniedPath = "/Pages/access-denied"; // Redirect when access is denied
 });
 

@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import './forms.css';
 import { useUser } from '../componements/userContext';
-import { QRCodeSVG }  from 'qrcode.react';  
+import { QRCodeSVG } from 'qrcode.react';
 
 const AccSettings = () => {
-    const { user, setUser } = useUser(); // Access user from context
+    const { user, setUser } = useUser();
     const [adres, setAdres] = useState(user?.adres || '');
     const [email, setEmail] = useState(user?.email || '');
     const [phonenumber, setPhonenumber] = useState(user?.phonenumber || '');
-    const [show2FA, setShow2FA] = useState(false); // For showing the 2FA setup
-    const [token, setToken] = useState(''); // Store the 2FA token
 
+    const [show2FA, setShow2FA] = useState(false);
+    const [otpAuthUrl, setOtpAuthUrl] = useState(''); // We'll store the otpauth url here
+    const [twoFaCode, setTwoFaCode] = useState('');   // Input field for verifying 2FA
+
+    // Enable 2FA
     const enable2FA = async () => {
         try {
             const response = await fetch('https://localhost:7065/api/gebruikers/enable-2fa', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`, // Assuming you manage tokens
+                    'Content-Type': 'application/json'
+                    // No Authorization header since we're using cookies
                 },
+                credentials: 'include'
             });
             const data = await response.json();
             if (response.ok) {
-                setToken(data.token);
+                setOtpAuthUrl(data.otpAuthUrl);
                 setShow2FA(true);
             } else {
                 alert(data.message || 'Failed to enable 2FA.');
@@ -33,19 +37,41 @@ const AccSettings = () => {
         }
     };
 
+    // Verify 2FA
+    const verify2FA = async () => {
+        try {
+            const response = await fetch('https://localhost:7065/api/gebruikers/verify-2fa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ token: twoFaCode })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert("2FA is now enabled!");
+                // Optionally, you can hide the QR code after success
+                setShow2FA(false);
+            } else {
+                alert(data.message || "Invalid 2FA code.");
+            }
+        } catch (error) {
+            console.error("Error verifying 2FA code:", error);
+            alert("Error verifying 2FA code.");
+        }
+    };
 
+    // Delete account
     const DeleteAccount = async () => {
         if (!user) return;
-
         try {
             const verwijdering = await fetch(`https://localhost:7065/api/gebruikers/deleteUser/${user.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    id: user.id,  // Use user.id directly
-                }),
+                body: JSON.stringify({ id: user.id })
             });
 
             if (verwijdering.ok) {
@@ -60,9 +86,9 @@ const AccSettings = () => {
         }
     };
 
+    // Save updated info
     const SaveOnSubmit = async () => {
         if (!user) return;
-
         try {
             const verwerking = await fetch(`https://localhost:7065/api/gebruikers/updateGebruiker/${user.id}`, {
                 method: 'PUT',
@@ -78,7 +104,7 @@ const AccSettings = () => {
 
             if (verwerking.ok) {
                 alert('Account succesvol bijgewerkt');
-                setUser({ ...user, adres, email, phonenumber }); // Update context
+                setUser({ ...user, adres, email, phonenumber });
             } else {
                 alert('Er is een fout opgetreden bij het bijwerken van uw account');
             }
@@ -100,61 +126,66 @@ const AccSettings = () => {
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         if (!adres || !email || !phonenumber) {
-                            alert("Voer  alle velden in");
+                            alert("Voer alle velden in");
                             return;
                         }
                         SaveOnSubmit();
-                    }} >
+                    }}>
                         <div>
-
                             <input
                                 type="text"
                                 value={adres}
                                 onChange={(e) => setAdres(e.target.value)}
-                                placeholder={adres}
-                            >
-
-                            </input>
+                                placeholder="Adres"
+                            />
                         </div>
                         <div>
-
                             <input
                                 type="text"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder={email}
-                            >
-
-                            </input>
+                                placeholder="Email"
+                            />
                         </div>
                         <div>
-
                             <input
                                 type="text"
                                 value={phonenumber}
                                 onChange={(e) => setPhonenumber(e.target.value)}
-                                placeholder={phonenumber}
-                            >
-                            </input>
-
+                                placeholder="Telefoonnummer"
+                            />
                         </div>
                         <button type="submit">submit</button>
                         <button type="button" onClick={DeleteAccount}>Verwijder account</button>
                     </form>
+
+                    {/* Button to initiate 2FA */}
                     <button type="button" onClick={enable2FA}>Gebruik 2FA</button>
+
+                    {/* Show the QR code and a prompt to verify */}
                     {show2FA && (
-                        <div>
-                            <p>Scan de QR Code met jouw autheticator app:</p>
-                            <QRCodeSVG value={token} size={256} level={"H"} includeMargin={true} />
+                        <div style={{ marginTop: '20px' }}>
+                            <p>Scan de QR Code met jouw authenticator app:</p>
+                            {/* Show the QR code for the otpauth URL */}
+                            {otpAuthUrl && (
+                                <QRCodeSVG value={otpAuthUrl} size={256} level={"H"} includeMargin={true} />
+                            )}
+                            <div style={{ marginTop: '10px' }}>
+                                <label>Voer de 6-cijferige code in:</label>
+                                <input
+                                    type="text"
+                                    value={twoFaCode}
+                                    onChange={(e) => setTwoFaCode(e.target.value)}
+                                    placeholder="123456"
+                                />
+                                <button onClick={verify2FA}>Verifieer Code</button>
+                            </div>
                         </div>
                     )}
                 </div>
             </div>
-           
         </div>
-
-        
     );
- };
-      export default AccSettings;
+};
 
+export default AccSettings;

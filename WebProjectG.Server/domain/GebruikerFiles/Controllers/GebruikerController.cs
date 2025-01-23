@@ -98,6 +98,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     return BadRequest(new { message = "Invalid data provided." });
                 }
 
+                // Find user by email or username
                 var user = model.EmailOrUsername.Contains("@")
                     ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
                     : await _userManager.FindByNameAsync(model.EmailOrUsername);
@@ -107,39 +108,48 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     return Unauthorized(new { message = "Invalid email/username or password." });
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-
-                if (result.Succeeded)
+                // Check password
+                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                if (!result.Succeeded)
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
-                  
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.StreetAddress, user.Adres),
-                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
-            };
-                    foreach (var claim in claims)
-                    {
-                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-                    }
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe
-                    };
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    return Ok(new { message = "Login successful" });
+                    return Unauthorized(new { message = "Invalid email/username or password." });
                 }
 
-                return Unauthorized(new { message = "Invalid email/username or password." });
+                // If user has 2FA enabled, let front-end know
+                if (await _userManager.GetTwoFactorEnabledAsync(user))
+                {
+                    // Option A: Let front-end handle second step
+                    return Ok(new
+                    {
+                        requiresTwoFactor = true,
+                        userId = user.Id
+                    });
+                }
+
+                // Normal (non-2FA) sign-in
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties
+                );
+
+                return Ok(new { message = "Login successful" });
             }
             catch (Exception ex)
             {
@@ -150,7 +160,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 });
             }
         }
-
 
         //Logout a user
         [HttpPost("logout")]
@@ -184,22 +193,32 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         [HttpPost("enable-2fa")]
+        [Authorize] // user must be logged in via cookie
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized(new { Message = "User not found." });
 
-            var tokenProvider = "Authenticator";
+            // 1) Ensure user has an authenticator key
+            var key = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrEmpty(key))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                key = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
 
-            var token = await _userManager.GenerateTwoFactorTokenAsync(user, tokenProvider);
-            if (string.IsNullOrWhiteSpace(token))
-                return BadRequest(new { Message = "Failed to generate 2FA token." });
+            // 2) Build the URI for TOTP apps
+            var email = user.Email ?? user.UserName;
+            var issuer = "MyAwesomeApp"; // put your app/service name here
+            var otpauthUrl = $"otpauth://totp/{issuer}:{email}?secret={key}&issuer={issuer}&digits=6";
 
-            return Ok(new { Token = token });
+            // Return the otpauth URL so the front-end can generate a QR code
+            return Ok(new { OtpAuthUrl = otpauthUrl });
         }
 
         [HttpPost("verify-2fa")]
+        [Authorize]
         public async Task<IActionResult> VerifyTwoFactorToken([FromBody] VerifyTokenDto model)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -208,7 +227,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             var isValid = await _userManager.VerifyTwoFactorTokenAsync(
                 user,
-                "Authenticator",
+                TokenOptions.DefaultAuthenticatorProvider,
                 model.Token);
 
             if (!isValid)
