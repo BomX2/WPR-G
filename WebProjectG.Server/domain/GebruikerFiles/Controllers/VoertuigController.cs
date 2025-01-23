@@ -31,19 +31,31 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 // Zet ophaaltijd en inlevertijd om naar numerieke waarden voor vergelijking (bijvoorbeeld ochtend = 0, middag = 1, avond = 2)
                 var dagdelen = new Dictionary<string, int> { { "ochtend", 0 }, { "middag", 1 }, { "avond", 2 } };
 
-                int OphaalTijd = dagdelen[queryParams.OphaalTijd.ToLower()];
-                int InleverTijd = dagdelen[queryParams.InleverTijd.ToLower()];
+                int OphaalTijd = dagdelen[queryParams.OphaalTijd.ToLower().Trim()];
+                int InleverTijd = dagdelen[queryParams.InleverTijd.ToLower().Trim()];
 
-                var bezetteAuto = await _huurContext.Aanvragen
+                if (!dagdelen.TryGetValue(queryParams.OphaalTijd.ToLower().Trim(), out var ophaalTijd) ||
+            !dagdelen.TryGetValue(queryParams.InleverTijd.ToLower().Trim(), out var inleverTijd))
+                {
+                    return BadRequest("OphaalTijd of InleverTijd is ongeldig.");
+                }
+
+                // Haal alle aanvragen op die relevant zijn
+                var aanvragen = await _huurContext.Aanvragen
                     .Where(a =>
-                        // Controleer overlappende verhuurperiodes
-                        (a.StartDatum < eindDatum || (a.StartDatum == eindDatum && dagdelen[a.ophaaltijd] <= InleverTijd)) &&
-                        (a.EindDatum > startDatum || (a.EindDatum == startDatum && dagdelen[a.inlevertijd] >= OphaalTijd)) &&
-                        // Zorg dat er minimaal 1 dagdeel ruimte zit
-                        (a.EindDatum < startDatum || (a.EindDatum == startDatum && dagdelen[a.inlevertijd] < OphaalTijd - 1)))
-                    .Select(a => a.Kenteken)
-                    .Distinct()
+                        a.StartDatum < eindDatum ||
+                        (a.StartDatum == eindDatum && a.StartDatum < eindDatum) ||
+                        (a.EindDatum > startDatum) ||
+                        (a.EindDatum == startDatum))
                     .ToListAsync();
+
+                // Filter de aanvragen verder in-memory
+                var bezetteAuto = aanvragen
+                    .Where(a =>
+                        dagdelen[a.ophaaltijd.ToLower()] <= inleverTijd &&
+                        dagdelen[a.inlevertijd.ToLower()] >= ophaalTijd)
+                    .Select(a => a.Kenteken)
+                    .Distinct();
 
                 // Filter voertuigen die niet beschikbaar zijn
                 query = query.Where(v => !bezetteAuto.Contains(v.Kenteken));

@@ -11,8 +11,8 @@ const Home = () => {
     const [vehicleType, setVehicleType] = useState("");
     const [ophaalDatum, setOphaalDatum] = useState(null);
     const [inleverDatum, setInleverDatum] = useState(null);
-    const [ophaalTime, setOphaalTime] = useState(null);
-    const [inleverTime, setInleverTime] = useState(null);
+    const [ophaalTime, setOphaalTime] = useState("");
+    const [inleverTime, setInleverTime] = useState("");
 
     const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const Home = () => {
         }
 
         navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${ophaalTime}
-                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inlevertijd=${inleverTime}
+                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inleverTijd=${inleverTime}
                             &soort=${encodeURIComponent(vehicleType)}`);
     }
 
@@ -46,7 +46,7 @@ const Home = () => {
             <form className="search-filter" onSubmit={handelsubmit}>
                 <div className="filters">
                     <select value={vehicleType}
-                        onChange={(e) => setVehicleType(e.target.value)} >
+                        onChange={(e) => setVehicleType(e.target.value.trim())} >
                         <option value="" disabled>Voertuigtype</option>
                         <option value="auto">Auto</option>
                         <option value="camper">Camper</option>
@@ -68,7 +68,7 @@ const Home = () => {
                     <div className="react-time-picker">
                         <label htmlFor="ophaal-time-picker">Kies ophaaltijd:</label>
                         <select value={ophaalTime}
-                            onChange={(e) => setOphaalTime(e.target.value)} >
+                            onChange={(e) => setOphaalTime(e.target.value.trim())} >
                             <option value="" disabled>ophaaltijd</option>
                             <option value="ochtend">Ochtend</option>
                             <option value="middag">Middag</option>
