@@ -6,6 +6,9 @@ namespace WebProjectG.Server.domain.BedrijfFiles
     {
 
         public string AbonnementType { get; set; }
+        public decimal Prijs { get; set; }
+        public string BetaalMethode { get; set; }
+        public string Periode { get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+    import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../componements/UserContext';
 
@@ -26,7 +26,7 @@ function Login() {
         }
 
         try {
-            console.log('Attempting to log in with : ', emailOrUsername); // Debug log for login attempt
+            console.log('Attempting to log in with : ', emailOrUsername); //Debug log for login attempt
             console.log("Remember Me:", rememberMe);
 
             const response = await fetch("https://localhost:7065/api/gebruikers/login", {
@@ -50,12 +50,10 @@ function Login() {
                 });
 
                 if (userResponse.ok) {
-                    const userData = await userResponse.json();
-                    const UserId = userData.UserId;
-                    sessionStorage.setItem("UserId", UserId);
+                    const userData = await userResponse.json();    
                     setUser(userData); // Update UserContext
                     console.log("User context updated:", userData);
-                    navigate("/");
+                   navigate("/");
                 } else {
                     console.error("Failed to fetch user details after login.");
                     setError("Failed to retrieve user information.");
