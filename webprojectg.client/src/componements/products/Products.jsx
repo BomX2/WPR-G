@@ -13,7 +13,7 @@ export default function Products({ auto }) {
                     <div className="products-details">
                         <h3>prijs per dag :{auto.prijsPerDag} euro</h3>
                         <h3>{ auto.huurStatus }</h3>
-                        <Link to={`/Product/${auto.id}`}>Klik hier</Link>
+                        <Link to={`/Product/${auto.kenteken}`}>Klik hier</Link>
                     </div>
                 </div>
             </section>

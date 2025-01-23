@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class aanvraagfixes : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,29 +28,22 @@ namespace WebProjectG.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "autos",
+                name: "Voertuigen",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AantalDeuren = table.Column<int>(type: "int", nullable: false),
-                    BrandstofType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HeeftAirco = table.Column<bool>(type: "bit", nullable: false),
-                    BrandstofVerbruik = table.Column<double>(type: "float", nullable: false),
-                    TransmissieType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Bagageruimte = table.Column<int>(type: "int", nullable: false),
+                    Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     HuurStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Merk = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Kenteken = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Kleur = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AanschafJaar = table.Column<int>(type: "int", nullable: false),
                     PrijsPerDag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    InclusiefVerzekering = table.Column<bool>(type: "bit", nullable: false)
+                    InclusiefVerzekering = table.Column<bool>(type: "bit", nullable: false),
+                    soort = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_autos", x => x.Id);
+                    table.PrimaryKey("PK_Voertuigen", x => x.Kenteken);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,6 +64,80 @@ namespace WebProjectG.Server.Migrations
                         column: x => x.AbonnementID,
                         principalTable: "Abonnement",
                         principalColumn: "AbonnementID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "autos",
+                columns: table => new
+                {
+                    Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AantalDeuren = table.Column<int>(type: "int", nullable: false),
+                    BrandstofType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HeeftAirco = table.Column<bool>(type: "bit", nullable: false),
+                    BrandstofVerbruik = table.Column<double>(type: "float", nullable: false),
+                    TransmissieType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bagageruimte = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_autos", x => x.Kenteken);
+                    table.ForeignKey(
+                        name: "FK_autos_Voertuigen_Kenteken",
+                        column: x => x.Kenteken,
+                        principalTable: "Voertuigen",
+                        principalColumn: "Kenteken",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "campers",
+                columns: table => new
+                {
+                    Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Lengte = table.Column<double>(type: "float", nullable: false),
+                    Hoogte = table.Column<double>(type: "float", nullable: false),
+                    Slaapplaatsen = table.Column<int>(type: "int", nullable: false),
+                    HeeftBadkamer = table.Column<bool>(type: "bit", nullable: false),
+                    HeeftKeuken = table.Column<bool>(type: "bit", nullable: false),
+                    WaterTankCapaciteit = table.Column<double>(type: "float", nullable: false),
+                    AfvalTankCapaciteit = table.Column<double>(type: "float", nullable: false),
+                    BrandstofVerbruik = table.Column<double>(type: "float", nullable: false),
+                    HeeftZonnepanelen = table.Column<bool>(type: "bit", nullable: false),
+                    FietsRekCapaciteit = table.Column<int>(type: "int", nullable: false),
+                    HeeftLuifel = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_campers", x => x.Kenteken);
+                    table.ForeignKey(
+                        name: "FK_campers_Voertuigen_Kenteken",
+                        column: x => x.Kenteken,
+                        principalTable: "Voertuigen",
+                        principalColumn: "Kenteken",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "caravans",
+                columns: table => new
+                {
+                    Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Lengte = table.Column<double>(type: "float", nullable: false),
+                    Slaapplaatsen = table.Column<int>(type: "int", nullable: false),
+                    HeeftKeuken = table.Column<bool>(type: "bit", nullable: false),
+                    WaterTankCapaciteit = table.Column<double>(type: "float", nullable: false),
+                    AfvalTankCapaciteit = table.Column<double>(type: "float", nullable: false),
+                    HeeftLuifel = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_caravans", x => x.Kenteken);
+                    table.ForeignKey(
+                        name: "FK_caravans_Voertuigen_Kenteken",
+                        column: x => x.Kenteken,
+                        principalTable: "Voertuigen",
+                        principalColumn: "Kenteken",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,11 +180,13 @@ namespace WebProjectG.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ophaaltijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    inlevertijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Goedgekeurd = table.Column<bool>(type: "bit", nullable: true),
                     persoonsgegevens = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gebruikerid = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AutoId = table.Column<int>(type: "int", nullable: false)
+                    Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,22 +197,22 @@ namespace WebProjectG.Server.Migrations
                         principalTable: "Gebruiker",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Aanvragen_autos_AutoId",
-                        column: x => x.AutoId,
-                        principalTable: "autos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_Aanvragen_Voertuigen_Kenteken",
+                        column: x => x.Kenteken,
+                        principalTable: "Voertuigen",
+                        principalColumn: "Kenteken",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Aanvragen_AutoId",
-                table: "Aanvragen",
-                column: "AutoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Aanvragen_Gebruikerid",
                 table: "Aanvragen",
                 column: "Gebruikerid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Aanvragen_Kenteken",
+                table: "Aanvragen",
+                column: "Kenteken");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bedrijf_AbonnementID",
@@ -163,10 +232,19 @@ namespace WebProjectG.Server.Migrations
                 name: "Aanvragen");
 
             migrationBuilder.DropTable(
+                name: "autos");
+
+            migrationBuilder.DropTable(
+                name: "campers");
+
+            migrationBuilder.DropTable(
+                name: "caravans");
+
+            migrationBuilder.DropTable(
                 name: "Gebruiker");
 
             migrationBuilder.DropTable(
-                name: "autos");
+                name: "Voertuigen");
 
             migrationBuilder.DropTable(
                 name: "Bedrijf");

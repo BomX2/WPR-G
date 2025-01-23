@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.BedrijfFiles;
-using WebProjectG.Server.domain.Voertuig;
+using WebProjectG.Server.domain.VoertuigFiles;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
@@ -114,15 +114,17 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 if (result.Succeeded)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
-
+                  
                     var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.StreetAddress, user.Adres),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
             };
-                    foreach (var claim in User.Claims)
+                    foreach (var claim in claims)
                     {
                         Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
                     }
@@ -165,17 +167,21 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
-            var userId = User.FindFirst("UserId")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var adres = User.FindFirst(ClaimTypes.StreetAddress)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            var phonenumber = User.FindFirst(ClaimTypes.MobilePhone)?.Value;
 
             return Ok(new
             {
                 id = userId,
                 email = email,
+                adres = adres,
                 role = role,
-                name = username
+                name = username,
+                phonenumber = phonenumber
             });
         }
 
@@ -310,8 +316,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == null)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Include(aanv => aanv.voertuig)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -323,8 +329,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == true)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Include(aanv => aanv.voertuig)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -359,11 +365,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NoContent();
         }
 
-        [HttpGet("GetgeboekteDatums/{id}")]
-        public async Task<IActionResult> GetAanvraagDatums(int id)
+        [HttpGet("GetgeboekteDatums/{Kenteken}")]
+        public async Task<IActionResult> GetAanvraagDatums(String Kenteken)
         {
 
-            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).Select(aanv => new { aanv.StartDatum, aanv.EindDatum }).ToListAsync();
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.Kenteken == Kenteken).Select(aanv => new { aanv.StartDatum, aanv.EindDatum }).ToListAsync();
             if (!aanvragen.Any()) return NotFound();
 
             return Ok(aanvragen);
