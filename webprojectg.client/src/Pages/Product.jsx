@@ -149,17 +149,41 @@ export default function Product() {
             <div className="productPage">
             <div className= "links">
                     <img src={carImage} alt="auto" className="product-image" />
-                    <div className="auto-info"> 
-                        <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
-                        <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
-                        <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
-                        <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
+                    <div className="auto-info">
+                        {auto && auto.voertuig ? (
+                            auto.voertuig.soort === "Auto" ? (
+                                <>
+                                    <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
+                                    <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
+                                    <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
+                                    <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
+                                </>
+                            ) : auto.voertuig.soort === "Camper" ? (
+                                <>
+                                    <div><strong>Slaapplaatsen:</strong> {auto.slaapplaatsen}</div>
+                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                    <div><strong>Heeft keuken:</strong> {auto.heeftKeuken ? "Ja" : "Nee"}</div>
+                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                </>
+                            ) : auto.voertuig.soort === "Caravan" ? (
+                                <>
+                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                    <div><strong>Heeft luifel:</strong> {auto.heeftLuifel ? "Ja" : "Nee"}</div>
+                                    <div><strong>Afvalwatertank:</strong> {auto.afvalTankCapaciteit} liter</div>
+                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                </>
+                            ) : (
+                                <div>geen verdere info.</div>
+                            )
+                        ) : (
+                            <div>Auto data is niet beschikbaar</div>
+                        )}
                     </div>
                 </div>
             <div className = "rechts">
-                    <h1>{auto.merk} {auto.type}</h1>
-                    <h2>{auto.kleur}</h2>
-                <h2> {auto.prijsPerDag} euro per dag</h2>
+                    <h1>{auto?.voertuig?.merk || "Onbekend merk"} {auto?.voertuig?.type || "Onbekend type"}</h1>
+                    <h2>{auto?.voertuig?.kleur || "Onbekende kleur"}</h2>
+                <h2> {auto?.voertuig?.prijsPerDag || "prijs niet bekend"} euro per dag</h2>
             
             <div className="date-picker-container">
             <DatePicker 

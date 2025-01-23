@@ -24,7 +24,9 @@ const Home = () => {
             return;
         }
 
-        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&inleverDatum=${encodeURIComponent(inleverDatum)}`);
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${ophaalTime}
+                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inlevertijd=${inleverTime}
+                            &soort=${encodeURIComponent(vehicleType)}`);
     }
 
     return (

@@ -14,7 +14,10 @@ export default function Catalogus() {
 
         const queryparams = new URLSearchParams(location.search);
         const ophaalDatum = queryparams.get("ophaalDatum");
+        const ophaalTijd = queryparams.get("ophaalTijd");
         const inleverDatum = queryparams.get("inleverDatum");
+        const inleverTijd = queryparams.get("inleverTijd");
+        const soort = queryparams.get("soort")
 
         if (!ophaalDatum || !inleverDatum) {
             setErrorMessage("Ophaaldatum en/of inleverdatum ontbreken.");
@@ -27,7 +30,9 @@ export default function Catalogus() {
         const fetchAutos = async () => {
 
             const baseUrl = "https://localhost:7065/api/voertuigen/autos";
-            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&EindDatum=${encodeURIComponent(formattedInleverDatum)}`;
+            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&OphaalTijd=${encodeURIComponent(ophaalTijd)}
+                                   &EindDatum=${encodeURIComponent(formattedInleverDatum)}&InleverTijd=${encodeURIComponent(inleverTijd)}
+                                   &soort=${encodeURIComponent(soort)}`;
 
             try {
                 const response = await fetch(Url);
