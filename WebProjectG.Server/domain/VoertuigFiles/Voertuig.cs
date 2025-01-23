@@ -1,6 +1,6 @@
 ﻿namespace WebProjectG.Server.domain.Voertuig
 {
-    abstract public class Voertuig
+    public class Voertuig
     {
         public string HuurStatus { get; set; }
         public string Merk { get; set; }
