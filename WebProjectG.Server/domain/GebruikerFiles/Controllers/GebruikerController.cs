@@ -14,6 +14,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Reflection.Metadata.Ecma335;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -57,9 +58,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return BadRequest(new { message = "Role is required." });
             }
 
-            if (model.Role != "ZakelijkeHuurder" 
-                && model.Role != "WagenparkBeheerder" 
-                && model.Role != "Particulier" 
+            if (model.Role != "ZakelijkeHuurder"
+                && model.Role != "WagenparkBeheerder"
+                && model.Role != "Particulier"
                 && model.Role != "BackOffice"
                 && model.Role != "FrontOffice"
                 && model.Role != "Admin")
@@ -399,6 +400,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 bedrijf.Abonnement = new Abonnement
                 {
                     AbonnementType = dto.AbonnementType,
+                    BetaalMethode = dto.BetaalMethode,
+                    Prijs = dto.Prijs,
+                    Periode = dto.Periode
                 };
                 _dbContext.Abonnementen.Add(bedrijf.Abonnement);
 
@@ -406,6 +410,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             else
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+                bedrijf.Abonnement.BetaalMethode = dto.BetaalMethode;
+                bedrijf.Abonnement.Prijs = dto.Prijs;
+                bedrijf.Abonnement.Periode = dto.Periode;
             }
             try
             {
@@ -427,23 +434,43 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
         }
 
-        [HttpGet("LaatGebruikerszien/{kvknummer}")] 
+        [HttpGet("LaatGebruikersZien/{kvknummer}")]
         public async Task<ActionResult<Bedrijf>> GetMedewerkers(string kvknummer)
         {
-             var bedrijf = await _dbContext.Bedrijven.FirstOrDefaultAsync(bedr => bedr.KvkNummer == kvknummer);
+
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(bedr => bedr.KvkNummer == kvknummer);
             if (bedrijf == null)
             {
                 return BadRequest();
             }
-            if (bedrijf.ZakelijkeHuurders.Count == 0) {
+            if (bedrijf.ZakelijkeHuurders == null) {
                 return NoContent();
             }
-         var zakelijkehuurders =   bedrijf.ZakelijkeHuurders.ToList();
+
+            var zakelijkehuurders = bedrijf.ZakelijkeHuurders.Select(geb => geb.Email).ToList();
             return Ok(zakelijkehuurders);
+        }
+        [HttpDelete("VerwijderMedewerker/{email}")]
+        public async Task<IActionResult> VerwijderMedewerker(string email, [FromBody] ZakelijkeHuurderDto zakelijkeHuurderDto )
+        {
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(bed => bed.KvkNummer == zakelijkeHuurderDto.kvknummer);
+            if (bedrijf == null)
+            {
+                return NotFound("Bedrijf is niet gevonden");
+            }
+            var zakelijkehuurder = bedrijf.ZakelijkeHuurders.FirstOrDefault(geb => geb.Email == email);
+           if (zakelijkehuurder == null)
+            {
+                return BadRequest("Gebruiker is niet gekoppeld aan dit bedrijf");
+            }
+            bedrijf.ZakelijkeHuurders.Remove(zakelijkehuurder);
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
         }
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {
+           
             if (gebruikerToevoegen == null)
             {
                 return BadRequest();
@@ -453,6 +480,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
             
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+            if (bedrijf == null) return BadRequest("Bedrijf bestaat niet.");
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");

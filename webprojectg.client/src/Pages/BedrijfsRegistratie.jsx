@@ -22,9 +22,6 @@ const RegistreerBedrijf = () => {
             });
             if (Toevoegen.ok) {
                 alert("Bedrijfs account succesvol toegevoegd.");
-                const data = await Toevoegen.json();
-                const bedrijfsKvknummer = data.kvkNummer 
-                sessionStorage.setItem('bedrijfsKvknummer', bedrijfsKvknummer);
                 navigeren('/Abonnement');
             }
             else {

@@ -35,7 +35,6 @@ const AanvraagBackOffice = () => {
                 method: 'PUT',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                  
                     id: activeItem.id,               
                     goedgekeurd: true, 
                 })
