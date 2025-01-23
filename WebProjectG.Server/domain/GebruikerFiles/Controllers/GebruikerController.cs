@@ -183,6 +183,46 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             });
         }
 
+        [HttpPost("enable-2fa")]
+        public async Task<IActionResult> EnableTwoFactorAuthentication()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { Message = "User not found." });
+
+            var tokenProvider = "Authenticator";
+
+            var token = await _userManager.GenerateTwoFactorTokenAsync(user, tokenProvider);
+            if (string.IsNullOrWhiteSpace(token))
+                return BadRequest(new { Message = "Failed to generate 2FA token." });
+
+            return Ok(new { Token = token });
+        }
+
+        [HttpPost("verify-2fa")]
+        public async Task<IActionResult> VerifyTwoFactorToken([FromBody] VerifyTokenDto model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { Message = "User not found." });
+
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user,
+                "Authenticator",
+                model.Token);
+
+            if (!isValid)
+                return BadRequest(new { Message = "Invalid token." });
+
+            user.TwoFactorEnabled = true;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { Message = "Could not enable 2FA." });
+
+            return Ok(new { Message = "2FA is enabled." });
+        }
+
+
         //Fetch user details
         [HttpGet("getUser/{id}")]
         public async Task<IActionResult> GetUserDetails(string id)

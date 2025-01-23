@@ -1,12 +1,37 @@
 import React, { useState } from 'react';
 import './forms.css';
 import { useUser } from '../componements/userContext';
+import { QRCodeSVG }  from 'qrcode.react';  
 
 const AccSettings = () => {
     const { user, setUser } = useUser(); // Access user from context
     const [adres, setAdres] = useState(user?.adres || '');
     const [email, setEmail] = useState(user?.email || '');
     const [phonenumber, setPhonenumber] = useState(user?.phonenumber || '');
+    const [show2FA, setShow2FA] = useState(false); // For showing the 2FA setup
+    const [token, setToken] = useState(''); // Store the 2FA token
+
+    const enable2FA = async () => {
+        try {
+            const response = await fetch('https://localhost:7065/api/gebruikers/enable-2fa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`, // Assuming you manage tokens
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setToken(data.token);
+                setShow2FA(true);
+            } else {
+                alert(data.message || 'Failed to enable 2FA.');
+            }
+        } catch (error) {
+            console.error("Enable 2FA failed", error);
+            alert("Error enabling 2FA.");
+        }
+    };
 
 
     const DeleteAccount = async () => {
@@ -116,6 +141,13 @@ const AccSettings = () => {
                         <button type="submit">submit</button>
                         <button type="button" onClick={DeleteAccount}>Verwijder account</button>
                     </form>
+                    <button type="button" onClick={enable2FA}>Gebruik 2FA</button>
+                    {show2FA && (
+                        <div>
+                            <p>Scan de QR Code met jouw autheticator app:</p>
+                            <QRCodeSVG value={token} size={256} level={"H"} includeMargin={true} />
+                        </div>
+                    )}
                 </div>
             </div>
            
