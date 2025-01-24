@@ -87,7 +87,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return BadRequest(new { message = errors });
         }
 
-        //Login a user
+        // Login a user with password, check if 2FA is required
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
@@ -108,48 +108,61 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     return Unauthorized(new { message = "Invalid email/username or password." });
                 }
 
-                // Check password
-                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                if (!result.Succeeded)
-                {
-                    return Unauthorized(new { message = "Invalid email/username or password." });
-                }
+                // Attempt sign-in with password
+                var result = await _signInManager.PasswordSignInAsync(
+                    user,
+                    model.Password,
+                    model.RememberMe,
+                    lockoutOnFailure: false
+                );
 
-                // If user has 2FA enabled, let front-end know
-                if (await _userManager.GetTwoFactorEnabledAsync(user))
+                // If 2FA is required, we do NOT do the final cookie sign-in here.
+                // Instead, we tell the front end: "2FA needed."
+                if (result.RequiresTwoFactor)
                 {
-                    // Option A: Let front-end handle second step
                     return Ok(new
                     {
                         requiresTwoFactor = true,
-                        userId = user.Id
+                        userId = user.Id,
+                        // optionally:  message = "2FA required"
                     });
                 }
 
-                // Normal (non-2FA) sign-in
-                var roles = await _userManager.GetRolesAsync(user);
-
-                var claims = new List<Claim>
+                if (result.Succeeded)
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User")
-                };
+                    // Build custom claims (if you want extra claims beyond defaults):
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
+                new Claim("UserId", user.Id)
+            };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = model.RememberMe
+                    };
+
+                    // This signs in the user by issuing the auth cookie
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties
+                    );
+
+                    return Ok(new { message = "Login successful" });
+                }
+
+                // If we reach here, it's usually a bad password or locked out scenario
+                if (result.IsLockedOut)
                 {
-                    IsPersistent = model.RememberMe
-                };
+                    return Unauthorized(new { message = "User is locked out." });
+                }
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties
-                );
-
-                return Ok(new { message = "Login successful" });
+                return Unauthorized(new { message = "Invalid email/username or password." });
             }
             catch (Exception ex)
             {
@@ -160,6 +173,45 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 });
             }
         }
+
+        [HttpPost("verify-2fa-login")]
+        public async Task<IActionResult> VerifyTwoFactorLogin([FromBody] TwoFactorLoginDto model)
+        {
+            // Example Dto: { userId: "XYZ", twoFactorCode: "123456", rememberMe: true }
+            try
+            {
+                // The user isn't signed in yet, so we can't just do _userManager.GetUserAsync(User).
+                // Instead, we rely on _signInManager for the second factor sign in.
+                var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(
+                    model.TwoFactorCode,
+                    model.RememberMe,
+                    rememberClient: false
+                );
+
+                if (result.Succeeded)
+                {
+                    // The sign-in manager will issue the cookie automatically if 2FA is correct.
+                    return Ok(new { message = "2FA login successful" });
+                }
+                else if (result.IsLockedOut)
+                {
+                    return Unauthorized(new { message = "User is locked out." });
+                }
+                else
+                {
+                    return Unauthorized(new { message = "Invalid 2FA code." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "An unexpected error occurred verifying 2FA.",
+                    details = ex.Message
+                });
+            }
+        }
+
 
         //Logout a user
         [HttpPost("logout")]
@@ -215,6 +267,29 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             // Return the otpauth URL so the front-end can generate a QR code
             return Ok(new { OtpAuthUrl = otpauthUrl });
+        }
+
+        [HttpPost("disable-2fa")]
+        [Authorize]
+        public async Task<IActionResult> DisableTwoFactorAuthentication()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { message = "User not found." });
+
+            // Set TwoFactorEnabled = false
+            user.TwoFactorEnabled = false;
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(new { message = "Could not disable 2FA." });
+            }
+
+            // Optionally clear/reset the authenticator key
+            // so any old TOTP codes won’t work anymore
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+
+            return Ok(new { message = "2FA disabled successfully." });
         }
 
         [HttpPost("verify-2fa")]

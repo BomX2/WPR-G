@@ -32,7 +32,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.None;
     options.ExpireTimeSpan = TimeSpan.FromHours(6); // cookie expiration time
     options.SlidingExpiration = true; // extend cookie every time the user interacts
     options.AccessDeniedPath = "/Pages/access-denied"; // Redirect when access is denied
