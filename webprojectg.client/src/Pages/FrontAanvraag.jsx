@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import './AanvraagItems.css'
 import { useEffect } from 'react';
 const FrontOfficeAanvraag = () => {
@@ -132,9 +132,17 @@ const FrontOfficeAanvraag = () => {
                                         <h2>Huuraanvraag</h2>
                                         <p>De klant: {activeItem.persoonsGegevens} </p>
                                         <p>wil een {activeItem.autoMerk}  {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
-                                        <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
-                                        <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
-                                        <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button> <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
+                                          <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
+                                         
+                            <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
+                            {!activeItem.status === 'uitgegeven' && (
+                                <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button>
+
+                            )}
+                            {activeItem.status === 'uitgegeven' && (
+                                <button>Registreer schade</button>
+                            )}
+                                        <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                         <button onClick={CloseWindow}>Sluiten</button>
                                     </div>
                                 </div>

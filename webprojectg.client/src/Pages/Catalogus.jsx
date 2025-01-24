@@ -18,7 +18,7 @@ export default function Catalogus() {
         const inleverDatum = queryparams.get("inleverDatum");
         const inleverTijd = queryparams.get("inleverTijd");
         const soort = queryparams.get("soort")
-
+        console.log(ophaalDatum, inleverDatum);
         if (!ophaalDatum || !inleverDatum) {
             setErrorMessage("Ophaaldatum en/of inleverdatum ontbreken.");
             return;
