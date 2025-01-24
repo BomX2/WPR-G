@@ -1,0 +1,40 @@
+.scherm-layout {
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+}
+.aanvraagItems-layout{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.aanvraagItems-box {
+    border: 1px solid #ddd;
+    border-color: black;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0, 0.1);
+    width: 200px;
+    text-align: center;
+}
+.huidigeDatums-balk {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+.middel-sectie {
+    display: flex;
+    flex: 1;
+}
+
+.linker-balk,
+.rechter-balk {
+    flex: 1;
+    padding: 10px;
+    border-left: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+.linker-balk {
+    border-left: none;
+}

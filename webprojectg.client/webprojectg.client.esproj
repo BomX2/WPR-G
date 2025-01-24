@@ -8,4 +8,12 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\assets\**" />
+    <TypeScriptConfiguration Remove="src\assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="public\NewFolder\" />
+    <Folder Include="src\componements\Formsandbuttons\" />
+  </ItemGroup>
 </Project>

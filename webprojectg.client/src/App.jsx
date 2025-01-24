@@ -1,49 +1,44 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-
-function App() {
-    const [forecasts, setForecasts] = useState();
-
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Navigation from './componements/Navigation';
+import Home from './Pages/Home';
+import Registratie from './Pages/Registratie';
+import Inlog from './Pages/Inlog';
+import Catalogus from './Pages/Catalogus';
+import AccSettings from './Pages/AccountSettings';
+import Product from './Pages/Product';
+import About from './Pages/About';
+import RegistreerBedrijf from './Pages/BedrijfsRegistratie';
+import Abonnementen from './Pages/Abonnement';
+import BedrijfsSettings from './Pages/BedrijfsInstellingen';
+import AanvraagBackOffice from './Pages/AanvraagBackOffice';
+import FrontOfficeAanvraag from './Pages/FrontAanvraag';
+import MedewerkerRegistratie from './Pages/MedewerkerRegistratie';
+import { UserProvider } from './componements/UserContext';
+const App = () => {
 
     return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+        <UserProvider>
+            <div>
+                <Navigation />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />\
+                    <Route path="/catalogus" element={<Catalogus />} />
+                    <Route path="/Product/:Kenteken" element={<Product />} />
+                    <Route path="/inlog" element={<Inlog />} />
+                    <Route path="/registratie" element={<Registratie />} />
+                    <Route path="/AccountSettings" element={<AccSettings />} />
+                    <Route path="/BedrijfsRegistratie" element={<RegistreerBedrijf />} />
+                    <Route path="/Abonnement" element={<Abonnementen />} />
+                    <Route path="/BedrijfsInstellingen" element={<BedrijfsSettings />} />
+                    <Route path="/AanvraagBackOffice" element={<AanvraagBackOffice />} />
+                    <Route path="/FrontAanvraag" element={<FrontOfficeAanvraag />} />
+                    <Route path="/MedewerkerRegistratie" element={<MedewerkerRegistratie />} />
+                </Routes>
+            </div>
+        </UserProvider>
     );
-    
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
-    }
 }
 
 export default App;
