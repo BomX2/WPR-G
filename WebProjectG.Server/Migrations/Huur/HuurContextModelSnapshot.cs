@@ -135,7 +135,7 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool?>("Goedgekeurd")
                         .HasColumnType("bit");
 
-                    b.Property<string>("InleverTijd")
+                    b.Property<string>("Inlevertijd")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -143,7 +143,7 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("OphaalTijd")
+                    b.Property<string>("Ophaaltijd")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

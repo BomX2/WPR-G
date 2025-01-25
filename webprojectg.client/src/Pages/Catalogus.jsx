@@ -19,7 +19,7 @@ export default function Catalogus() {
         const OphaalTijd = queryparams.get("OphaalTijd");
         const inleverDatum = queryparams.get("inleverDatum");
 
-        const inleverTijd = queryparams.get("inleverTijd");
+        const InleverTijd = queryparams.get("InleverTijd");
         const soort = queryparams.get("soort");
         setSoort(soort)
 

@@ -7,9 +7,9 @@ export default function Products({ auto }) {
     const location = useLocation();
     const queryparams = new URLSearchParams(location.search);
     const ophaalDatum = queryparams.get("ophaalDatum");
-    const ophaalTime = queryparams.get("ophaalTijd");
+    const OphaalTijd = queryparams.get("OphaalTijd");
     const inleverDatum = queryparams.get("inleverDatum");
-    const inleverTime = queryparams.get("inleverTijd");
+    const InleverTijd = queryparams.get("InleverTijd");
     const verhicleType = queryparams.get("soort");
     const navigate = useNavigate('');
     return (
@@ -19,15 +19,15 @@ export default function Products({ auto }) {
                 <div className="products-content">
                     <img src={carImage} alt="auto" className="products-image" />
                     <div className="products-details">
-                        <h3>prijs per dag :{auto.prijsPerDag} euro</h3>
+                        <h3>prijs per dag :{auto.voertuig.prijsPerDag} euro</h3>
                         <h3>{ auto.huurStatus }</h3>
-                        <button onClick={() => navigate(`/Product/${encodeURIComponent(auto.kenteken)}?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${ophaalTime}
-                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inleverTijd=${inleverTime}
+                        <button onClick={() => navigate(`/Product/${encodeURIComponent(auto.kenteken)}?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${OphaalTijd}
+                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inleverTijd=${InleverTijd}
                             &soort=${encodeURIComponent(verhicleType)}`) }>Klik hier!</button>
 
                         <h3>{auto.kenteken}</h3>
                         <h3>{ auto.voertuig.kleur }</h3>
-                        <Link to={`/Product/${auto.kenteken}`}>Klik hier</Link>
+
                     </div>
                 </div>
             </section>

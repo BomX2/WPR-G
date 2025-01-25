@@ -9,8 +9,8 @@ namespace WebProjectG.Server.domain.Huur
         public int Id { get; set; }
         public DateOnly StartDatum { get; set; }
         public DateOnly EindDatum { get; set; }
-        public string ophaaltijd {  get; set; }
-        public string inlevertijd { get; set; }
+        public string Ophaaltijd {  get; set; }
+        public string Inlevertijd { get; set; }
         public string? Status { get; set; }
         public string  Email { get; set; }
         public string Adres { get; set; }
@@ -24,10 +24,15 @@ namespace WebProjectG.Server.domain.Huur
         [ForeignKey("Kenteken")]
         public Voertuig? voertuig { get; set; }
 
-        public  Aanvraag(DateOnly startDatum, string email, string adres, string telefoonnummer,DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, String kenteken)
+        public Aanvraag()
+        {
+        }
+        public  Aanvraag(DateOnly startDatum,String ophaalTijd, string email, string adres, string telefoonnummer,DateOnly eindDatum,String inleverTijd,string? gebruikerid, bool? goedgekeurd, String kenteken)
         {
             StartDatum = startDatum;
+            Ophaaltijd = ophaalTijd;
             EindDatum = eindDatum;
+            Inlevertijd = inleverTijd;
             Email = email;
             Adres = adres;
             Telefoonnummer = telefoonnummer;
