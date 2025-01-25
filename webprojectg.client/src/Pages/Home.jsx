@@ -5,7 +5,7 @@ import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import './Home.css';
 import heroImage from '../image/CARNAL_LOGO.png';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
     const [vehicleType, setVehicleType] = useState("");
@@ -165,6 +165,10 @@ const Home = () => {
                 <p>Email: contact@yourwebsite.com</p>
                 <p>Telefoon: +123 456 7890</p>
                 <p>Adres: Hoofdstraat 123, Stad, Land</p>
+            </section>
+
+            <section>
+                <Link to ="/Privacy">Privacyverklaring </Link>
             </section>
         </div>
     );
