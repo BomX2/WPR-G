@@ -27,6 +27,16 @@ body {
     filter: brightness(70%);
 }
 
+.hero-filter {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%; /* Pas de breedte aan naar wens */
+    z-index: 3; /* Zorg ervoor dat het boven de afbeelding komt */
+    padding: 20px;
+    border-radius: 10px;
+}
 .hero-text {
     position: absolute;
     top: 50%;
@@ -59,22 +69,12 @@ body {
         background-color: #0056b3;
     }
 
-/* Search and Filter Section */
 .search-filter {
     background-color: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 40px;
-}
-
-.search-bar {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
 }
 
 .filters {
@@ -92,7 +92,6 @@ body {
         border-radius: 5px;
     }
 
-/* Time Picker & Date Picker adjustments */
 .react-time-picker, .date-picker {
     display: flex;
     flex-direction: column;

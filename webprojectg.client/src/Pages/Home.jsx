@@ -25,15 +25,13 @@ const Home = () => {
            
             <section className="hero">
                 <img src={heroImage} alt="Hero" className="hero-image" />
-                <div className="hero-text">
-                    <h1>Jouw Perfecte Rit Wacht</h1>
-                    <p>Vind en huur de beste voertuigen tegen onverslaanbare prijzen.</p>
-                    <button className="cta-button">Huur Nu</button>
+                <div className="hero-filter">
+                    <SearchFilters onSubmit={handleSearchSubmit} />
                 </div>
             </section>
 
             
-            <SearchFilters onSubmit={ handleSearchSubmit } />
+            
 
             
             <section className="testimonials">

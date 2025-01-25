@@ -76,15 +76,40 @@ export default function Catalogus() {
         }));
     };
 
+    const getNestedValue = (obj, path) => {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    };
+
     const filteredAutos = autos.filter((auto) => {
         return Object.entries(filters).every(([key, value]) => {
-            if (!value) return true; // Geen filterwaarde
-            if (typeof auto[key] === "string") {
-                return auto[key].toLowerCase().includes(value.toLowerCase()); // Tekst
+            if (!value) return true; // Sla lege filters over
+
+            const autoValue = getNestedValue(auto, key);
+
+            // String-vergelijkingen
+            if (typeof autoValue === "string") {
+                return autoValue.toLowerCase().includes(value.toLowerCase());
             }
-            if (typeof auto[key] === "number") {
-                return auto[key] === Number(value); // Numeriek
+
+            // Numerieke vergelijkingen
+            if (typeof autoValue === "number") {
+                if (key.startsWith("min")) {
+                    const field = key.replace("min", "").toLowerCase();
+                    const minValue = getNestedValue(auto, field);
+                    return minValue >= Number(value);
+                } else if (key.startsWith("max")) {
+                    const field = key.replace("max", "").toLowerCase();
+                    const maxValue = getNestedValue(auto, field);
+                    return maxValue <= Number(value);
+                }
+                return autoValue === Number(value);
             }
+
+            // Boolean-vergelijkingen
+            if (typeof autoValue === "boolean") {
+                return autoValue === (value === "true");
+            }
+
             return true;
         });
     });
@@ -95,12 +120,12 @@ export default function Catalogus() {
                 <SearchFilters />
             ) : (
                 <>
-                    <SideBar filters={filters} onFilterChange={(e) => setFilters(e)} />
+                    <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
                     <div className="content">
                         {errorMessage ? (
                             <div className="error-message">{errorMessage}</div>
                         ) : (
-                            autos.map(auto => (
+                            filteredAutos.map(auto => (
                                 <Products key={auto.kenteken} auto={auto} />
                             ))
                         )}

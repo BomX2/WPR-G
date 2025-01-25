@@ -1,33 +1,75 @@
-import './SideBar.css'
+import React, { useState, useEffect } from "react";
+import "./SideBar.css";
+
 export default function SideBar({ filters, onFilterChange, soort }) {
+    const [merken, setMerken] = useState([]);
+
+    // Ophalen van merken vanuit de API
+    useEffect(() => {
+        const fetchMerken = async () => {
+            try {
+                const response = await fetch(`https://localhost:7065/api/voertuigen/merken?soort=${soort}`);
+                if (!response.ok) {
+                    throw new Error("Fout bij het ophalen van merken");
+                }
+                const data = await response.json();
+                setMerken(data);
+            } catch (error) {
+                console.error("Error fetching merken:", error);
+            }
+        };
+
+        fetchMerken();
+    }, []);
+
+    // Algemene filters die altijd beschikbaar zijn
     const commonFilters = (
         <>
+            {/* Filter: Prijs */}
+            <label>Prijs</label>
+            <select name="prijs" onChange={onFilterChange}>
+                <option value="">Kies een optie</option>
+                <option value="laag-hoog">Laag naar Hoog</option>
+                <option value="hoog-laag">Hoog naar Laag</option>
+            </select>
+
+            {/* Filter: Merk */}
+            <label>Merk</label>
+            <select name="merk" value={filters.merk || ""} onChange={onFilterChange}>
+                <option value="">Alle merken</option>
+                {merken.map((merk) => (
+                    <option key={merk} value={merk}>
+                        {merk}
+                    </option>
+                ))}
+            </select>
+
+            {/* Filter: Bouwjaar */}
+            <label>Bouwjaar</label>
             <input
-                type="text"
-                name="merk"
-                placeholder="Merk"
-                value={filters.merk || ""}
+                type="number"
+                name="bouwjaar"
+                placeholder="Bijv. 2020"
+                value={filters.bouwjaar || ""}
                 onChange={onFilterChange}
             />
+
+            {/* Filter: Kleur */}
+            <label>Kleur</label>
             <input
                 type="text"
                 name="kleur"
-                placeholder="Kleur"
+                placeholder="Bijv. Rood"
                 value={filters.kleur || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="number"
-                name="kostenPerDag"
-                placeholder="Max kosten per dag"
-                value={filters.kostenPerDag || ""}
                 onChange={onFilterChange}
             />
         </>
     );
 
+    // Filters specifiek voor auto's
     const autoFilters = (
         <>
+            <label>Aantal deuren</label>
             <input
                 type="number"
                 name="aantalDeuren"
@@ -35,30 +77,37 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 value={filters.aantalDeuren || ""}
                 onChange={onFilterChange}
             />
-            <select
-                name="brandstofType"
-                value={filters.brandstofType || ""}
-                onChange={onFilterChange}
-            >
+
+            <label>Brandstoftype</label>
+            <select name="brandstofType" value={filters.brandstofType || ""} onChange={onFilterChange}>
                 <option value="">Alle brandstoffen</option>
                 <option value="benzine">Benzine</option>
                 <option value="diesel">Diesel</option>
                 <option value="elektrisch">Elektrisch</option>
             </select>
-            <input
-                type="checkbox"
-                name="heeftAirco"
-                checked={filters.heeftAirco || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftAirco", value: e.target.checked } })}
-            />
-            <label>Heeft airco</label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftAirco"
+                    checked={filters.heeftAirco || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftAirco", value: e.target.checked } })
+                    }
+                />
+                Heeft airco
+            </label>
+
+            <label>Brandstofverbruik (L/100km)</label>
             <input
                 type="number"
                 name="brandstofVerbruik"
-                placeholder="Max brandstofverbruik (L/100km)"
+                placeholder="Max brandstofverbruik"
                 value={filters.brandstofVerbruik || ""}
                 onChange={onFilterChange}
             />
+
+            <label>Transmissietype</label>
             <select
                 name="transmissieType"
                 value={filters.transmissieType || ""}
@@ -68,32 +117,40 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 <option value="Handgeschakeld">Handmatig</option>
                 <option value="Automatisch">Automatisch</option>
             </select>
+
+            <label>Bagageruimte (L)</label>
             <input
                 type="number"
                 name="bagageruimte"
-                placeholder="Min bagageruimte (L)"
+                placeholder="Min bagageruimte"
                 value={filters.bagageruimte || ""}
                 onChange={onFilterChange}
             />
         </>
     );
 
+    // Filters specifiek voor campers
     const camperFilters = (
         <>
+            <label>Lengte (m)</label>
             <input
                 type="number"
                 name="lengte"
-                placeholder="Max lengte (m)"
+                placeholder="Max lengte"
                 value={filters.lengte || ""}
                 onChange={onFilterChange}
             />
+
+            <label>Hoogte (m)</label>
             <input
                 type="number"
                 name="hoogte"
-                placeholder="Max hoogte (m)"
+                placeholder="Max hoogte"
                 value={filters.hoogte || ""}
                 onChange={onFilterChange}
             />
+
+            <label>Slaapplaatsen</label>
             <input
                 type="number"
                 name="slaapplaatsen"
@@ -101,67 +158,46 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
             />
-            <input
-                type="checkbox"
-                name="heeftBadkamer"
-                checked={filters.heeftBadkamer || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftBadkamer", value: e.target.checked } })}
-            />
-            <label>Heeft badkamer</label>
-            <input
-                type="checkbox"
-                name="heeftKeuken"
-                checked={filters.heeftKeuken || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftKeuken", value: e.target.checked } })}
-            />
-            <label>Heeft keuken</label>
-            <input
-                type="number"
-                name="waterTankCapaciteit"
-                placeholder="Min watertank capaciteit (L)"
-                value={filters.waterTankCapaciteit || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="number"
-                name="afvalTankCapaciteit"
-                placeholder="Min afvalwatertank capaciteit (L)"
-                value={filters.afvalTankCapaciteit || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="checkbox"
-                name="heeftZonnepanelen"
-                checked={filters.heeftZonnepanelen || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftZonnepanelen", value: e.target.checked } })}
-            />
-            <label>Heeft zonnepanelen</label>
-            <input
-                type="number"
-                name="fietsRekCapaciteit"
-                placeholder="Min fietrek capaciteit"
-                value={filters.fietsRekCapaciteit || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="checkbox"
-                name="heeftLuifel"
-                checked={filters.heeftLuifel || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftLuifel", value: e.target.checked } })}
-            />
-            <label>Heeft luifel</label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftBadkamer"
+                    checked={filters.heeftBadkamer || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftBadkamer", value: e.target.checked } })
+                    }
+                />
+                Heeft badkamer
+            </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftKeuken"
+                    checked={filters.heeftKeuken || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftKeuken", value: e.target.checked } })
+                    }
+                />
+                Heeft keuken
+            </label>
         </>
     );
 
+    // Filters specifiek voor caravans
     const caravanFilters = (
         <>
+            <label>Lengte (m)</label>
             <input
                 type="number"
                 name="lengte"
-                placeholder="Max lengte (m)"
+                placeholder="Max lengte"
                 value={filters.lengte || ""}
                 onChange={onFilterChange}
             />
+
+            <label>Slaapplaatsen</label>
             <input
                 type="number"
                 name="slaapplaatsen"
@@ -169,34 +205,18 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
             />
-            <input
-                type="checkbox"
-                name="heeftKeuken"
-                checked={filters.heeftKeuken || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftKeuken", value: e.target.checked } })}
-            />
-            <label>Heeft keuken</label>
-            <input
-                type="number"
-                name="waterTankCapaciteit"
-                placeholder="Min watertank capaciteit (L)"
-                value={filters.waterTankCapaciteit || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="number"
-                name="afvalTankCapaciteit"
-                placeholder="Min afvalwatertank capaciteit (L)"
-                value={filters.afvalTankCapaciteit || ""}
-                onChange={onFilterChange}
-            />
-            <input
-                type="checkbox"
-                name="heeftLuifel"
-                checked={filters.heeftLuifel || false}
-                onChange={(e) => onFilterChange({ target: { name: "heeftLuifel", value: e.target.checked } })}
-            />
-            <label>Heeft luifel</label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftKeuken"
+                    checked={filters.heeftKeuken || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftKeuken", value: e.target.checked } })
+                    }
+                />
+                Heeft keuken
+            </label>
         </>
     );
 
