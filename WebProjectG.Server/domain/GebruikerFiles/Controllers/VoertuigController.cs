@@ -75,7 +75,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         public async Task<ActionResult> GetAutoById(String Kenteken)
         {
             var voertuig = await _huurContext.Voertuigen.FindAsync(Kenteken);
-            if (voertuig == null) return NotFound(new { message = "Auto not found" });
+            if (voertuig == null) return NotFound(new { message = "Auto niet gevonden" });
 
             object extraInfo = null;
 
@@ -94,10 +94,134 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     break;
 
                 default:
-                    return BadRequest(new { message = "invalid voertuig type" });
+                    return BadRequest(new { message = "Ongeldige voertuige soort" });
             }
 
             return Ok(extraInfo);
         }
+
+        [HttpPost("createVoertuig")]
+        public async Task<ActionResult> CreateVoertuig(
+        string huurStatus,
+        string merk,
+        string type,
+        string kenteken,
+        string kleur,
+        int aanschafJaar,
+        decimal prijsPerDag,
+        bool inclusiefVerzekering,
+        string soort,
+        int? aantalDeuren = null,
+        string? brandstofType = null,
+        bool? heeftAirco = null,
+        double? brandstofVerbruik = null,
+        string? transmissieType = null,
+        int? bagageruimte = null,
+        double? lengte = null,
+        double? hoogte = null,
+        int? slaapplaatsen = null,
+        bool? heeftBadkamer = null,
+        bool? heeftKeuken = null,
+        double? waterTankCapaciteit = null,
+        double? afvalTankCapaciteit = null,
+        bool? heeftZonnepanelen = null,
+        int? fietsRekCapaciteit = null,
+        bool? heeftLuifel = null)
+        {
+            // Create the base Voertuig object
+            var voertuig = new Voertuig(
+                huurStatus: huurStatus,
+                merk: merk,
+                type: type,
+                kenteken: kenteken,
+                kleur: kleur,
+                aanschafJaar: aanschafJaar,
+                prijsPerDag: prijsPerDag,
+                inclusiefVerzekering: inclusiefVerzekering
+            )
+            {
+                soort = soort.ToLower()
+            };
+
+            await _huurContext.Voertuigen.AddAsync(voertuig);
+
+            // Create specific subtype based on "soort"
+            switch (voertuig.soort)
+            {
+                case "auto":
+                    if (aantalDeuren == null || brandstofType == null || heeftAirco == null || brandstofVerbruik == null || transmissieType == null || bagageruimte == null)
+                    {
+                        return BadRequest(new { message = "Missing required fields for Auto." });
+                    }
+
+                    var auto = new Auto
+                    {
+                        Kenteken = voertuig.Kenteken,
+                        Voertuig = voertuig,
+                        AantalDeuren = aantalDeuren.Value,
+                        BrandstofType = brandstofType,
+                        HeeftAirco = heeftAirco.Value,
+                        BrandstofVerbruik = brandstofVerbruik.Value,
+                        TransmissieType = transmissieType,
+                        Bagageruimte = bagageruimte.Value
+                    };
+                    await _huurContext.autos.AddAsync(auto);
+                    break;
+
+                case "camper":
+                    if (lengte == null || hoogte == null || slaapplaatsen == null || heeftBadkamer == null || heeftKeuken == null || waterTankCapaciteit == null || afvalTankCapaciteit == null || brandstofVerbruik == null || heeftZonnepanelen == null || fietsRekCapaciteit == null || heeftLuifel == null)
+                    {
+                        return BadRequest(new { message = "Missing required fields for Camper." });
+                    }
+
+                    var camper = new Camper
+                    {
+                        Kenteken = voertuig.Kenteken,
+                        Voertuig = voertuig,
+                        Lengte = lengte.Value,
+                        Hoogte = hoogte.Value,
+                        Slaapplaatsen = slaapplaatsen.Value,
+                        HeeftBadkamer = heeftBadkamer.Value,
+                        HeeftKeuken = heeftKeuken.Value,
+                        WaterTankCapaciteit = waterTankCapaciteit.Value,
+                        AfvalTankCapaciteit = afvalTankCapaciteit.Value,
+                        BrandstofVerbruik = brandstofVerbruik.Value,
+                        HeeftZonnepanelen = heeftZonnepanelen.Value,
+                        FietsRekCapaciteit = fietsRekCapaciteit.Value,
+                        HeeftLuifel = heeftLuifel.Value
+                    };
+                    await _huurContext.campers.AddAsync(camper);
+                    break;
+
+                case "caravan":
+                    if (lengte == null || slaapplaatsen == null || heeftKeuken == null || waterTankCapaciteit == null || afvalTankCapaciteit == null || heeftLuifel == null)
+                    {
+                        return BadRequest(new { message = "Missing required fields for Caravan." });
+                    }
+
+                    var caravan = new Caravan
+                    {
+                        Kenteken = voertuig.Kenteken,
+                        Voertuig = voertuig,
+                        Lengte = lengte.Value,
+                        Slaapplaatsen = slaapplaatsen.Value,
+                        HeeftKeuken = heeftKeuken.Value,
+                        WaterTankCapaciteit = waterTankCapaciteit.Value,
+                        AfvalTankCapaciteit = afvalTankCapaciteit.Value,
+                        HeeftLuifel = heeftLuifel.Value
+                    };
+                    await _huurContext.caravans.AddAsync(caravan);
+                    break;
+
+                default:
+                    return BadRequest(new { message = "Invalid voertuig type." });
+            }
+
+            // Save all changes to the database
+            await _huurContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetAutoById), new { Kenteken = voertuig.Kenteken }, voertuig);
+        }
+
     }
 }
