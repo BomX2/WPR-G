@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250125095654_initialhuur")]
-    partial class initialhuur
+    [Migration("20250125152138_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,7 +138,7 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool?>("Goedgekeurd")
                         .HasColumnType("bit");
 
-                    b.Property<string>("InleverTijd")
+                    b.Property<string>("Inlevertijd")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -146,7 +146,7 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("OphaalTijd")
+                    b.Property<string>("Ophaaltijd")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

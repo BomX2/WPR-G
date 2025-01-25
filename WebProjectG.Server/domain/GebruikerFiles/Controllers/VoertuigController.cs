@@ -33,11 +33,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 // Zet ophaaltijd en inlevertijd om naar numerieke waarden voor vergelijking (bijvoorbeeld ochtend = 0, middag = 1, avond = 2)
                 var dagdelen = new Dictionary<string, int> { { "ochtend", 0 }, { "middag", 1 }, { "avond", 2 } };
 
-                int OphaalTijd = dagdelen[queryParams.OphaalTijd.ToLower().Trim()];
-                int InleverTijd = dagdelen[queryParams.InleverTijd.ToLower().Trim()];
+                int ophaalTijd = dagdelen[queryParams.OphaalTijd.ToLower().Trim()];
+                int inleverTijd = dagdelen[queryParams.InleverTijd.ToLower().Trim()];
 
-                if (!dagdelen.TryGetValue(queryParams.OphaalTijd.ToLower().Trim(), out var ophaalTijd) ||
-                    !dagdelen.TryGetValue(queryParams.InleverTijd.ToLower().Trim(), out var inleverTijd))
+                if (!dagdelen.TryGetValue(queryParams.OphaalTijd.ToLower().Trim(), out var OphaalTijd) ||
+                    !dagdelen.TryGetValue(queryParams.InleverTijd.ToLower().Trim(), out var InleverTijd))
                 {
                     return BadRequest("OphaalTijd of InleverTijd is ongeldig.");
                 }
@@ -54,8 +54,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 // Filter de aanvragen verder in-memory
                 var bezetteAuto = aanvragen
                     .Where(a =>
-                        dagdelen[a.ophaaltijd.ToLower().Trim()] <= InleverTijd &&
-                        dagdelen[a.inlevertijd.ToLower().Trim()] >= OphaalTijd)
+                        dagdelen[a.Ophaaltijd.ToLower().Trim()] <= inleverTijd &&
+                        dagdelen[a.Inlevertijd.ToLower().Trim()] >= ophaalTijd)
                     .Select(a => a.Kenteken)
                     .Distinct();
 
@@ -106,7 +106,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             // Als geen specifieke soort is opgegeven, retourneer de voertuigen zonder filtering
             return Ok(gefilterdeVoertuigen);
         }
-    
+
 
         [HttpGet("getByKenteken/{Kenteken}")]
         public async Task<ActionResult> GetAutoById(String Kenteken)
@@ -127,7 +127,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     break;
 
                 case "caravan":
-                    extraInfo = await _huurContext.caravans.FirstOrDefaultAsync(a => a.Kenteken== Kenteken);
+                    extraInfo = await _huurContext.caravans.FirstOrDefaultAsync(a => a.Kenteken == Kenteken);
                     break;
 
                 default:
@@ -135,6 +135,18 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
 
             return Ok(extraInfo);
+        }
+
+        [HttpGet("merken")]
+        public async Task<IActionResult> GetMerken([FromQuery] string soort)
+        {
+            var merken = await _huurContext.Voertuigen
+                .Where(v => v.soort.ToLower() == soort.ToLower())
+                .Select(v => v.Merk)
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(merken);
         }
     }
 }

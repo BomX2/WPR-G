@@ -4,13 +4,16 @@ import Products from '../componements/Products/Products'
 import SideBar from '../componements/SideBar/SideBar'
 import { useLocation } from "react-router-dom"
 import dayjs from "dayjs"
+import SearchFilters from '../componements/filter-bar/FilterBar';
+
 
 export default function Catalogus() {
     const location = useLocation();
     const [autos, setautos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     const [filters, setFilters] = useState({});
-    const [soort, setSoort] = useState("")
+    const [soort, setSoort] = useState("");
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
 
@@ -19,9 +22,16 @@ export default function Catalogus() {
         const OphaalTijd = queryparams.get("OphaalTijd");
         const inleverDatum = queryparams.get("inleverDatum");
 
-        const InleverTijd = queryparams.get("inleverTijd");
+        const InleverTijd = queryparams.get("InleverTijd");
         const soort = queryparams.get("soort");
         setSoort(soort)
+
+        if (!ophaalDatum || !inleverDatum || !OphaalTijd || !InleverTijd || !soort) {
+            setShowFilters(true);
+            return;
+        }
+
+        setShowFilters(false);
 
         console.log("Soort:", soort);
 
@@ -66,31 +76,62 @@ export default function Catalogus() {
         }));
     };
 
+    const getNestedValue = (obj, path) => {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    };
+
     const filteredAutos = autos.filter((auto) => {
         return Object.entries(filters).every(([key, value]) => {
-            if (!value) return true; // Geen filterwaarde
-            if (typeof auto[key] === "string") {
-                return auto[key].toLowerCase().includes(value.toLowerCase()); // Tekst
+            if (!value) return true; // Sla lege filters over
+
+            const autoValue = getNestedValue(auto, key);
+
+            // String-vergelijkingen
+            if (typeof autoValue === "string") {
+                return autoValue.toLowerCase().includes(value.toLowerCase());
             }
-            if (typeof auto[key] === "number") {
-                return auto[key] === Number(value); // Numeriek
+
+            // Numerieke vergelijkingen
+            if (typeof autoValue === "number") {
+                if (key.startsWith("min")) {
+                    const field = key.replace("min", "").toLowerCase();
+                    const minValue = getNestedValue(auto, field);
+                    return minValue >= Number(value);
+                } else if (key.startsWith("max")) {
+                    const field = key.replace("max", "").toLowerCase();
+                    const maxValue = getNestedValue(auto, field);
+                    return maxValue <= Number(value);
+                }
+                return autoValue === Number(value);
             }
+
+            // Boolean-vergelijkingen
+            if (typeof autoValue === "boolean") {
+                return autoValue === (value === "true");
+            }
+
             return true;
         });
     });
 
     return (
         <div className="catalogus-container">
-            <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
-            <div className="content">
-                {errorMessage ? (
-                    <div className="error-message">{errorMessage}</div>
-                ) : (
-                    filteredAutos.map(auto => (
-                        <Products key={auto.kenteken} auto={auto} />
-                    ))
-                )}
-            </div>
+            {showFilters ? (
+                <SearchFilters />
+            ) : (
+                <>
+                    <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
+                    <div className="content">
+                        {errorMessage ? (
+                            <div className="error-message">{errorMessage}</div>
+                        ) : (
+                            filteredAutos.map(auto => (
+                                <Products key={auto.kenteken} auto={auto} />
+                            ))
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

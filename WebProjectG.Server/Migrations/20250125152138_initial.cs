@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initialhuur : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -182,8 +182,8 @@ namespace WebProjectG.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OphaalTijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InleverTijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ophaaltijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Inlevertijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Adres = table.Column<string>(type: "nvarchar(max)", nullable: false),
