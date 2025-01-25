@@ -4,13 +4,16 @@ import Products from '../componements/Products/Products'
 import SideBar from '../componements/SideBar/SideBar'
 import { useLocation } from "react-router-dom"
 import dayjs from "dayjs"
+import SearchFilters from '../componements/filter-bar/FilterBar';
+
 
 export default function Catalogus() {
     const location = useLocation();
     const [autos, setautos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     const [filters, setFilters] = useState({});
-    const [soort, setSoort] = useState("")
+    const [soort, setSoort] = useState("");
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
 
@@ -22,6 +25,13 @@ export default function Catalogus() {
         const InleverTijd = queryparams.get("InleverTijd");
         const soort = queryparams.get("soort");
         setSoort(soort)
+
+        if (!ophaalDatum || !inleverDatum || !OphaalTijd || !InleverTijd || !soort) {
+            setShowFilters(true);
+            return;
+        }
+
+        setShowFilters(false);
 
         console.log("Soort:", soort);
 
@@ -81,16 +91,22 @@ export default function Catalogus() {
 
     return (
         <div className="catalogus-container">
-            <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
-            <div className="content">
-                {errorMessage ? (
-                    <div className="error-message">{errorMessage}</div>
-                ) : (
-                    filteredAutos.map(auto => (
-                        <Products key={auto.kenteken} auto={auto} />
-                    ))
-                )}
-            </div>
+            {showFilters ? (
+                <SearchFilters />
+            ) : (
+                <>
+                    <SideBar filters={filters} onFilterChange={(e) => setFilters(e)} />
+                    <div className="content">
+                        {errorMessage ? (
+                            <div className="error-message">{errorMessage}</div>
+                        ) : (
+                            autos.map(auto => (
+                                <Products key={auto.kenteken} auto={auto} />
+                            ))
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 };
