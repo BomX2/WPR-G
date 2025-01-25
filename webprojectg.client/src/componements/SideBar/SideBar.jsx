@@ -20,14 +20,14 @@ export default function SideBar({ filters, onFilterChange, soort }) {
         };
 
         fetchMerken();
-    }, []);
+    }, [soort]);
 
     // Algemene filters die altijd beschikbaar zijn
     const commonFilters = (
         <>
             {/* Filter: Prijs */}
             <label>Prijs</label>
-            <select name="prijs" onChange={onFilterChange}>
+            <select name="voertuig.prijsPerDag" onChange={onFilterChange}>
                 <option value="">Kies een optie</option>
                 <option value="laag-hoog">Laag naar Hoog</option>
                 <option value="hoog-laag">Hoog naar Laag</option>
@@ -35,7 +35,7 @@ export default function SideBar({ filters, onFilterChange, soort }) {
 
             {/* Filter: Merk */}
             <label>Merk</label>
-            <select name="merk" value={filters.merk || ""} onChange={onFilterChange}>
+            <select name="voertuig.merk" value={filters.merk} onChange={onFilterChange}>
                 <option value="">Alle merken</option>
                 {merken.map((merk) => (
                     <option key={merk} value={merk}>
@@ -48,9 +48,9 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <label>Bouwjaar</label>
             <input
                 type="number"
-                name="bouwjaar"
+                name="voertuig.aanschafJaar"
                 placeholder="Bijv. 2020"
-                value={filters.bouwjaar || ""}
+                value={filters.bouwjaar}
                 onChange={onFilterChange}
             />
 
@@ -58,9 +58,9 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <label>Kleur</label>
             <input
                 type="text"
-                name="kleur"
+                name="voertuig.kleur"
                 placeholder="Bijv. Rood"
-                value={filters.kleur || ""}
+                value={filters.kleur}
                 onChange={onFilterChange}
             />
         </>
