@@ -136,8 +136,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.StreetAddress, user.Adres),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim("UserId", user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString())
             };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -156,7 +159,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     return Ok(new { message = "Login successful" });
                 }
 
-                // If we reach here, it's usually a bad password or locked out scenario
                 if (result.IsLockedOut)
                 {
                     return Unauthorized(new { message = "User is locked out." });
@@ -177,11 +179,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("verify-2fa-login")]
         public async Task<IActionResult> VerifyTwoFactorLogin([FromBody] TwoFactorLoginDto model)
         {
-            // Example Dto: { userId: "XYZ", twoFactorCode: "123456", rememberMe: true }
             try
             {
-                // The user isn't signed in yet, so we can't just do _userManager.GetUserAsync(User).
-                // Instead, we rely on _signInManager for the second factor sign in.
                 var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(
                     model.TwoFactorCode,
                     model.RememberMe,
@@ -190,7 +189,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
                 if (result.Succeeded)
                 {
-                    // The sign-in manager will issue the cookie automatically if 2FA is correct.
                     return Ok(new { message = "2FA login successful" });
                 }
                 else if (result.IsLockedOut)
@@ -232,6 +230,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var phonenumber = User.FindFirst(ClaimTypes.MobilePhone)?.Value;
+            var twoFactorEnabledString = User.FindFirst("TwoFactorEnabled")?.Value;
+            bool twoFactorEnabled = bool.TryParse(twoFactorEnabledString, out var parsedResult) && parsedResult;
+
 
             return Ok(new
             {
@@ -240,19 +241,19 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 adres = adres,
                 role = role,
                 name = username,
-                phonenumber = phonenumber
+                phonenumber = phonenumber,
+                twoFactorEnabled = twoFactorEnabled
             });
         }
 
         [HttpPost("enable-2fa")]
-        [Authorize] // user must be logged in via cookie
+        [Authorize]
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized(new { Message = "User not found." });
 
-            // 1) Ensure user has an authenticator key
             var key = await _userManager.GetAuthenticatorKeyAsync(user);
             if (string.IsNullOrEmpty(key))
             {
@@ -260,9 +261,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 key = await _userManager.GetAuthenticatorKeyAsync(user);
             }
 
-            // 2) Build the URI for TOTP apps
             var email = user.Email ?? user.UserName;
-            var issuer = "MyAwesomeApp"; // put your app/service name here
+            var issuer = "CarAndAll"; 
             var otpauthUrl = $"otpauth://totp/{issuer}:{email}?secret={key}&issuer={issuer}&digits=6";
 
             // Return the otpauth URL so the front-end can generate a QR code
@@ -277,7 +277,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             if (user == null)
                 return Unauthorized(new { message = "User not found." });
 
-            // Set TwoFactorEnabled = false
             user.TwoFactorEnabled = false;
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
@@ -285,14 +284,12 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return BadRequest(new { message = "Could not disable 2FA." });
             }
 
-            // Optionally clear/reset the authenticator key
-            // so any old TOTP codes won’t work anymore
             await _userManager.ResetAuthenticatorKeyAsync(user);
 
             return Ok(new { message = "2FA disabled successfully." });
         }
 
-        [HttpPost("verify-2fa")]
+        [HttpPost("verify-2fa")] //verify for enabling
         [Authorize]
         public async Task<IActionResult> VerifyTwoFactorToken([FromBody] VerifyTokenDto model)
         {
@@ -315,7 +312,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(new { Message = "2FA is enabled." });
         }
-
+       
 
         //Fetch user details
         [HttpGet("getUser/{id}")]

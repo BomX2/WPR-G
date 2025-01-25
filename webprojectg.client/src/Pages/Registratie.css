@@ -1,4 +1,4 @@
-.container {
+﻿.container {
     display: flex;
     max-width: 650px;
     flex-direction: column;
@@ -6,9 +6,10 @@
     margin-top: 120px;
     background: #F5E9DB;
     border-radius: 8px;
-    padding-bottom: 30px
+    padding-bottom: 30px;
 }
-.header{
+
+.header {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,33 +17,107 @@
     width: 100%;
     margin-top: 30px;
 }
-.inputs{
+
+.inputs {
     margin-top: 55px;
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
-.input{
+
+.input {
     display: flex;
     align-items: center;
     margin: auto;
-    width:450px;
+    width: 450px;
     height: 60px;
     background: #ffffff;
     border-radius: 6px;
-}
-.input input{
-    padding: 10px;
-    height: 50px;
-    width: 400px;
-    background: transparent;
-    border: none;
-    outline:none;
-    color: #808080;
-    font-size: 19px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-.submit-container{
+    .input:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .input input,
+    .input select {
+        padding: 10px;
+        height: 100%;
+        width: 90%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #333333;
+        font-size: 19px;
+    }
+
+        .input input::placeholder {
+            color: #808080;
+        }
+
+.roleinput {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 450px;
+    height: 60px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+    .roleinput:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-color: #aaaaaa;
+    }
+
+    .roleinput label {
+        font-size: 16px; 
+        color: #808080; 
+        flex-shrink: 0;
+    }
+
+    .roleinput select {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #333333; 
+        font-size: 19px;
+        padding: 5px;
+        border-radius: 4px;
+        appearance: none;
+        cursor: pointer;
+    }
+
+        .roleinput select option:first-child {
+            color: #808080;
+        }
+
+    .roleinput::after {
+        content: '▼';
+        position: relative;
+        right: 20px;
+        font-size: 14px;
+        color: #808080;
+        pointer-events: none;
+    }
+
+
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: auto;
+    width: 450px;
+}
+
+.submit-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,19 +125,67 @@
     margin: 30px auto;
 }
 
-.buttons{
-    display:flex;
+.buttons {
+    display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     width: 200px;
     height: 55px;
     border-radius: 50px;
     font-size: 19px;
     font-weight: 700;
     color: #808080;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-form{
+    .buttons:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #e0e0e0; 
+        color: #606060; 
+    }
+
+form {
     margin: 0;
     padding: 0;
 }
+.qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+    width: 450px;
+}
+
+    .qr-container p {
+        font-size: 16px;
+        color: #333333;
+        text-align: center;
+    }
+
+.qr-code {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 256px;
+    height: 256px;
+    background: #f9f9f9;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.cancel-button {
+    background-color: #e74c3c;
+    color: #ffffff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+    .cancel-button:hover {
+        background-color: #c0392b;
+    }

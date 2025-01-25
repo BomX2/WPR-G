@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './forms.css';
+import './Registratie.css';
 import { useUser } from '../componements/userContext';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -10,18 +10,16 @@ const AccSettings = () => {
     const [phonenumber, setPhonenumber] = useState(user?.phonenumber || '');
 
     const [show2FA, setShow2FA] = useState(false);
-    const [otpAuthUrl, setOtpAuthUrl] = useState(''); // We'll store the otpauth url here
-    const [twoFaCode, setTwoFaCode] = useState('');   // Input field for verifying 2FA
+    const [otpAuthUrl, setOtpAuthUrl] = useState('');
+    const [twoFaCode, setTwoFaCode] = useState('');
     const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(user?.twoFactorEnabled || false);
 
-    // Enable 2FA
     const enable2FA = async () => {
         try {
             const response = await fetch('https://localhost:7065/api/gebruikers/enable-2fa', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                    // No Authorization header since we're using cookies
                 },
                 credentials: 'include'
             });
@@ -38,11 +36,8 @@ const AccSettings = () => {
         }
     };
 
-    // Disabled 2FA
     const disable2FA = async () => {
         try {
-            // This assumes you have an endpoint like:
-            // POST /api/gebruikers/disable-2fa
             const response = await fetch('https://localhost:7065/api/gebruikers/disable-2fa', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -52,7 +47,6 @@ const AccSettings = () => {
             if (response.ok) {
                 alert("2FA disabled!");
                 setIsTwoFactorEnabled(false);
-                // Optionally clear any leftover 2FA UI
                 setShow2FA(false);
                 setTwoFaCode('');
                 setOtpAuthUrl('');
@@ -65,7 +59,6 @@ const AccSettings = () => {
         }
     };
 
-    // Verify 2FA
     const verify2FA = async () => {
         try {
             const response = await fetch('https://localhost:7065/api/gebruikers/verify-2fa', {
@@ -79,10 +72,9 @@ const AccSettings = () => {
             const data = await response.json();
             if (response.ok) {
                 alert("2FA is now enabled!");
-                // Optionally, you can hide the QR code after success
                 setShow2FA(false);
             } else {
-                alert(data.message || "Invalid 2FA code.");
+                alert(data.message || "Ongelidge 2FA code.");
             }
         } catch (error) {
             console.error("Error verifying 2FA code:", error);
@@ -90,7 +82,6 @@ const AccSettings = () => {
         }
     };
 
-    // Delete account
     const DeleteAccount = async () => {
         if (!user) return;
         try {
@@ -114,7 +105,6 @@ const AccSettings = () => {
         }
     };
 
-    // Save updated info
     const SaveOnSubmit = async () => {
         if (!user) return;
         try {
@@ -147,83 +137,97 @@ const AccSettings = () => {
     }
 
     return (
-        <div
-            className="form-overlay"
-            style={{
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                padding: '20px'
-            }}
-        >
-            <div className="form-content">
-                <h1>Account Settings</h1>
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!adres || !email || !phonenumber) {
-                        alert("Voer alle velden in");
-                        return;
-                    }
-                    SaveOnSubmit();
-                }}>
-                    <div>
-                        <input
-                            type="text"
-                            value={adres}
-                            onChange={(e) => setAdres(e.target.value)}
-                            placeholder="Adres"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="text"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="text"
-                            value={phonenumber}
-                            onChange={(e) => setPhonenumber(e.target.value)}
-                            placeholder="Telefoonnummer"
-                        />
-                    </div>
-                    <button type="submit">submit</button>
-                    <button type="button" onClick={DeleteAccount}>Verwijder account</button>
-                </form>
-
-                {/* Conditionally render "Enable 2FA" or "Disable 2FA" */}
-                {!isTwoFactorEnabled ? (
-                    <button type="button" onClick={enable2FA}>
-                        Enable 2FA
+        <div className="container">
+            <div className="header">
+                <div className="text">Accountinstellingen</div>
+            </div>
+            <form className="inputs" onSubmit={SaveOnSubmit}>
+                <div className="input">
+                    <input
+                        type="text"
+                        value={adres}
+                        onChange={(e) => setAdres(e.target.value)}
+                        placeholder="Adres"
+                    />
+                </div>
+                <div className="input">
+                    <input
+                        type="text"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="E-mailadres"
+                    />
+                </div>
+                <div className="input">
+                    <input
+                        type="text"
+                        value={phonenumber}
+                        onChange={(e) => setPhonenumber(e.target.value)}
+                        placeholder="Telefoonnummer"
+                    />
+                </div>
+                <div className="submit-container">
+                    <button type="submit" className="buttons">
+                        Opslaan
                     </button>
-                ) : (
-                    <button type="button" onClick={disable2FA}>
-                        Disable 2FA
+                    <button type="button" className="buttons" onClick={DeleteAccount}>
+                        Verwijder Account
+                    </button>
+                </div>
+            </form>
+            <div className="submit-container">
+                {!isTwoFactorEnabled && !show2FA && (
+                    <button className="buttons" type="button" onClick={enable2FA}>
+                        Schakel 2FA in
                     </button>
                 )}
+                {isTwoFactorEnabled && (
+                    <button
+                        className="buttons"
+                        type="button"
+                        onClick={disable2FA}
+                        style={{ backgroundColor: '#e74c3c', color: '#ffffff' }}
+                    >
+                        Schakel 2FA uit
+                    </button>
+                )}
+            </div>
 
-                {/* Show the QR code and a prompt to verify if user is enabling 2FA */}
-                {show2FA && !isTwoFactorEnabled && (
-                    <div style={{ marginTop: '20px' }}>
-                        <p>Scan de QR Code met jouw authenticator app:</p>
-                        {otpAuthUrl && (
-                            <QRCodeSVG value={otpAuthUrl} size={256} level="H" includeMargin={true} />
-                        )}
-                        <div style={{ marginTop: '10px' }}>
-                            <label>Voer de 6-cijferige code in:</label>
+            {show2FA && (
+                <div className="qr-container">
+                    <p>Scan de QR-code met uw authenticator-app:</p>
+                    {otpAuthUrl && (
+                        <div className="qr-code">
+                            <QRCodeSVG value={otpAuthUrl} size={256} />
+                        </div>
+                    )}
+                    <div className="inputs">
+                        <div className="input">
                             <input
                                 type="text"
                                 value={twoFaCode}
                                 onChange={(e) => setTwoFaCode(e.target.value)}
-                                placeholder="123456"
+                                placeholder="Voer 2FA-code in"
                             />
-                            <button onClick={verify2FA}>Verifieer Code</button>
+                        </div>
+                        <div className="submit-container">
+                            <button className="buttons" onClick={verify2FA}>
+                                Verifieer Code
+                            </button>
+                            <button
+                                className="buttons cancel-button"
+                                onClick={() => {
+                                    setShow2FA(false);
+                                    setOtpAuthUrl('');
+                                    setTwoFaCode('');
+                                }}
+                            >
+                                Annuleer
+                            </button>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

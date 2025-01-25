@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../componements/UserContext';
-
+import './Registratie.css';
 function Login() {
     const [emailOrUsername, setEmailOrUsername] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
 
-    // 2FA-related state:
     const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
     const [twoFactorCode, setTwoFactorCode] = useState("");
     const [twoFactorUserId, setTwoFactorUserId] = useState("");
@@ -20,13 +19,12 @@ function Login() {
         navigate("/Registratie");
     };
 
-    // Normal login submission
     const onSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
         if (!emailOrUsername || !password) {
-            setError("Please fill in all fields.");
+            setError("Vul alle velden in.");
             return;
         }
 
@@ -34,10 +32,11 @@ function Login() {
             console.log("Attempting login for:", emailOrUsername);
             console.log("Remember Me:", rememberMe);
 
+            // normale login
             const response = await fetch("https://localhost:7065/api/gebruikers/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include", // for cookie-based auth
+                credentials: "include", 
                 body: JSON.stringify({ emailOrUsername, password, rememberMe }),
             });
 
@@ -47,14 +46,13 @@ function Login() {
             if (response.ok) {
                 const data = JSON.parse(responseText);
 
-                // If server indicates 2FA is required
+                // als 2fa required is
                 if (data.requiresTwoFactor) {
                     setRequiresTwoFactor(true);
                     setTwoFactorUserId(data.userId || "");
                 } else {
                     console.log("Login successful. Getting user info...");
 
-                    // Wait briefly for cookie to set
                     await new Promise((resolve) => setTimeout(resolve, 200));
 
                     const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
@@ -68,7 +66,7 @@ function Login() {
                         navigate("/");
                     } else {
                         console.error("Failed to fetch user details after login.");
-                        setError("Failed to retrieve user information.");
+                        setError("UserData kon niet opgehaald worden");
                     }
                 }
             } else {
@@ -78,7 +76,7 @@ function Login() {
             }
         } catch (err) {
             console.error("Unexpected error during login:", err);
-            setError("An unexpected error occurred. Please try again.");
+            setError("Iets is fout gegaan! Probeer opnieuw: ");
         }
     };
 
@@ -88,7 +86,7 @@ function Login() {
         setError("");
 
         if (!twoFactorCode) {
-            setError("Please enter your 2FA code.");
+            setError("Voer de 6-cijferige 2FA code in:");
             return;
         }
 
@@ -109,7 +107,6 @@ function Login() {
 
             if (response.ok) {
                 console.log("2FA verification successful. Fetching user...");
-                // Again, wait briefly
                 await new Promise((resolve) => setTimeout(resolve, 200));
 
                 const userResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
@@ -123,16 +120,16 @@ function Login() {
                     navigate("/");
                 } else {
                     console.error("Failed to fetch user details after 2FA login.");
-                    setError("Failed to retrieve user information after 2FA.");
+                    setError("UserData kon niet opgehaald worden na F2A login.");
                 }
             } else {
                 const errorData = JSON.parse(responseText);
                 console.error("2FA verification failed:", errorData);
-                setError(errorData.message || "2FA verification failed.");
+                setError(errorData.message || "2FA verificatie mislukt!.");
             }
         } catch (err) {
             console.error("Error during 2FA verification:", err);
-            setError("An unexpected error occurred during 2FA verification.");
+            setError("Er is een fout opgetreden tijdens het 2FA verificatie process.");
         }
     };
 
@@ -150,7 +147,7 @@ function Login() {
                                 type="text"
                                 value={emailOrUsername}
                                 onChange={(e) => setEmailOrUsername(e.target.value)}
-                                placeholder="Email or Username"
+                                placeholder="Email of Username"
                             />
                         </div>
                         <div className="input">
@@ -161,7 +158,7 @@ function Login() {
                                 placeholder="Password"
                             />
                         </div>
-                        <div>
+                        <div className="checkbox-container">
                             <input
                                 type="checkbox"
                                 checked={rememberMe}
@@ -187,7 +184,9 @@ function Login() {
 
             {requiresTwoFactor && (
                 <form onSubmit={handle2faVerify}>
-                    <p>2FA is required. Please enter the code from your authenticator app:</p>
+                    <div className="header">
+                        <div className="text">Voer de 6-cijferige code van uw autheticator app in:</div>
+                    </div>
                     <div className="inputs">
                         <div className="input">
                             <input
@@ -202,6 +201,19 @@ function Login() {
                         <div className="submit">
                             <button type="submit" className="buttons">
                                 Verify 2FA
+                            </button>
+                        </div>
+                        <div className="submit">
+                            <button
+                                className="buttons cancel-button"
+                                onClick={() => {
+                                    setRequiresTwoFactor(false);
+                                    setTwoFactorCode("");
+                                    setTwoFactorUserId("");
+                                    setError("")
+                                }}
+                            >
+                                Annuleer
                             </button>
                         </div>
                     </div>

@@ -2,8 +2,8 @@
 {
     public class TwoFactorLoginDto
     {
-        public string UserId { get; set; }        // The user's ID
-        public string TwoFactorCode { get; set; } // The 6-digit code from the authenticator app
-        public bool RememberMe { get; set; }      // If user wants to remain signed in
+        public string UserId { get; set; }        
+        public string TwoFactorCode { get; set; } 
+        public bool RememberMe { get; set; }     
     }
 }
