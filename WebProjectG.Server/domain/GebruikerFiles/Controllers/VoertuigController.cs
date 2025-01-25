@@ -37,7 +37,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 int InleverTijd = dagdelen[queryParams.InleverTijd.ToLower().Trim()];
 
                 if (!dagdelen.TryGetValue(queryParams.OphaalTijd.ToLower().Trim(), out var ophaalTijd) ||
-            !dagdelen.TryGetValue(queryParams.InleverTijd.ToLower().Trim(), out var inleverTijd))
+                    !dagdelen.TryGetValue(queryParams.InleverTijd.ToLower().Trim(), out var inleverTijd))
                 {
                     return BadRequest("OphaalTijd of InleverTijd is ongeldig.");
                 }
@@ -54,8 +54,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 // Filter de aanvragen verder in-memory
                 var bezetteAuto = aanvragen
                     .Where(a =>
-                        dagdelen[a.ophaaltijd.ToLower()] <= inleverTijd &&
-                        dagdelen[a.inlevertijd.ToLower()] >= ophaalTijd)
+                        dagdelen[a.OphaalTijd.ToLower().Trim()] <= InleverTijd &&
+                        dagdelen[a.InleverTijd.ToLower().Trim()] >= OphaalTijd)
                     .Select(a => a.Kenteken)
                     .Distinct();
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initialhuur : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,6 +19,8 @@ namespace WebProjectG.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AbonnementType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Prijs = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BetaalMethode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Periode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -180,11 +182,13 @@ namespace WebProjectG.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ophaaltijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    inlevertijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OphaalTijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InleverTijd = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefoonnummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Goedgekeurd = table.Column<bool>(type: "bit", nullable: true),
-                    persoonsgegevens = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gebruikerid = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Kenteken = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -202,6 +206,33 @@ namespace WebProjectG.Server.Migrations
                         principalTable: "Voertuigen",
                         principalColumn: "Kenteken",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "schadeFormulieren",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SchadeType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Kenteken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VoertuigKenteken = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AanvraagId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_schadeFormulieren", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_schadeFormulieren_Aanvragen_AanvraagId",
+                        column: x => x.AanvraagId,
+                        principalTable: "Aanvragen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_schadeFormulieren_Voertuigen_VoertuigKenteken",
+                        column: x => x.VoertuigKenteken,
+                        principalTable: "Voertuigen",
+                        principalColumn: "Kenteken");
                 });
 
             migrationBuilder.CreateIndex(
@@ -223,14 +254,21 @@ namespace WebProjectG.Server.Migrations
                 name: "IX_Gebruiker_KvkNummer",
                 table: "Gebruiker",
                 column: "KvkNummer");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_schadeFormulieren_AanvraagId",
+                table: "schadeFormulieren",
+                column: "AanvraagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_schadeFormulieren_VoertuigKenteken",
+                table: "schadeFormulieren",
+                column: "VoertuigKenteken");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Aanvragen");
-
             migrationBuilder.DropTable(
                 name: "autos");
 
@@ -239,6 +277,12 @@ namespace WebProjectG.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "caravans");
+
+            migrationBuilder.DropTable(
+                name: "schadeFormulieren");
+
+            migrationBuilder.DropTable(
+                name: "Aanvragen");
 
             migrationBuilder.DropTable(
                 name: "Gebruiker");

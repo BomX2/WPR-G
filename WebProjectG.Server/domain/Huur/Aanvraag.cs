@@ -9,11 +9,13 @@ namespace WebProjectG.Server.domain.Huur
         public int Id { get; set; }
         public DateOnly StartDatum { get; set; }
         public DateOnly EindDatum { get; set; }
-        public String ophaaltijd {  get; set; }
-        public String inlevertijd { get; set; }
+        public string ophaaltijd {  get; set; }
+        public string inlevertijd { get; set; }
         public string? Status { get; set; }
+        public string  Email { get; set; }
+        public string Adres { get; set; }
+        public string Telefoonnummer { get; set; }
         public bool? Goedgekeurd { get; set; } = false;
-        public string persoonsgegevens { get; set; }
         public string? Gebruikerid { get; set; }
         [ForeignKey("Gebruikerid")]
         public Gebruiker? Gebruiker { get; set; }
@@ -22,10 +24,13 @@ namespace WebProjectG.Server.domain.Huur
         [ForeignKey("Kenteken")]
         public Voertuig? voertuig { get; set; }
 
-        public Aanvraag(DateOnly startDatum, DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, String kenteken)
+        public  Aanvraag(DateOnly startDatum, string email, string adres, string telefoonnummer,DateOnly eindDatum,string? gebruikerid, bool? goedgekeurd, String kenteken)
         {
             StartDatum = startDatum;
             EindDatum = eindDatum;
+            Email = email;
+            Adres = adres;
+            Telefoonnummer = telefoonnummer;
             Gebruikerid = gebruikerid;
             Goedgekeurd = goedgekeurd;
             Kenteken = kenteken;
