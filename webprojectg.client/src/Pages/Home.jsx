@@ -6,6 +6,8 @@ import 'react-time-picker/dist/TimePicker.css';
 import './Home.css';
 import heroImage from '../image/CARNAL_LOGO.png';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../componements/userContext';
+
 
 const Home = () => {
     const [vehicleType, setVehicleType] = useState("");
@@ -14,6 +16,7 @@ const Home = () => {
     const [ophaalTime, setOphaalTime] = useState("");
     const [inleverTime, setInleverTime] = useState("");
 
+    const [user] = useUser();
     const navigate = useNavigate();
 
     const handelsubmit = (e) => {
