@@ -1,41 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import './modal.css';
 import carImage from "../image/kever.jpg";
 import './product.css'
+import dayjs from "dayjs"
 export default function Product() {
     const [auto, setAuto] = useState("");
     const [autoBestaat, setAutoBestaat] = useState(true);
-    const [modalWindow, setModalWindow] = useState(false);
-    const [startDatum, setStartDatum] = useState(null);
-    const [eindDatum, setEindDatum] = useState(null);
-    const [naam, setNaam] = useState("");
-    const [email, setEmail] = useState("");
-    const [telnummer, setTelNummer] = useState("")
-    const [geboektedatums, setGeBoekteDatums] = useState([]);
-    const { id } = useParams()
+    const { Kenteken } = useParams();
+    const [item, setItem] = useState([]);
+    const location = useLocation();
+    const queryparams = new URLSearchParams(location.search);
+    const ophaalDatum = queryparams.get("ophaalDatum");
+    const inleverDatum = queryparams.get("inleverDatum");
+    const ophaalTijd = queryparams.get("ophaalTijd");
+    const inleverTijd = queryparams.get("inleverTijd");
+    const fOphaalDatum = dayjs(ophaalDatum).format("YYYY-MM-DD");
+    const fInleverDatum = dayjs(inleverDatum).format("YYYY-MM-DD");
+    const [geboektedatums, setGeBoekteDatums] = useState({});
 
+    useEffect(() => {
+        const RoepUserGegevens = async () => {
+            try {
+                const RoepUser = await fetch(`https://localhost:7065/api/gebruikers/me`, {
+                    credentials: "include",
+
+                });
+                const data = await RoepUser.json();
+                setItem(data);
+            
+                if (RoepUser.ok) {
+                    console.log(" usergegevens succesvol aangeroepen!")
+                }
+                else {
+                    alert("pagina is incorrect geladen");
+                }
+            }
+            catch (error) {
+                alert("De volgende error is opgetreden:", error)
+            }
+        }
+        RoepUserGegevens();
+    }, [Kenteken]);
     useEffect(() => {
         const fetchGeboekteDatums = async () => {
             try {
-                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${id}`, {
+                console.log("productpagina:", ophaalDatum, inleverDatum);
+                
 
-                })
+               
+                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${Kenteken}`, {
+
+                })  
                 if (Calldatums.ok) {
                     const data = await Calldatums.json();
-                    const geboektedatums = [];
                     console.log("Data ontvangen van API:", data);
+                    data.forEach(({ fOphaalDatum, fInleverDatum  }) => {
+                        console.log(`Oorspronkelijke data - Begin: ${fOphaalDatum}, Eind: ${fInleverDatum}`);
 
-                    data.forEach(({ startDatum, eindDatum }) => {
-                        console.log(`Oorspronkelijke data - Begin: ${startDatum}, Eind: ${eindDatum}`);
-
-                        const current = new Date(startDatum);
-                        const end = new Date(eindDatum);
+                        const current = new Date(fOphaalDatum);
+                        const end = new Date(fInleverDatum);
                         console.log(`Verwerken: Startdatum=${current}, Einddatum=${end}`);
                         if (isNaN(current)) {
-                            console.error(`Parsing error: Ongeldige datum voor startDatum - ${startDatum}`);
+                            console.error(`Parsing error: Ongeldige datum voor startDatum - ${fOphaalDatum}`);
                         }
                         if (!isNaN(current)) {
                             while (current <= end) {
@@ -61,11 +90,11 @@ export default function Product() {
             }
         }
         fetchGeboekteDatums();
-    }, [id]);
+    }, [Kenteken]);
         useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`https://localhost:7065/api/voertuigen/getAutoById/${id}`);
+                const response = await fetch(`https://localhost:7065/api/voertuigen/getByKenteken/${Kenteken}`);
                 if (!response.ok) {
                     setAutoBestaat(false);
                     return;
@@ -83,37 +112,30 @@ export default function Product() {
             }
         };
         fetchCar();
-    }, [id]);
+    }, [Kenteken]);
     
 
     const HandleAanvraag = async () => {
         try {
-            const formatDateToUTC = (date) => {
-                if (!date) return null;
-
-                const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-                return utcDate.toISOString().split('T')[0];
-            };
+          
             const PostAanvraag = await fetch(`https://localhost:7065/api/gebruikers/postAanvraag`, {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                    startDatum: formatDateToUTC(startDatum),
-                    eindDatum: formatDateToUTC(eindDatum),
-                    persoonsgegevens: naam,
-                    email: email,
-                    telefoonnummer: telnummer,
-                    autoId: id,
+                    startDatum: fOphaalDatum,
+                    eindDatum: fInleverDatum,
+                    Kenteken: Kenteken,
+                    Ophaaltijd: ophaalTijd,
+                    Inlevertijd: inleverTijd,
+                    email: item.email,
+                    adres: item.adres,
+                    telefoonnummer: item.phonenumber,
                 })
             })
            
             if (PostAanvraag.ok) {
                 alert("Aanvraag succesvol aangemaakt");
-                CloseWindow();
-                setGeBoekteDatums((prev) => [
-                    ...prev,
-                    ...getDatesInRange(new Date(startDatum), new Date(eindDatum))
-                ]);
+               
             }
             else {
                 alert("Er is iets fout gegaan");
@@ -125,21 +147,7 @@ export default function Product() {
         }
 
     }
-    const getDatesInRange = (start, end) => {
-        const dates = [];
-        const current = new Date(start);
-        while (current <= end) {
-            dates.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-        }
-        return dates;
-    };
-    const OnButtonClick = () => {   
-        setModalWindow(true);
-    }
-    const  CloseWindow = () => {
-        setModalWindow(false);
-    }
+ 
 
     if (!autoBestaat) {
             return <h2>De auto bestaat niet.</h2>;
@@ -149,66 +157,46 @@ export default function Product() {
             <div className="productPage">
             <div className= "links">
                     <img src={carImage} alt="auto" className="product-image" />
-                    <div className="auto-info"> 
-                        <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
-                        <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
-                        <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
-                        <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
+                    <div className="auto-info">
+                        {auto && auto.voertuig ? (
+                            auto.voertuig.soort === "Auto" ? (
+                                <>
+                                    <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
+                                    <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
+                                    <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
+                                    <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
+                                </>
+                            ) : auto.voertuig.soort === "Camper" ? (
+                                <>
+                                    <div><strong>Slaapplaatsen:</strong> {auto.slaapplaatsen}</div>
+                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                    <div><strong>Heeft keuken:</strong> {auto.heeftKeuken ? "Ja" : "Nee"}</div>
+                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                </>
+                            ) : auto.voertuig.soort === "Caravan" ? (
+                                <>
+                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                    <div><strong>Heeft luifel:</strong> {auto.heeftLuifel ? "Ja" : "Nee"}</div>
+                                    <div><strong>Afvalwatertank:</strong> {auto.afvalTankCapaciteit} liter</div>
+                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                </>
+                            ) : (
+                                <div>geen verdere info.</div>
+                            )
+                        ) : (
+                            <div>Auto data is niet beschikbaar</div>
+                        )}
                     </div>
                 </div>
             <div className = "rechts">
-                    <h1>{auto.merk} {auto.type}</h1>
-                    <h2>{auto.kleur}</h2>
-                <h2> {auto.prijsPerDag} euro per dag</h2>
+                    <h1>{auto?.voertuig?.merk || "Onbekend merk"} {auto?.voertuig?.type || "Onbekend type"}</h1>
+                    <h2>{auto?.voertuig?.kleur || "Onbekende kleur"}</h2>
+                <h2> {auto?.voertuig?.prijsPerDag || "prijs niet bekend"} euro per dag</h2>
             
             <div className="date-picker-container">
-            <DatePicker 
-                selected={startDatum}
-                onChange={(date) => setStartDatum(date)}
-                selectsStart
-                startDate={startDatum}
-                endDate={eindDatum}
-                dateFormat="dd/MM/yyyy"
-                excludeDates={geboektedatums}
-            />
-            <DatePicker
-                selected={eindDatum}
-                onChange={(date) => setEindDatum(date)}
-                selectsEnd
-                startDate={startDatum}
-                endDate={eindDatum}
-                minDate={startDatum}
-                dateFormat="dd/MM/yyyy"
-                disabled={!startDatum}
-                excludeDates={geboektedatums}
-            />
-            <button onClick={OnButtonClick} disabled={!startDatum || !eindDatum} >klik hier om een huuraanvraag te maken voor deze auto</button>
-            {modalWindow && (
-                <div className="modal-overlay">
-                <div className="modal-content" >
-                        <h2>Huuraanvraag</h2>
-                        <p>Vul de gegevens in voor de huuraanvraag van deze auto.</p>
-                        <form onSubmit={(e) => {
-                            e.preventDefault(); if (!naam || !email || !telnummer) {
-                                alert("Voer alle gegevens in.");
-                                return;
-                            }
-                            HandleAanvraag()
-                        }}>
-                            <input type="text" value={naam} placeholder="Voer hier uw voornaam en achternaam in." onChange={(e) => setNaam(e.target.value)}>
-                            </input>
-                            <input type="email" value={email} placeholder="Voer hier uw emailadres in." onChange={(e) => setEmail(e.target.value)}>
-                            </input>
-                            <input type="tel" value={telnummer} placeholder="Voer hier uw telefoonnummer in." onChange={(e) => setTelNummer(e.target.value)}>
-                            </input>
-                            <button type="submit">verstuur huuraanvraag</button>
-
-                        </form>
-                   
-                        <button onClick={CloseWindow}>Sluiten</button>
-                    </div>
-                </div>
-                    )}
+          
+            <button onClick={() => HandleAanvraag()}  >klik hier om een huuraanvraag te maken voor deze auto</button>
+   
                     </div>
                 </div>
             </div>

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import './AanvraagItems.css'
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { cache } from 'react';
 const FrontOfficeAanvraag = () => {
         const [modalWindow, setModalWindow] = useState(false);
     const [item, setItem] = useState([]);
     const [activeItem, setActiveItem] = useState(null);
+    const navigeren = useNavigate('');
     useEffect(() => {
         const fetchAanvragen = async () => {
             try {
@@ -14,6 +17,8 @@ const FrontOfficeAanvraag = () => {
                     ...item,
                 }));
                 setItem(geupdateData);
+                console.log(data);
+                console.log(geupdateData);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -74,6 +79,32 @@ const FrontOfficeAanvraag = () => {
             console.log("error: ", error)
         }
     }
+    const CreeerSchadeFormulier = async () => {
+        try {
+            const MaakFormulier = await fetch(`https://localhost:7065/api/gebruikers/MaakSchadeFormulier`, {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    Kenteken: activeItem.Kenteken,
+                    AanvraagId: activeItem.id,
+                })
+            })
+            if (MaakFormulier.ok) {
+                const data = await MaakFormulier.json();
+                const SchadeId = data.id;
+                console.log(data.id);
+                console.log(SchadeId)
+                sessionStorage.setItem("SchadeId", SchadeId);
+                navigeren('/SchadePagina');
+            }
+            else {
+                alert("Er is iets fout gegaan");
+            }
+        }
+        catch (error) {
+            console.log("error bij schadeformulier aanmaken:", error);
+        }
+    }
     return (
         <div>
             <h1>Onbehandelde huuraanvragen</h1>
@@ -130,11 +161,19 @@ const FrontOfficeAanvraag = () => {
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <h2>Huuraanvraag</h2>
-                                        <p>De klant: {activeItem.persoonsGegevens} </p>
+                                        <p>De klant: {activeItem.pe} </p>
                                         <p>wil een {activeItem.autoMerk}  {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
-                                        <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
-                                        <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
-                                        <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button> <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
+                                          <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
+                                         
+                            <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
+                            {activeItem.status !== 'uitgegeven' && (
+                                <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button>
+
+                            )}
+                            {activeItem.status == 'uitgegeven' && (
+                                <button onClick={() => CreeerSchadeFormulier() }>Registreer schade</button>
+                            )}
+                                        <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                         <button onClick={CloseWindow}>Sluiten</button>
                                     </div>
                                 </div>

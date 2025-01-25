@@ -1,18 +1,22 @@
-﻿namespace WebProjectG.Server.domain.Voertuig
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebProjectG.Server.domain.VoertuigFiles
 {
-    abstract public class Voertuig
+    public class Voertuig
     {
+        [Key]
+        public string Kenteken { get; set; }
         public string HuurStatus { get; set; }
         public string Merk { get; set; }
         public string Type { get; set; }
-        public string Kenteken { get; set; }
         public string Kleur { get; set; }
         public int AanschafJaar { get; set; }
         public decimal PrijsPerDag { get; set; }
         public bool InclusiefVerzekering { get; set; }
-        
+        public String soort {  get; set; }
 
-        protected Voertuig(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering)
+
+        public Voertuig(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering)
         {
             HuurStatus = huurStatus;
             Merk = merk;

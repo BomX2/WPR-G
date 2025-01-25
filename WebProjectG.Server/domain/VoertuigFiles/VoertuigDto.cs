@@ -3,9 +3,10 @@
     public record class GetVoertuigenDto
     {
         public DateOnly? StartDatum { get; set; }
+        public String? OphaalTijd { get; set; }
         public DateOnly? EindDatum { get; set; }
+        public String? InleverTijd { get; set; }
+        public String? Soort { get; set; }
 
-        public decimal? MinPrijs { get; set; } = null;
-        public decimal? MaxPrijs { get; set; } = null;
     }
 }

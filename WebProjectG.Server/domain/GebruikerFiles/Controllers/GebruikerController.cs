@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.Huur;
 using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 using WebProjectG.Server.domain.BedrijfFiles;
-using WebProjectG.Server.domain.Voertuig;
+using WebProjectG.Server.domain.VoertuigFiles;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
@@ -13,6 +13,8 @@ using System.Data;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Reflection.Metadata.Ecma335;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -56,9 +58,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return BadRequest(new { message = "Role is required." });
             }
 
-            if (model.Role != "ZakelijkeHuurder" 
-                && model.Role != "WagenparkBeheerder" 
-                && model.Role != "Particulier" 
+            if (model.Role != "ZakelijkeHuurder"
+                && model.Role != "WagenparkBeheerder"
+                && model.Role != "Particulier"
                 && model.Role != "BackOffice"
                 && model.Role != "FrontOffice"
                 && model.Role != "Admin")
@@ -445,8 +447,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == null)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Include(aanv => aanv.voertuig)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -458,8 +460,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         {
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == true)
-                .Include(aanv => aanv.Auto)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.Auto.Type, AutoMerk = aanv.Auto.Merk })
+                .Include(aanv => aanv.voertuig)
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -494,11 +496,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NoContent();
         }
 
-        [HttpGet("GetgeboekteDatums/{id}")]
-        public async Task<IActionResult> GetAanvraagDatums(int id)
+        [HttpGet("GetgeboekteDatums/{Kenteken}")]
+        public async Task<IActionResult> GetAanvraagDatums(String Kenteken)
         {
 
-            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.AutoId == id).Select(aanv => new { aanv.StartDatum, aanv.EindDatum }).ToListAsync();
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.Kenteken == Kenteken).Select(aanv => new { aanv.StartDatum, aanv.EindDatum }).ToListAsync();
             if (!aanvragen.Any()) return NotFound();
 
             return Ok(aanvragen);
@@ -535,6 +537,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 bedrijf.Abonnement = new Abonnement
                 {
                     AbonnementType = dto.AbonnementType,
+                    BetaalMethode = dto.BetaalMethode,
+                    Prijs = dto.Prijs,
+                    Periode = dto.Periode
                 };
                 _dbContext.Abonnementen.Add(bedrijf.Abonnement);
 
@@ -542,6 +547,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             else
             {
                 bedrijf.Abonnement.AbonnementType = dto.AbonnementType;
+                bedrijf.Abonnement.BetaalMethode = dto.BetaalMethode;
+                bedrijf.Abonnement.Prijs = dto.Prijs;
+                bedrijf.Abonnement.Periode = dto.Periode;
             }
             try
             {
@@ -563,10 +571,43 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
         }
 
+        [HttpGet("LaatGebruikersZien/{kvknummer}")]
+        public async Task<ActionResult<Bedrijf>> GetMedewerkers(string kvknummer)
+        {
 
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(bedr => bedr.KvkNummer == kvknummer);
+            if (bedrijf == null)
+            {
+                return BadRequest();
+            }
+            if (bedrijf.ZakelijkeHuurders == null) {
+                return NoContent();
+            }
+
+            var zakelijkehuurders = bedrijf.ZakelijkeHuurders.Select(geb => geb.Email).ToList();
+            return Ok(zakelijkehuurders);
+        }
+        [HttpDelete("VerwijderMedewerker/{email}")]
+        public async Task<IActionResult> VerwijderMedewerker(string email, [FromBody] ZakelijkeHuurderDto zakelijkeHuurderDto )
+        {
+            var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(bed => bed.KvkNummer == zakelijkeHuurderDto.kvknummer);
+            if (bedrijf == null)
+            {
+                return NotFound("Bedrijf is niet gevonden");
+            }
+            var zakelijkehuurder = bedrijf.ZakelijkeHuurders.FirstOrDefault(geb => geb.Email == email);
+           if (zakelijkehuurder == null)
+            {
+                return BadRequest("Gebruiker is niet gekoppeld aan dit bedrijf");
+            }
+            bedrijf.ZakelijkeHuurders.Remove(zakelijkehuurder);
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
+        }
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
         public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {
+           
             if (gebruikerToevoegen == null)
             {
                 return BadRequest();
@@ -576,6 +617,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
             
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
+            if (bedrijf == null) return BadRequest("Bedrijf bestaat niet.");
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
@@ -592,6 +634,29 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
             return NotFound();
         }
+        [HttpPost("MaakSchadeFormulier")]
+        public async Task<ActionResult> PostSchade(SchadeFormulierDto  schadeFormulierDto)
+        {
+            var schadeformulier = new SchadeFormulier("beschadigd",schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
+            
+            _huurContext.schadeFormulieren.Add(schadeformulier);
+            await _huurContext.SaveChangesAsync();
+            return CreatedAtAction("GetSchadeFormulier", new {id = schadeformulier.Id}, schadeformulier);
+        }
+        [HttpGet("SchadeFormulier/{id}")]
+        public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FindAsync(id);
+
+            if (schadeFormulier == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(schadeFormulier);
+        }
+
+
 
 
     }

@@ -35,7 +35,6 @@ const AanvraagBackOffice = () => {
                 method: 'PUT',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                  
                     id: activeItem.id,               
                     goedgekeurd: true, 
                 })
@@ -82,7 +81,7 @@ const AanvraagBackOffice = () => {
                 {item.map(item => (
                     <div key={item.id} className="aanvraagItems-box">
                         <h3>Aanvraag: {item.id}</h3>
-                        <p>De klant: {item.persoonsGegevens}</p>
+                        <p>De klant: {item.persoonsgegevens}</p>
                         <button
                             onClick={() => OnButtonClick(item)}>
                             bekijk deze huuraanvraag
@@ -91,7 +90,7 @@ const AanvraagBackOffice = () => {
                             <div className="modal-overlay">
                                 <div className="modal-content">
                                     <h2>Huuraanvraag</h2>
-                                    <p>De klant: {activeItem.persoonsGegevens} </p>
+                                    <p>De klant: {activeItem.persoonsgegevens} </p>
                                     <p>Wil een {activeItem.autoMerk} {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
                                     <button onClick={() => PasAanvraagAan()}>accepteer aanvraag</button> <button onClick={() => VerwijderAanvraag()}> verwijder aanvraag</button>
                                     <button onClick={CloseWindow}>Sluiten</button>

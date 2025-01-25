@@ -9,17 +9,28 @@ export default function Catalogus() {
     const location = useLocation();
     const [autos, setautos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [filters, setFilters] = useState({});
+    const [soort, setSoort] = useState("")
 
     useEffect(() => {
 
         const queryparams = new URLSearchParams(location.search);
         const ophaalDatum = queryparams.get("ophaalDatum");
+        const OphaalTijd = queryparams.get("OphaalTijd");
         const inleverDatum = queryparams.get("inleverDatum");
+
+        const InleverTijd = queryparams.get("InleverTijd");
+        const soort = queryparams.get("soort");
+        setSoort(soort)
+
+        console.log("Soort:", soort);
 
         if (!ophaalDatum || !inleverDatum) {
             setErrorMessage("Ophaaldatum en/of inleverdatum ontbreken.");
             return;
         }
+
+      
 
         const formattedOphaalDatum = dayjs(ophaalDatum).format("YYYY-MM-DD");
         const formattedInleverDatum = dayjs(inleverDatum).format("YYYY-MM-DD");
@@ -27,7 +38,9 @@ export default function Catalogus() {
         const fetchAutos = async () => {
 
             const baseUrl = "https://localhost:7065/api/voertuigen/autos";
-            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&EindDatum=${encodeURIComponent(formattedInleverDatum)}`;
+            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&OphaalTijd=${encodeURIComponent(OphaalTijd)}
+                                   &EindDatum=${encodeURIComponent(formattedInleverDatum)}&InleverTijd=${encodeURIComponent(InleverTijd)}
+                                   &soort=${encodeURIComponent(soort)}`;
 
             try {
                 const response = await fetch(Url);
@@ -35,6 +48,7 @@ export default function Catalogus() {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
+                
                 setautos(data);
             } catch (error) {
                 console.error('Error fetching autos', error);
@@ -44,24 +58,35 @@ export default function Catalogus() {
         fetchAutos();
     }, [location.search]);
 
-    // vergeet niet in een useEffect te zetten
-    // const queryParams = URLSearchParams(this.props.location.search);
-    // let url = new URL("https://localhost:7065/api/voertuigen/autos");
+    const handleFilterChange = (event) => {
+        const { name, value } = event.target; // Zorg ervoor dat je de 'name' en 'value' van het inputveld oppakt.
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value, // Update het specifieke filter op basis van de naam van het veld.
+        }));
+    };
 
-    // voor elke filter optie doe je dit maar dan met de key in de query param voor de filteroptie dus "minPrijs" vervangen
-    // if (queryParams.get("minPrijs")) url.searchParams.append("minPrijs", queryParams.get("minPrijs"));
-    // if (queryParams.get("maxPrijs")) url.searchParams.append("maxPrijs", queryParams.get("maxPrijs"));
-
-
+    const filteredAutos = autos.filter((auto) => {
+        return Object.entries(filters).every(([key, value]) => {
+            if (!value) return true; // Geen filterwaarde
+            if (typeof auto[key] === "string") {
+                return auto[key].toLowerCase().includes(value.toLowerCase()); // Tekst
+            }
+            if (typeof auto[key] === "number") {
+                return auto[key] === Number(value); // Numeriek
+            }
+            return true;
+        });
+    });
 
     return (
         <div className="catalogus-container">
-            <SideBar />
+            <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
             <div className="content">
                 {errorMessage ? (
                     <div className="error-message">{errorMessage}</div>
                 ) : (
-                    autos.map(auto => (
+                    filteredAutos.map(auto => (
                         <Products key={auto.kenteken} auto={auto} />
                     ))
                 )}

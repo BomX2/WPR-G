@@ -11,8 +11,8 @@ const Home = () => {
     const [vehicleType, setVehicleType] = useState("");
     const [ophaalDatum, setOphaalDatum] = useState(null);
     const [inleverDatum, setInleverDatum] = useState(null);
-    const [ophaalTime, setOphaalTime] = useState(null);
-    const [inleverTime, setInleverTime] = useState(null);
+    const [ophaalTime, setOphaalTime] = useState("");
+    const [inleverTime, setInleverTime] = useState("");
 
     const navigate = useNavigate();
 
@@ -20,11 +20,15 @@ const Home = () => {
         e.preventDefault();
 
         if (!ophaalDatum || !inleverDatum) {
-            alert("vul alle velden in");
+            alert("Vul alle velden in");
             return;
         }
+        console.log("OphaalTijd:", ophaalTime);  
+        console.log("InleverTijd:", inleverTime);
 
-        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&inleverDatum=${encodeURIComponent(inleverDatum)}`);
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&OphaalTijd=${ophaalTime}
+                            &inleverDatum=${encodeURIComponent(inleverDatum)}&InleverTijd=${inleverTime}
+                            &soort=${encodeURIComponent(vehicleType)}`);
     }
 
     return (
@@ -34,19 +38,18 @@ const Home = () => {
             <section className="hero">
                 <img src={heroImage} alt="Hero" className="hero-image" />
                 <div className="hero-text">
-                    <h1>Your Perfect Ride Awaits</h1>
-                    <p>Find and rent the best vehicles at unbeatable prices.</p>
-                    <button className="cta-button">Rent Now</button>
+                    <h1>Jouw Perfecte Rit Wacht</h1>
+                    <p>Vind en huur de beste voertuigen tegen onverslaanbare prijzen.</p>
+                    <button className="cta-button">Huur Nu</button>
                 </div>
             </section>
 
             {/* Search and Filter Options */}
-            <form className="search-filter" onSubmit={handelsubmit }>
-                <input type="text" placeholder="Search for vehicles..." className="search-bar" />
+            <form className="search-filter" onSubmit={handelsubmit}>
                 <div className="filters">
                     <select value={vehicleType}
-                        onChange={(e) => setVehicleType(e.target.value)} >
-                        <option value="" disabled>Vehicle Type</option>
+                        onChange={(e) => setVehicleType(e.target.value.trim())} >
+                        <option value="" disabled>Voertuigtype</option>
                         <option value="auto">Auto</option>
                         <option value="camper">Camper</option>
                         <option value="caravan">Caravan</option>
@@ -66,7 +69,14 @@ const Home = () => {
                     </div>
                     <div className="react-time-picker">
                         <label htmlFor="ophaal-time-picker">Kies ophaaltijd:</label>
-                        
+                        <select value={ophaalTime}
+                            onChange={(e) => setOphaalTime(e.target.value.trim())} >
+                            <option value="" disabled>ophaaltijd</option>
+                            <option value="ochtend">Ochtend</option>
+                            <option value="middag">Middag</option>
+                            <option value="avond">Avond</option>
+                        </select>
+
                     </div>
                     <div className="date-picker">
                         <label htmlFor="inleverdatum">Inleverdatum:</label>
@@ -84,73 +94,79 @@ const Home = () => {
                         />
                     </div>
                     <div className="react-time-picker">
-                        <label htmlFor="inlever-time-picker">Kies inlevertijd:</label>
-                        
+                        <label >Kies inlevertijd:</label>
+                        <select value={inleverTime}
+                            onChange={(e) => setInleverTime(e.target.value)} >
+                            <option value="" disabled>inlevertijd</option>
+                            <option value="ochtend">Ochtend</option>
+                            <option value="middag">Middag</option>
+                            <option value="avond">Avond</option>
+                        </select>
                     </div>
-                    <button className="cta-button" type= "submit">Rent Now</button>
+                    <button className="cta-button" type="submit">Huur Nu</button>
                 </div>
             </form>
 
             {/* Customer Testimonials */}
             <section className="testimonials">
-                <h2>Customer Testimonials</h2>
+                <h2>Klantbeoordelingen</h2>
                 <div className="testimonial-list">
                     <div className="testimonial-item">
-                        <p>Great service and amazing vehicles!</p>
-                        <h4>- Customer Name</h4>
+                        <p>Geweldige service en fantastische voertuigen!</p>
+                        <h4>- Klantnaam</h4>
                     </div>
                     <div className="testimonial-item">
-                        <p>I had a fantastic experience renting from here.</p>
-                        <h4>- Customer Name</h4>
+                        <p>Ik had een geweldige ervaring met huren hier.</p>
+                        <h4>- Klantnaam</h4>
                     </div>
-                    {/* Add more testimonials as needed */}
+                    {/* Voeg meer beoordelingen toe indien nodig */}
                 </div>
             </section>
 
             {/* Special Offers */}
             <section className="special-offers">
-                <h2>Special Offers</h2>
+                <h2>Speciale Aanbiedingen</h2>
                 <div className="offer-item">
-                    <p>Get 20% off on your first rental!</p>
-                    <button className="cta-button">Claim Offer</button>
+                    <p>Krijg 20% korting op je eerste huur!</p>
+                    <button className="cta-button">Claim Aanbieding</button>
                 </div>
             </section>
 
             {/* Benefits of Renting with Us */}
             <section className="benefits">
-                <h2>Why Rent with Us?</h2>
+                <h2>Waarom Huren Bij Ons?</h2>
                 <ul>
-                    <li>Wide selection of vehicles</li>
-                    <li>Competitive prices</li>
-                    <li>Easy booking process</li>
+                    <li>Grote selectie voertuigen</li>
+                    <li>Concurrerende prijzen</li>
+                    <li>Eenvoudig boekingsproces</li>
                 </ul>
             </section>
 
             {/* Newsletter Signup */}
             <section className="newsletter-signup">
-                <h2>Stay Updated</h2>
-                <p>Sign up for our newsletter to receive the latest offers and updates.</p>
-                <input type="email" placeholder="Enter your email" />
-                <button className="cta-button">Subscribe</button>
+                <h2>Blijf Op De Hoogte</h2>
+                <p>Schrijf je in voor onze nieuwsbrief en ontvang de nieuwste aanbiedingen en updates.</p>
+                <input type="email" placeholder="Voer je e-mailadres in" />
+                <button className="cta-button">Abonneer</button>
             </section>
 
             {/* Blog/News Section */}
             <section className="blog-news">
-                <h2>Latest News</h2>
+                <h2>Laatste Nieuws</h2>
                 <div className="blog-post">
-                    <h3>Blog Post Title</h3>
-                    <p>Summary of the blog post...</p>
-                    <button className="cta-button">Read More</button>
+                    <h3>Blogtitel</h3>
+                    <p>Samenvatting van het blogbericht...</p>
+                    <button className="cta-button">Lees Meer</button>
                 </div>
-                {/* Add more blog posts as needed */}
+                {/* Voeg meer blogberichten toe indien nodig */}
             </section>
 
             {/* Contact Information */}
             <section className="contact-info">
-                <h2>Contact Us</h2>
+                <h2>Neem Contact Op</h2>
                 <p>Email: contact@yourwebsite.com</p>
-                <p>Phone: +123 456 7890</p>
-                <p>Address: 123 Main Street, City, Country</p>
+                <p>Telefoon: +123 456 7890</p>
+                <p>Adres: Hoofdstraat 123, Stad, Land</p>
             </section>
         </div>
     );
