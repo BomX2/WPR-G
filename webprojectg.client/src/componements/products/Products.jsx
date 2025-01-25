@@ -27,7 +27,6 @@ export default function Products({ auto }) {
 
                         <h3>{auto.kenteken}</h3>
                         <h3>{ auto.voertuig.kleur }</h3>
-                        <Link to={`/Product/${auto.kenteken}`}>Klik hier</Link>
                     </div>
                 </div>
             </section>
