@@ -1,10 +1,12 @@
 import React, {useState } from 'react';
 import './AanvraagItems.css'
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 const FrontOfficeAanvraag = () => {
         const [modalWindow, setModalWindow] = useState(false);
     const [item, setItem] = useState([]);
     const [activeItem, setActiveItem] = useState(null);
+    const navigeren = useNavigate('');
     useEffect(() => {
         const fetchAanvragen = async () => {
             try {
@@ -14,6 +16,8 @@ const FrontOfficeAanvraag = () => {
                     ...item,
                 }));
                 setItem(geupdateData);
+                console.log(data);
+                console.log(geupdateData);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -130,17 +134,17 @@ const FrontOfficeAanvraag = () => {
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <h2>Huuraanvraag</h2>
-                                        <p>De klant: {activeItem.persoonsGegevens} </p>
+                                        <p>De klant: {activeItem.pe} </p>
                                         <p>wil een {activeItem.autoMerk}  {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
                                           <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
                                          
                             <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
-                            {!activeItem.status === 'uitgegeven' && (
+                            {activeItem.status !== 'uitgegeven' && (
                                 <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button>
 
                             )}
-                            {activeItem.status === 'uitgegeven' && (
-                                <button>Registreer schade</button>
+                            {activeItem.status == 'uitgegeven' && (
+                                <button onClick={() => navigeren('/SchadePagina') }>Registreer schade</button>
                             )}
                                         <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                         <button onClick={CloseWindow}>Sluiten</button>

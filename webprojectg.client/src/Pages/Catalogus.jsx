@@ -14,15 +14,16 @@ export default function Catalogus() {
 
         const queryparams = new URLSearchParams(location.search);
         const ophaalDatum = queryparams.get("ophaalDatum");
-        const ophaalTijd = queryparams.get("ophaalTijd");
+        const OphaalTijd = queryparams.get("OphaalTijd");
         const inleverDatum = queryparams.get("inleverDatum");
-        const inleverTijd = queryparams.get("inleverTijd");
-        const soort = queryparams.get("soort")
-        console.log(ophaalDatum, inleverDatum);
+        const InleverTijd = queryparams.get("InleverTijd");
+        const soort = queryparams.get("soort");
         if (!ophaalDatum || !inleverDatum) {
             setErrorMessage("Ophaaldatum en/of inleverdatum ontbreken.");
             return;
         }
+
+      
 
         const formattedOphaalDatum = dayjs(ophaalDatum).format("YYYY-MM-DD");
         const formattedInleverDatum = dayjs(inleverDatum).format("YYYY-MM-DD");
@@ -30,8 +31,8 @@ export default function Catalogus() {
         const fetchAutos = async () => {
 
             const baseUrl = "https://localhost:7065/api/voertuigen/autos";
-            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&OphaalTijd=${encodeURIComponent(ophaalTijd)}
-                                   &EindDatum=${encodeURIComponent(formattedInleverDatum)}&InleverTijd=${encodeURIComponent(inleverTijd)}
+            const Url = `${baseUrl}?StartDatum=${encodeURIComponent(formattedOphaalDatum)}&OphaalTijd=${encodeURIComponent(OphaalTijd)}
+                                   &EindDatum=${encodeURIComponent(formattedInleverDatum)}&InleverTijd=${encodeURIComponent(InleverTijd)}
                                    &soort=${encodeURIComponent(soort)}`;
 
             try {
@@ -40,6 +41,7 @@ export default function Catalogus() {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
+                
                 setautos(data);
             } catch (error) {
                 console.error('Error fetching autos', error);

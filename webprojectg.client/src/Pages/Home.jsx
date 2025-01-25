@@ -23,9 +23,11 @@ const Home = () => {
             alert("Vul alle velden in");
             return;
         }
+        console.log("OphaalTijd:", ophaalTime);  
+        console.log("InleverTijd:", inleverTime);
 
-        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${ophaalTime}
-                            &inleverDatum=${encodeURIComponent(inleverDatum)}&inleverTijd=${inleverTime}
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&OphaalTijd=${ophaalTime}
+                            &inleverDatum=${encodeURIComponent(inleverDatum)}&InleverTijd=${inleverTime}
                             &soort=${encodeURIComponent(vehicleType)}`);
     }
 

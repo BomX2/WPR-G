@@ -317,7 +317,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == null)
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -330,7 +330,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var aanvragen = await _huurContext.Aanvragen
                 .Where(aanv => aanv.Goedgekeurd == true)
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Gebruiker.Email, aanv.Gebruiker.PhoneNumber, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -503,6 +503,29 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
             return NotFound();
         }
+        [HttpPost("MaakSchadeFormulier")]
+        public async Task<ActionResult> PostSchade(string kenteken, int aanvraagId)
+        {
+            var schadeformulier = new SchadeFormulier("beschadigd", kenteken, aanvraagId);
+            
+            _huurContext.schadeFormulieren.Add(schadeformulier);
+            await _huurContext.SaveChangesAsync();
+            return CreatedAtAction("GetSchadeFormulier", new {id = schadeformulier.Id}, schadeformulier);
+        }
+        [HttpGet("SchadeFormulier/{id}")]
+        public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FindAsync(id);
+
+            if (schadeFormulier == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(schadeFormulier);
+        }
+
+
 
 
     }

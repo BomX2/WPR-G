@@ -10,6 +10,7 @@ export default function Product() {
     const [auto, setAuto] = useState("");
     const [autoBestaat, setAutoBestaat] = useState(true);
     const { Kenteken } = useParams();
+    const [item, setItem] = useState([]);
     const location = useLocation();
     const queryparams = new URLSearchParams(location.search);
     const ophaalDatum = queryparams.get("ophaalDatum");
@@ -18,14 +19,18 @@ export default function Product() {
     const inleverTijd = queryparams.get("inleverTijd");
     const fOphaalDatum = dayjs(ophaalDatum).format("YYYY-MM-DD");
     const fInleverDatum = dayjs(inleverDatum).format("YYYY-MM-DD");
-    const [geboektedatums, setGeBoekteDatums] = useState([]);
+    const [geboektedatums, setGeBoekteDatums] = useState({});
 
     useEffect(() => {
         const RoepUserGegevens = async () => {
             try {
                 const RoepUser = await fetch(`https://localhost:7065/api/gebruikers/me`, {
                     credentials: "include",
+
                 });
+                const data = await RoepUser.json();
+                setItem(data);
+            
                 if (RoepUser.ok) {
                     console.log(" usergegevens succesvol aangeroepen!")
                 }
@@ -122,6 +127,9 @@ export default function Product() {
                     Kenteken: Kenteken,
                     ophaaltijd: ophaalTijd,
                     inlevertijd: inleverTijd,
+                    email: item.email,
+                    adres: item.adres,
+                    telefoonnummer: item.phonenumber,
                 })
             })
            

@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250120145424_initial")]
-    partial class initial
+    [Migration("20250125095654_initialhuur")]
+    partial class initialhuur
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,8 +121,16 @@ namespace WebProjectG.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Adres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("EindDatum")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gebruikerid")
                         .HasColumnType("nvarchar(450)");
@@ -130,9 +138,17 @@ namespace WebProjectG.Server.Migrations
                     b.Property<bool?>("Goedgekeurd")
                         .HasColumnType("bit");
 
+                    b.Property<string>("InleverTijd")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Kenteken")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OphaalTijd")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDatum")
                         .HasColumnType("datetime2");
@@ -140,15 +156,7 @@ namespace WebProjectG.Server.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("inlevertijd")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ophaaltijd")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("persoonsgegevens")
+                    b.Property<string>("Telefoonnummer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -173,8 +181,16 @@ namespace WebProjectG.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BetaalMethode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Periode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Prijs")
                         .HasColumnType("decimal(18,2)");
@@ -185,6 +201,37 @@ namespace WebProjectG.Server.Migrations
                     b.HasKey("AbonnementID");
 
                     b.ToTable("Abonnement");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.SchadeFormulier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AanvraagId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Kenteken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchadeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VoertuigKenteken")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AanvraagId");
+
+                    b.HasIndex("VoertuigKenteken");
+
+                    b.ToTable("schadeFormulieren");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Auto", b =>
@@ -360,6 +407,23 @@ namespace WebProjectG.Server.Migrations
                     b.Navigation("Gebruiker");
 
                     b.Navigation("voertuig");
+                });
+
+            modelBuilder.Entity("WebProjectG.Server.domain.Huur.SchadeFormulier", b =>
+                {
+                    b.HasOne("WebProjectG.Server.domain.Huur.Aanvraag", "aanvraag")
+                        .WithMany()
+                        .HasForeignKey("AanvraagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebProjectG.Server.domain.VoertuigFiles.Voertuig", "Voertuig")
+                        .WithMany()
+                        .HasForeignKey("VoertuigKenteken");
+
+                    b.Navigation("Voertuig");
+
+                    b.Navigation("aanvraag");
                 });
 
             modelBuilder.Entity("WebProjectG.Server.domain.VoertuigFiles.Auto", b =>

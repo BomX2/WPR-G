@@ -52,8 +52,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 // Filter de aanvragen verder in-memory
                 var bezetteAuto = aanvragen
                     .Where(a =>
-                        dagdelen[a.ophaaltijd.ToLower()] <= inleverTijd &&
-                        dagdelen[a.inlevertijd.ToLower()] >= ophaalTijd)
+                        dagdelen[a.OphaalTijd.ToLower()] <= inleverTijd &&
+                        dagdelen[a.InleverTijd.ToLower()] >= ophaalTijd)
                     .Select(a => a.Kenteken)
                     .Distinct();
 

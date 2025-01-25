@@ -12,6 +12,7 @@ namespace WebProjectG.Server.domain
     public class HuurContext : DbContext
     {
        public DbSet<Aanvraag> Aanvragen { get; set; }
+        public DbSet<SchadeFormulier> schadeFormulieren { get; set; }
         public DbSet<Voertuig> Voertuigen{ get; set; }
         public DbSet<Auto> autos { get; set;}
 
