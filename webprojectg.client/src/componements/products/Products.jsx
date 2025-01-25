@@ -15,7 +15,7 @@ export default function Products({ auto }) {
     return (
         <section className="products-container">
             <section className="products">
-                <h3 className="products-title">{auto.merk} {auto.type}</h3>
+                <h1 className="products-title">{auto.voertuig.merk} {auto.voertuig.type}</h1>
                 <div className="products-content">
                     <img src={carImage} alt="auto" className="products-image" />
                     <div className="products-details">
@@ -24,6 +24,10 @@ export default function Products({ auto }) {
                         <button onClick={() => navigate(`/Product/${encodeURIComponent(auto.kenteken)}?ophaalDatum=${encodeURIComponent(ophaalDatum)}&ophaalTijd=${ophaalTime}
                             &inleverDatum=${encodeURIComponent(inleverDatum)}&inleverTijd=${inleverTime}
                             &soort=${encodeURIComponent(verhicleType)}`) }>Klik hier!</button>
+
+                        <h3>{auto.kenteken}</h3>
+                        <h3>{ auto.voertuig.kleur }</h3>
+                        <Link to={`/Product/${auto.kenteken}`}>Klik hier</Link>
                     </div>
                 </div>
             </section>
