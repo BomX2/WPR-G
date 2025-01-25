@@ -2,6 +2,7 @@ import React, {useState } from 'react';
 import './AanvraagItems.css'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cache } from 'react';
 const FrontOfficeAanvraag = () => {
         const [modalWindow, setModalWindow] = useState(false);
     const [item, setItem] = useState([]);
@@ -78,6 +79,32 @@ const FrontOfficeAanvraag = () => {
             console.log("error: ", error)
         }
     }
+    const CreeerSchadeFormulier = async () => {
+        try {
+            const MaakFormulier = await fetch(`https://localhost:7065/api/gebruikers/MaakSchadeFormulier`, {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    Kenteken: activeItem.Kenteken,
+                    AanvraagId: activeItem.id,
+                })
+            })
+            if (MaakFormulier.ok) {
+                const data = await MaakFormulier.json();
+                const SchadeId = data.id;
+                console.log(data.id);
+                console.log(SchadeId)
+                sessionStorage.setItem("SchadeId", SchadeId);
+                navigeren('/SchadePagina');
+            }
+            else {
+                alert("Er is iets fout gegaan");
+            }
+        }
+        catch (error) {
+            console.log("error bij schadeformulier aanmaken:", error);
+        }
+    }
     return (
         <div>
             <h1>Onbehandelde huuraanvragen</h1>
@@ -144,7 +171,7 @@ const FrontOfficeAanvraag = () => {
 
                             )}
                             {activeItem.status == 'uitgegeven' && (
-                                <button onClick={() => navigeren('/SchadePagina') }>Registreer schade</button>
+                                <button onClick={() => CreeerSchadeFormulier() }>Registreer schade</button>
                             )}
                                         <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                         <button onClick={CloseWindow}>Sluiten</button>

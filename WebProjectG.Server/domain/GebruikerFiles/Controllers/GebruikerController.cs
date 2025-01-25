@@ -504,9 +504,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NotFound();
         }
         [HttpPost("MaakSchadeFormulier")]
-        public async Task<ActionResult> PostSchade(string kenteken, int aanvraagId)
+        public async Task<ActionResult> PostSchade(SchadeFormulierDto  schadeFormulierDto)
         {
-            var schadeformulier = new SchadeFormulier("beschadigd", kenteken, aanvraagId);
+            var schadeformulier = new SchadeFormulier("beschadigd",schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
             
             _huurContext.schadeFormulieren.Add(schadeformulier);
             await _huurContext.SaveChangesAsync();
