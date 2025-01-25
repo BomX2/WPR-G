@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.VoertuigFiles;
 using WebProjectG.Server.domain.Huur;
+using WebProjectG.Server.domain.GebruikerFiles.Dtos;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -101,126 +102,182 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         [HttpPost("createVoertuig")]
-        public async Task<ActionResult> CreateVoertuig(
-        string huurStatus,
-        string merk,
-        string type,
-        string kenteken,
-        string kleur,
-        int aanschafJaar,
-        decimal prijsPerDag,
-        bool inclusiefVerzekering,
-        string soort,
-        int? aantalDeuren = null,
-        string? brandstofType = null,
-        bool? heeftAirco = null,
-        double? brandstofVerbruik = null,
-        string? transmissieType = null,
-        int? bagageruimte = null,
-        double? lengte = null,
-        double? hoogte = null,
-        int? slaapplaatsen = null,
-        bool? heeftBadkamer = null,
-        bool? heeftKeuken = null,
-        double? waterTankCapaciteit = null,
-        double? afvalTankCapaciteit = null,
-        bool? heeftZonnepanelen = null,
-        int? fietsRekCapaciteit = null,
-        bool? heeftLuifel = null)
+        public async Task<ActionResult> CreateVoertuig([FromBody] UpdateVoertuigDto voertuigDto)
         {
-            // Create the base Voertuig object
+            if (voertuigDto == null || !ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var voertuig = new Voertuig(
-                huurStatus: huurStatus,
-                merk: merk,
-                type: type,
-                kenteken: kenteken,
-                kleur: kleur,
-                aanschafJaar: aanschafJaar,
-                prijsPerDag: prijsPerDag,
-                inclusiefVerzekering: inclusiefVerzekering
+                huurStatus: voertuigDto.HuurStatus,
+                merk: voertuigDto.Merk,
+                type: voertuigDto.Type,
+                kenteken: voertuigDto.Kenteken,
+                kleur: voertuigDto.Kleur,
+                aanschafJaar: voertuigDto.AanschafJaar,
+                prijsPerDag: voertuigDto.PrijsPerDag,
+                inclusiefVerzekering: voertuigDto.InclusiefVerzekering
             )
             {
-                soort = soort.ToLower()
+                soort = voertuigDto.Soort?.ToLower()
             };
 
             await _huurContext.Voertuigen.AddAsync(voertuig);
 
-            // Create specific subtype based on "soort"
-            switch (voertuig.soort)
+            switch (voertuigDto.Soort?.ToLower())
             {
                 case "auto":
-                    if (aantalDeuren == null || brandstofType == null || heeftAirco == null || brandstofVerbruik == null || transmissieType == null || bagageruimte == null)
-                    {
-                        return BadRequest(new { message = "Missing required fields for Auto." });
-                    }
+                    if (voertuigDto is not AutoDto autoDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Auto." });
 
                     var auto = new Auto
                     {
                         Kenteken = voertuig.Kenteken,
                         Voertuig = voertuig,
-                        AantalDeuren = aantalDeuren.Value,
-                        BrandstofType = brandstofType,
-                        HeeftAirco = heeftAirco.Value,
-                        BrandstofVerbruik = brandstofVerbruik.Value,
-                        TransmissieType = transmissieType,
-                        Bagageruimte = bagageruimte.Value
+                        AantalDeuren = autoDto.AantalDeuren,
+                        BrandstofType = autoDto.BrandstofType,
+                        HeeftAirco = autoDto.HeeftAirco,
+                        BrandstofVerbruik = autoDto.BrandstofVerbruik,
+                        TransmissieType = autoDto.TransmissieType,
+                        Bagageruimte = autoDto.Bagageruimte
                     };
                     await _huurContext.autos.AddAsync(auto);
                     break;
 
                 case "camper":
-                    if (lengte == null || hoogte == null || slaapplaatsen == null || heeftBadkamer == null || heeftKeuken == null || waterTankCapaciteit == null || afvalTankCapaciteit == null || brandstofVerbruik == null || heeftZonnepanelen == null || fietsRekCapaciteit == null || heeftLuifel == null)
-                    {
-                        return BadRequest(new { message = "Missing required fields for Camper." });
-                    }
+                    if (voertuigDto is not CamperDto camperDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Camper." });
 
                     var camper = new Camper
                     {
                         Kenteken = voertuig.Kenteken,
                         Voertuig = voertuig,
-                        Lengte = lengte.Value,
-                        Hoogte = hoogte.Value,
-                        Slaapplaatsen = slaapplaatsen.Value,
-                        HeeftBadkamer = heeftBadkamer.Value,
-                        HeeftKeuken = heeftKeuken.Value,
-                        WaterTankCapaciteit = waterTankCapaciteit.Value,
-                        AfvalTankCapaciteit = afvalTankCapaciteit.Value,
-                        BrandstofVerbruik = brandstofVerbruik.Value,
-                        HeeftZonnepanelen = heeftZonnepanelen.Value,
-                        FietsRekCapaciteit = fietsRekCapaciteit.Value,
-                        HeeftLuifel = heeftLuifel.Value
+                        Lengte = camperDto.Lengte,
+                        Hoogte = camperDto.Hoogte,
+                        Slaapplaatsen = camperDto.Slaapplaatsen,
+                        HeeftBadkamer = camperDto.HeeftBadkamer,
+                        HeeftKeuken = camperDto.HeeftKeuken,
+                        WaterTankCapaciteit = camperDto.WaterTankCapaciteit,
+                        AfvalTankCapaciteit = camperDto.AfvalTankCapaciteit,
+                        BrandstofVerbruik = camperDto.BrandstofVerbruik,
+                        HeeftZonnepanelen = camperDto.HeeftZonnepanelen,
+                        FietsRekCapaciteit = camperDto.FietsRekCapaciteit,
+                        HeeftLuifel = camperDto.HeeftLuifel
                     };
                     await _huurContext.campers.AddAsync(camper);
                     break;
 
                 case "caravan":
-                    if (lengte == null || slaapplaatsen == null || heeftKeuken == null || waterTankCapaciteit == null || afvalTankCapaciteit == null || heeftLuifel == null)
-                    {
-                        return BadRequest(new { message = "Missing required fields for Caravan." });
-                    }
+                    if (voertuigDto is not CaravanDto caravanDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Caravan." });
 
                     var caravan = new Caravan
                     {
                         Kenteken = voertuig.Kenteken,
                         Voertuig = voertuig,
-                        Lengte = lengte.Value,
-                        Slaapplaatsen = slaapplaatsen.Value,
-                        HeeftKeuken = heeftKeuken.Value,
-                        WaterTankCapaciteit = waterTankCapaciteit.Value,
-                        AfvalTankCapaciteit = afvalTankCapaciteit.Value,
-                        HeeftLuifel = heeftLuifel.Value
+                        Lengte = caravanDto.Lengte,
+                        Slaapplaatsen = caravanDto.Slaapplaatsen,
+                        HeeftKeuken = caravanDto.HeeftKeuken,
+                        WaterTankCapaciteit = caravanDto.WaterTankCapaciteit,
+                        AfvalTankCapaciteit = caravanDto.AfvalTankCapaciteit,
+                        HeeftLuifel = caravanDto.HeeftLuifel
                     };
                     await _huurContext.caravans.AddAsync(caravan);
                     break;
 
                 default:
-                    return BadRequest(new { message = "Invalid voertuig type." });
+                    return BadRequest(new { message = "Ongeldig voertuig soort." });
             }
 
-            // Save all changes to the database
             await _huurContext.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetAutoById), new { Kenteken = voertuig.Kenteken }, voertuig);
+        }
+
+        [HttpPut("updateVoertuig/{Kenteken}")]
+        public async Task<ActionResult> UpdateVoertuig(string Kenteken, [FromBody] UpdateVoertuigDto voertuigDto)
+        {
+            if (voertuigDto == null || !ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Find the existing voertuig
+            var voertuig = await _huurContext.Voertuigen.FindAsync(Kenteken);
+            if (voertuig == null)
+                return NotFound(new { message = "Voertuig niet gevonden." });
+
+            // Update the common voertuig properties
+            voertuig.HuurStatus = voertuigDto.HuurStatus;
+            voertuig.Merk = voertuigDto.Merk;
+            voertuig.Type = voertuigDto.Type;
+            voertuig.Kleur = voertuigDto.Kleur;
+            voertuig.AanschafJaar = voertuigDto.AanschafJaar;
+            voertuig.PrijsPerDag = voertuigDto.PrijsPerDag;
+            voertuig.InclusiefVerzekering = voertuigDto.InclusiefVerzekering;
+            voertuig.soort = voertuigDto.Soort?.ToLower();
+
+            // Update the specific type details
+            switch (voertuigDto.Soort?.ToLower())
+            {
+                case "auto":
+                    var existingAuto = await _huurContext.autos.FirstOrDefaultAsync(a => a.Kenteken == Kenteken);
+                    if (existingAuto == null)
+                        return NotFound(new { message = "Bijbehorende Auto gegevens niet gevonden." });
+
+                    if (voertuigDto is not AutoDto autoDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Auto." });
+
+                    existingAuto.AantalDeuren = autoDto.AantalDeuren;
+                    existingAuto.BrandstofType = autoDto.BrandstofType;
+                    existingAuto.HeeftAirco = autoDto.HeeftAirco;
+                    existingAuto.BrandstofVerbruik = autoDto.BrandstofVerbruik;
+                    existingAuto.TransmissieType = autoDto.TransmissieType;
+                    existingAuto.Bagageruimte = autoDto.Bagageruimte;
+                    break;
+
+                case "camper":
+                    var existingCamper = await _huurContext.campers.FirstOrDefaultAsync(c => c.Kenteken == Kenteken);
+                    if (existingCamper == null)
+                        return NotFound(new { message = "Bijbehorende Camper gegevens niet gevonden." });
+
+                    if (voertuigDto is not CamperDto camperDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Camper." });
+
+                    existingCamper.Lengte = camperDto.Lengte;
+                    existingCamper.Hoogte = camperDto.Hoogte;
+                    existingCamper.Slaapplaatsen = camperDto.Slaapplaatsen;
+                    existingCamper.HeeftBadkamer = camperDto.HeeftBadkamer;
+                    existingCamper.HeeftKeuken = camperDto.HeeftKeuken;
+                    existingCamper.WaterTankCapaciteit = camperDto.WaterTankCapaciteit;
+                    existingCamper.AfvalTankCapaciteit = camperDto.AfvalTankCapaciteit;
+                    existingCamper.BrandstofVerbruik = camperDto.BrandstofVerbruik;
+                    existingCamper.HeeftZonnepanelen = camperDto.HeeftZonnepanelen;
+                    existingCamper.FietsRekCapaciteit = camperDto.FietsRekCapaciteit;
+                    existingCamper.HeeftLuifel = camperDto.HeeftLuifel;
+                    break;
+
+                case "caravan":
+                    var existingCaravan = await _huurContext.caravans.FirstOrDefaultAsync(c => c.Kenteken == Kenteken);
+                    if (existingCaravan == null)
+                        return NotFound(new { message = "Bijbehorende Caravan gegevens niet gevonden." });
+
+                    if (voertuigDto is not CaravanDto caravanDto)
+                        return BadRequest(new { message = "Ontbrekende of ongeldige gegevens voor Caravan." });
+
+                    existingCaravan.Lengte = caravanDto.Lengte;
+                    existingCaravan.Slaapplaatsen = caravanDto.Slaapplaatsen;
+                    existingCaravan.HeeftKeuken = caravanDto.HeeftKeuken;
+                    existingCaravan.WaterTankCapaciteit = caravanDto.WaterTankCapaciteit;
+                    existingCaravan.AfvalTankCapaciteit = caravanDto.AfvalTankCapaciteit;
+                    existingCaravan.HeeftLuifel = caravanDto.HeeftLuifel;
+                    break;
+
+                default:
+                    return BadRequest(new { message = "Ongeldige voertuig soort." });
+            }
+
+            // Save changes to the database
+            await _huurContext.SaveChangesAsync();
+
+            return NoContent();
         }
 
     }
