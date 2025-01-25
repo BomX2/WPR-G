@@ -29,10 +29,6 @@ const Home = () => {
                     <SearchFilters onSubmit={handleSearchSubmit} />
                 </div>
             </section>
-
-            
-            
-
             
             <section className="testimonials">
                 <h2>Klantbeoordelingen</h2>
