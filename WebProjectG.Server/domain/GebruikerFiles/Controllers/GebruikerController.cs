@@ -93,90 +93,36 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new { message = "Invalid data provided." });
-                }
+            if (!ModelState.IsValid)
+                return BadRequest(new { message = "Invalid data provided." });
 
-                // Find user by email or username
-                var user = model.EmailOrUsername.Contains("@")
-                    ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
-                    : await _userManager.FindByNameAsync(model.EmailOrUsername);
+            // Find user by Email or Username
+            Gebruiker user = model.EmailOrUsername.Contains('@')
+                ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
+                : await _userManager.FindByNameAsync(model.EmailOrUsername);
 
-                if (user == null)
-                {
-                    return Unauthorized(new { message = "Invalid email/username or password." });
-                }
-
-                // Attempt sign-in with password
-                var result = await _signInManager.PasswordSignInAsync(
-                    user,
-                    model.Password,
-                    model.RememberMe,
-                    lockoutOnFailure: false
-                );
-
-                // If 2FA is required, we do NOT do the final cookie sign-in here.
-                // Instead, we tell the front end: "2FA needed."
-                if (result.RequiresTwoFactor)
-                {
-                    return Ok(new
-                    {
-                        requiresTwoFactor = true,
-                        userId = user.Id,
-                        // optionally:  message = "2FA required"
-                    });
-                }
-
-                if (result.Succeeded)
-                {
-                    // Build custom claims (if you want extra claims beyond defaults):
-                    var roles = await _userManager.GetRolesAsync(user);
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.StreetAddress, user.Adres),
-                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-                new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString())
-            };
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe
-                    };
-
-                    // This signs in the user by issuing the auth cookie
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties
-                    );
-
-                    return Ok(new { message = "Login successful" });
-                }
-
-                if (result.IsLockedOut)
-                {
-                    return Unauthorized(new { message = "User is locked out." });
-                }
-
+            if (user == null)
                 return Unauthorized(new { message = "Invalid email/username or password." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "An unexpected error occurred during login.",
-                    details = ex.Message
-                });
-            }
+
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: false
+            );
+
+            if (result.RequiresTwoFactor)
+                return Ok(new { requiresTwoFactor = true, userId = user.Id });
+
+            if (result.Succeeded)
+                return Ok(new { message = "Login successful" });
+
+            if (result.IsLockedOut)
+                return Unauthorized(new { message = "User is locked out." });
+
+            return Unauthorized(new { message = "Invalid email/username or password." });
         }
+
 
         [HttpPost("verify-2fa-login")]
         public async Task<IActionResult> VerifyTwoFactorLogin([FromBody] TwoFactorLoginDto model)
@@ -242,7 +188,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 email = email,
                 adres = adres,
                 role = role,
-                name = username,
+                username = username,
                 phonenumber = phonenumber,
                 twoFactorEnabled = twoFactorEnabled
             });
@@ -264,7 +210,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
 
             var email = user.Email ?? user.UserName;
-            var issuer = "CarAndAll"; 
+            var issuer = "CarAndAll";
             var otpauthUrl = $"otpauth://totp/{issuer}:{email}?secret={key}&issuer={issuer}&digits=6";
 
             // Return the otpauth URL so the front-end can generate a QR code
@@ -314,7 +260,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(new { Message = "2FA is enabled." });
         }
-       
+
 
         //Fetch user details
         [HttpGet("getUser/{id}")]
@@ -337,30 +283,28 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Update user details
-        [HttpPut("{id}")]
+        [HttpPut("updateGebruiker/{id}")]
         public async Task<IActionResult> UpdateUserDetails(string id, [FromBody] UpdateGebruikerDto model)
         {
             var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-            {
+            if (user is null)
                 return NotFound(new { message = "User not found." });
-            }
 
+            user.UserName = model.UserName;
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
             user.Adres = model.Adres;
 
             var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { message = string.Join(", ", result.Errors.Select(e => e.Description)) });
 
-            if (result.Succeeded)
-            {
-                return Ok(new { message = "User details updated successfully." });
-            }
+            // refresh claims
+            await _signInManager.RefreshSignInAsync(user);
 
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return BadRequest(new { message = errors });
+            return Ok(new { message = "User details updated, claims refreshed." });
         }
+
 
         //Change password
         [HttpPost("password/change")]
@@ -522,7 +466,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
 
-
         [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
         public async Task<IActionResult> PutBedrijf(string kvkNummer, [FromBody] BedrijfPutDto dto)
         {
@@ -580,7 +523,8 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             {
                 return BadRequest();
             }
-            if (bedrijf.ZakelijkeHuurders == null) {
+            if (bedrijf.ZakelijkeHuurders == null)
+            {
                 return NoContent();
             }
 
@@ -588,7 +532,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return Ok(zakelijkehuurders);
         }
         [HttpDelete("VerwijderMedewerker/{email}")]
-        public async Task<IActionResult> VerwijderMedewerker(string email, [FromBody] ZakelijkeHuurderDto zakelijkeHuurderDto )
+        public async Task<IActionResult> VerwijderMedewerker(string email, [FromBody] ZakelijkeHuurderDto zakelijkeHuurderDto)
         {
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(bed => bed.KvkNummer == zakelijkeHuurderDto.kvknummer);
             if (bedrijf == null)
@@ -596,7 +540,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 return NotFound("Bedrijf is niet gevonden");
             }
             var zakelijkehuurder = bedrijf.ZakelijkeHuurders.FirstOrDefault(geb => geb.Email == email);
-           if (zakelijkehuurder == null)
+            if (zakelijkehuurder == null)
             {
                 return BadRequest("Gebruiker is niet gekoppeld aan dit bedrijf");
             }
@@ -605,9 +549,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NoContent();
         }
         [HttpPost("AddGebruikerToBedrijf/{kvkNummer}")]
-        public async Task<ActionResult> VoegMedewerkerToe( string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
+        public async Task<ActionResult> VoegMedewerkerToe(string kvkNummer, [FromBody] GebruikerToevoegenDto gebruikerToevoegen)
         {
-           
+
             if (gebruikerToevoegen == null)
             {
                 return BadRequest();
@@ -615,15 +559,15 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var email = gebruikerToevoegen.Email;
             var gebruiker = await _userManager.FindByEmailAsync(email);
             if (gebruiker == null) return BadRequest("Gebruiker is niet gevonden");
-            
+
             var bedrijf = await _dbContext.Bedrijven.Include(b => b.ZakelijkeHuurders).FirstOrDefaultAsync(b => b.KvkNummer == kvkNummer);
             if (bedrijf == null) return BadRequest("Bedrijf bestaat niet.");
             if (bedrijf.ZakelijkeHuurders.Any(g => g.Email == email))
             {
                 return BadRequest("Gebruiker is al gekoppeld aan dit bedrijf.");
             }
- 
-             
+
+
             var emailDomein = email.Split('@').LastOrDefault();
             if (bedrijf == null) return BadRequest("Bedrijf niet gevonden");
             if (bedrijf.DomeinNaam == emailDomein)
@@ -635,13 +579,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return NotFound();
         }
         [HttpPost("MaakSchadeFormulier")]
-        public async Task<ActionResult> PostSchade(SchadeFormulierDto  schadeFormulierDto)
+        public async Task<ActionResult> PostSchade(SchadeFormulierDto schadeFormulierDto)
         {
-            var schadeformulier = new SchadeFormulier("beschadigd",schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
-            
+            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
+
             _huurContext.schadeFormulieren.Add(schadeformulier);
             await _huurContext.SaveChangesAsync();
-            return CreatedAtAction("GetSchadeFormulier", new {id = schadeformulier.Id}, schadeformulier);
+            return CreatedAtAction("GetSchadeFormulier", new { id = schadeformulier.Id }, schadeformulier);
         }
         [HttpGet("SchadeFormulier/{id}")]
         public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)

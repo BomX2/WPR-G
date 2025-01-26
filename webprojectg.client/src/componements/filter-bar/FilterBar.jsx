@@ -13,7 +13,7 @@ const SearchFilters = ({ onSubmit }) => {
     const { user } = useUser() || {};
 
     if (!user) {
-        return <div>Loading...</div>; // Handle null user gracefully
+        return <div></div>; // Handle null user gracefully
     }
 
     const handleSubmit = (e) => {

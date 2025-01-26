@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 
 const AccSettings = () => {
     const { user, setUser } = useUser();
+    const [username, setUsername] = useState(user?.username || '')
     const [adres, setAdres] = useState(user?.adres || '');
     const [email, setEmail] = useState(user?.email || '');
     const [phonenumber, setPhonenumber] = useState(user?.phonenumber || '');
@@ -105,29 +106,47 @@ const AccSettings = () => {
         }
     };
 
-    const SaveOnSubmit = async () => {
-        if (!user) return;
-        try {
-            const verwerking = await fetch(`https://localhost:7065/api/gebruikers/updateGebruiker/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    Adres: adres,
-                    Email: email,
-                    PhoneNumber: phonenumber,
-                }),
-            });
+    const SaveOnSubmit = async (e) => {
+        e.preventDefault();
 
-            if (verwerking.ok) {
+        if (!user) return;
+
+        try {
+            const response = await fetch(
+                `https://localhost:7065/api/gebruikers/updateGebruiker/${user.id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // IMPORTANT
+                    body: JSON.stringify({
+                        UserName: username,
+                        Adres: adres,
+                        Email: email,
+                        PhoneNumber: phonenumber
+                    })
+                }
+            );
+
+            if (response.ok) {
                 alert('Account succesvol bijgewerkt');
-                setUser({ ...user, adres, email, phonenumber });
+
+                // re-fetch the updated claims
+                const updatedUserResponse = await fetch("https://localhost:7065/api/gebruikers/me", {
+                    credentials: "include"
+                });
+
+                if (updatedUserResponse.ok) {
+                    const updatedUserData = await updatedUserResponse.json();
+                    setUser(updatedUserData);
+                    console.log("User context updated:", updatedUserData);
+                }
             } else {
-                alert('Er is een fout opgetreden bij het bijwerken van uw account');
+                alert('Er is een fout bij het bijwerken van uw account');
             }
         } catch (error) {
-            console.error("try is mislukt", error);
+            console.error("Update error:", error);
             alert("Er is een fout opgetreden");
         }
     };
@@ -142,6 +161,14 @@ const AccSettings = () => {
                 <div className="text">Accountinstellingen</div>
             </div>
             <form className="inputs" onSubmit={SaveOnSubmit}>
+                <div className="input">
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                    />
+                </div>
                 <div className="input">
                     <input
                         type="text"
