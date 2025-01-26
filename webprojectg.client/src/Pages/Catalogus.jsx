@@ -60,11 +60,15 @@ export default function Catalogus() {
     }, [location.search]);
 
     const handleFilterChange = (event) => {
-        const { name, value } = event.target;
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value,
-        }));
+        if (event.target.name === "reset") {
+            setFilters({});
+        } else {
+            const { name, value } = event.target;
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                [name]: value,
+            }));
+        }
     };
 
     const getNestedValue = (obj, path) => {
@@ -86,7 +90,7 @@ export default function Catalogus() {
             }
 
             if (typeof autoValue === 'boolean') {
-                return autoValue === (value === 'true');
+                return autoValue === (value === true || value === "true");
             }
 
             return true;

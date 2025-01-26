@@ -117,22 +117,34 @@ export default function Product() {
                                 <>
                                     <div><strong>Aantal deuren:</strong> {auto.aantalDeuren}</div>
                                     <div><strong>Brandstoftype:</strong> {auto.brandstofType}</div>
-                                    <div><strong>Aanschaf jaar:</strong> {auto.aanschafJaar}</div>
-                                    <div><strong>Bagageruimte:</strong> {auto.bagageruimte}</div>
+                                    <div><strong>Transmissietype:</strong> {auto.transmissieType}</div>
+                                    <div><strong>Heeft airco:</strong> {auto.heeftAirco ? "Ja" : "Nee"}</div>
+                                    <div><strong>Brandstofverbruik:</strong> {auto.brandstofVerbruik} liter/100km</div>
+                                    <div><strong>Bagageruimte:</strong> {auto.bagageruimte} liter</div>
+                                    <div><strong>Aanschaf jaar:</strong> {auto.voertuig.aanschafJaar}</div>
                                 </>
                             ) : auto.voertuig.soort === "Camper" ? (
                                 <>
-                                    <div><strong>Slaapplaatsen:</strong> {auto.slaapplaatsen}</div>
-                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
-                                    <div><strong>Heeft keuken:</strong> {auto.heeftKeuken ? "Ja" : "Nee"}</div>
-                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                        <div><strong>Slaapplaatsen:</strong> {auto.slaapplaatsen}</div>
+                                        <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                        <div><strong>Hoogte:</strong> {auto.hoogte} meter</div>
+                                        <div><strong>Heeft keuken:</strong> {auto.heeftKeuken ? "Ja" : "Nee"}</div>
+                                        <div><strong>Heeft badkamer:</strong> {auto.heeftBadkamer ? "Ja" : "Nee"}</div>
+                                        <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                        <div><strong>Afvalwatertank capaciteit:</strong> {auto.afvalTankCapaciteit} liter</div>
+                                        <div><strong>Brandstofverbruik:</strong> {auto.brandstofVerbruik} liter/100km</div>
+                                        <div><strong>Heeft zonnepanelen:</strong> {auto.heeftZonnepanelen ? "Ja" : "Nee"}</div>
+                                        <div><strong>Fietsrek capaciteit:</strong> {auto.fietsRekCapaciteit} fietsen</div>
+                                        <div><strong>Heeft luifel:</strong> {auto.heeftLuifel ? "Ja" : "Nee"}</div>
                                 </>
                             ) : auto.voertuig.soort === "Caravan" ? (
                                 <>
-                                    <div><strong>Lengte:</strong> {auto.lengte} meter</div>
-                                    <div><strong>Heeft luifel:</strong> {auto.heeftLuifel ? "Ja" : "Nee"}</div>
-                                    <div><strong>Afvalwatertank:</strong> {auto.afvalTankCapaciteit} liter</div>
-                                    <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                            <div><strong>Lengte:</strong> {auto.lengte} meter</div>
+                                            <div><strong>Slaapplaatsen:</strong> {auto.slaapplaatsen}</div>
+                                            <div><strong>Heeft keuken:</strong> {auto.heeftKeuken ? "Ja" : "Nee"}</div>
+                                            <div><strong>Watertank capaciteit:</strong> {auto.waterTankCapaciteit} liter</div>
+                                            <div><strong>Afvalwatertank capaciteit:</strong> {auto.afvalTankCapaciteit} liter</div>
+                                            <div><strong>Heeft luifel:</strong> {auto.heeftLuifel ? "Ja" : "Nee"}</div>
                                 </>
                             ) : (
                                 <div>geen verdere info.</div>

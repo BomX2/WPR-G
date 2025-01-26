@@ -23,6 +23,15 @@ export default function SideBar({ filters, onFilterChange, soort }) {
         fetchMerken();
     }, [soort]);
 
+    const resetFilters = () => {
+        onFilterChange({
+            target: {
+                name: "reset",
+                value: null,
+            },
+        });
+    };
+
     // Algemene filters die altijd beschikbaar zijn
     const commonFilters = (
         <>
@@ -70,15 +79,6 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor auto's
     const autoFilters = (
         <>
-            <label>Aantal deuren</label>
-            <input
-                type="number"
-                name="aantalDeuren"
-                placeholder="Aantal deuren"
-                value={filters.aantalDeuren || ""}
-                onChange={onFilterChange}
-            />
-
             <label>Brandstoftype</label>
             <select name="brandstofType" value={filters.brandstofType || ""} onChange={onFilterChange}>
                 <option value="">Alle brandstoffen</option>
@@ -122,7 +122,7 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 type="number"
                 name="slaapplaatsen"
                 placeholder="aantal slaapplaatsen"
-                value={filters.slaapplaatsenMin || ""}
+                value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
             />
 
@@ -159,10 +159,11 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsenMin"
-                placeholder="Min slaapplaatsen"
-                value={filters.slaapplaatsenMin || ""}
+                name="slaapplaatsen"
+                placeholder="slaapplaatsen"
+                value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
+                min="0"
             />
 
             <label>
@@ -176,6 +177,18 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 />
                 Heeft keuken
             </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftLuifel"
+                    checked={filters.heeftLuifel || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftLuifel", value: e.target.checked } })
+                    }
+                />
+                Heeft Luifel
+            </label>
         </>
     );
 
@@ -186,6 +199,10 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             {soort === "auto" && autoFilters}
             {soort === "camper" && camperFilters}
             {soort === "caravan" && caravanFilters}
+
+            <button onClick={resetFilters} className="reset-button">
+                Reset alle filters
+            </button>
         </div>
     );
 }
