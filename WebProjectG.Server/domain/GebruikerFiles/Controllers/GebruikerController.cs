@@ -581,7 +581,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("MaakSchadeFormulier")]
         public async Task<ActionResult> PostSchade(SchadeFormulierDto schadeFormulierDto)
         {
-            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
+            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Email, schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId,);
 
             _huurContext.schadeFormulieren.Add(schadeformulier);
             await _huurContext.SaveChangesAsync();
