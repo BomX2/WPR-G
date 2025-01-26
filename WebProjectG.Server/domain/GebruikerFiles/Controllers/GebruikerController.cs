@@ -315,12 +315,10 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         public async Task<ActionResult> GetAanvragen()
         {
             var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == null)
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
-            if (!aanvragen.Any()) return NotFound();
+            if (aanvragen.Count == 0) return NotFound();
             return Ok(aanvragen);
         }
 

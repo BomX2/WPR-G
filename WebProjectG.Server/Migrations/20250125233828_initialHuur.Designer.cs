@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250125152138_initial")]
-    partial class initial
+    [Migration("20250125233828_initialHuur")]
+    partial class initialHuur
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
