@@ -81,6 +81,17 @@ export default function Catalogus() {
                 return autoValue.toLowerCase().includes(value.toLowerCase());
             }
 
+            if (typeof autoValue === 'number') {
+                // Filteren op minimale waarde
+                if (key.includes('Min') && value !== "") {
+                    return autoValue >= value;  // Alleen voertuigen waarvan de waarde groter dan of gelijk is aan de minwaarde
+                }
+                // Filteren op maximale waarde
+                if (key.includes('Max') && value !== "") {
+                    return autoValue <= value;  // Alleen voertuigen waarvan de waarde kleiner dan of gelijk is aan de maxwaarde
+                }
+            }
+
             if (typeof autoValue === 'boolean') {
                 return autoValue === (value === 'true');
             }
@@ -91,16 +102,16 @@ export default function Catalogus() {
 
   
     const sortedAutos = filteredAutos.sort((a, b) => {
-            const prijsA = getNestedValue(a, 'voertuig.prijsPerDag');
-            const prijsB = getNestedValue(b, 'voertuig.prijsPerDag');
+        const prijsA = getNestedValue(a, 'voertuig.prijsPerDag') || 0; // Fallback naar 0 als er geen waarde is
+        const prijsB = getNestedValue(b, 'voertuig.prijsPerDag') || 0
 
-            if (filters.prijs === 'laag-hoog') {
-                return prijsA - prijsB; // Sorteer op voertuig.prijsPerDag in oplopende volgorde
-            }
-            if (filters.prijs === 'hoog-laag') {
-                return prijsB - prijsA; // Sorteer op voertuig.prijsPerDag in aflopende volgorde
-            }
-            return 0;
+        if (filters.prijs === 'laag-hoog') {
+            return prijsA - prijsB; // Sorteer oplopend
+        }
+        if (filters.prijs === 'hoog-laag') {
+            return prijsB - prijsA; // Sorteer aflopend
+        }
+        return 0; // Geen sortering als filters.prijs niet is ingesteld
     });
 
     return (

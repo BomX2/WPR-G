@@ -28,7 +28,7 @@ export default function SideBar({ filters, onFilterChange, soort }) {
         <>
             {/* Filter: Prijs */}
             <label>Prijs</label>
-            <select name="voertuig.prijsPerDag" onChange={onFilterChange}>
+            <select name="prijs" onChange={onFilterChange}>
                 <option value="">Kies een optie</option>
                 <option value="laag-hoog">Laag naar Hoog</option>
                 <option value="hoog-laag">Hoog naar Laag</option>
@@ -119,27 +119,27 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <label>Lengte (m)</label>
             <input
                 type="number"
-                name="lengte"
+                name="lengteMax"
                 placeholder="Max lengte"
-                value={filters.lengte || ""}
+                value={filters.lengteMax || ""}
                 onChange={onFilterChange}
             />
 
             <label>Hoogte (m)</label>
             <input
                 type="number"
-                name="hoogte"
+                name="hoogteMax"
                 placeholder="Max hoogte"
-                value={filters.hoogte || ""}
+                value={filters.hoogteMax || ""}
                 onChange={onFilterChange}
             />
 
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsen"
+                name="slaapplaatsenMin"
                 placeholder="Min slaapplaatsen"
-                value={filters.slaapplaatsen || ""}
+                value={filters.slaapplaatsenMin || ""}
                 onChange={onFilterChange}
             />
 
@@ -175,18 +175,18 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <label>Lengte (m)</label>
             <input
                 type="number"
-                name="lengte"
+                name="lengteMax"
                 placeholder="Max lengte"
-                value={filters.lengte || ""}
+                value={filters.lengteMax || ""}
                 onChange={onFilterChange}
             />
 
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsen"
+                name="slaapplaatsenMin"
                 placeholder="Min slaapplaatsen"
-                value={filters.slaapplaatsen || ""}
+                value={filters.slaapplaatsenMin || ""}
                 onChange={onFilterChange}
             />
 
