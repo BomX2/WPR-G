@@ -14,6 +14,7 @@ import BedrijfsSettings from './Pages/BedrijfsInstellingen';
 import AanvraagBackOffice from './Pages/AanvraagBackOffice';
 import FrontOfficeAanvraag from './Pages/FrontAanvraag';
 import MedewerkerRegistratie from './Pages/MedewerkerRegistratie';
+import VoertuigBeheren from './Pages/VoertuigBeheren'
 import { UserProvider } from './componements/UserContext';
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
                     <Route path="/AanvraagBackOffice" element={<AanvraagBackOffice />} />
                     <Route path="/FrontAanvraag" element={<FrontOfficeAanvraag />} />
                     <Route path="/MedewerkerRegistratie" element={<MedewerkerRegistratie />} />
+                    <Route path="/VoertuigBeheren" element={<VoertuigBeheren />} />
                 </Routes>
             </div>
         </UserProvider>
