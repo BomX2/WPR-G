@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import './AanvraagItems.css'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +26,7 @@ const FrontOfficeAanvraag = () => {
 
         fetchAanvragen();
     }, []);
-    const SetUitgaveStatus = async () => {
+    const SetUitgaveStatus = async (Status) => {
         try {
             const keurGoed = await fetch(`https://localhost:7065/api/gebruikers/KeurAanvraagGoed/${activeItem.id}`, {
                 method: 'PUT',
@@ -35,13 +35,13 @@ const FrontOfficeAanvraag = () => {
 
                     id: activeItem.id,
                     goedgekeurd: true,
-                    status: "uitgegeven",
+                    status: Status,
                 })
             })
             if (keurGoed.ok) {
                 alert("Voertuig uitgegeven!");
                 CloseWindow();
-
+                setItem(prevItems => prevItems.filter(a => a.id !== activeItem.id));
             }
             else {
                 alert("Er is iets fout gegaan");
@@ -85,8 +85,11 @@ const FrontOfficeAanvraag = () => {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({
-                    Kenteken: activeItem.Kenteken,
                     AanvraagId: activeItem.id,
+                    Kenteken: activeItem.kenteken,
+                    Email: activeItem.email,
+                    Telefoonnummer: activeItem.telefoonnummer,
+
                 })
             })
             if (MaakFormulier.ok) {
@@ -99,6 +102,7 @@ const FrontOfficeAanvraag = () => {
             }
             else {
                 alert("Er is iets fout gegaan");
+                console.log(activeItem.Kenteken);
             }
         }
         catch (error) {
@@ -119,7 +123,7 @@ const FrontOfficeAanvraag = () => {
                     ).map(gefilterdeItem => (
                         <div key={gefilterdeItem.id} className="aanvraagItems-box">
                             <h3>Aanvraag: {gefilterdeItem.id}</h3>
-                            <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                            <p>De klant: {gefilterdeItem.email}</p>
                             <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
                         </div>
                         
@@ -135,7 +139,7 @@ const FrontOfficeAanvraag = () => {
                             ).map(gefilterdeItem => (
                                 <div key={gefilterdeItem.id} className="aanvraagItems-box">
                                     <h3>Aanvraag: {gefilterdeItem.id}</h3>
-                                    <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                                    <p>De klant: {gefilterdeItem.email}</p>
                                     <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
                                 </div>
 
@@ -149,7 +153,7 @@ const FrontOfficeAanvraag = () => {
                             ).map(gefilterdeItem => (
                                 <div key={gefilterdeItem.id} className="aanvraagItems-box">
                                     <h3>Aanvraag: {gefilterdeItem.id}</h3>
-                                    <p>De klant: {gefilterdeItem.persoonsGegevens}</p>
+                                    <p>De klant: {gefilterdeItem.email}</p>
                                     <button onClick={() => OnButtonClick(gefilterdeItem)}>Bekijk aanvraag</button>
                                 </div>
                             ))}
@@ -161,17 +165,17 @@ const FrontOfficeAanvraag = () => {
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <h2>Huuraanvraag</h2>
-                                        <p>De klant: {activeItem.pe} </p>
+                                        <p>De klant: {activeItem.email} </p>
                                         <p>wil een {activeItem.autoMerk}  {activeItem.autoType} huren in de periode van: {activeItem.startDatum} tot {activeItem.eindDatum}  </p>
                                           <p>De klant heeft de volgende persoonsgegevens voor identificatie:</p>
                                          
                             <p> email: {activeItem.email}, telefoonnummer: {activeItem.telefoonnummer}, </p>
-                            {activeItem.status !== 'uitgegeven' && (
-                                <button onClick={() => SetUitgaveStatus()} >markeer als Uitgegeven.</button>
+                            {activeItem.status !== 'uitgegeven' && activeItem.status !== 'beschadigd' && (
+                                <button onClick={() => SetUitgaveStatus("uitgegeven")} >markeer als Uitgegeven.</button>
 
                             )}
                             {activeItem.status == 'uitgegeven' && (
-                                <button onClick={() => CreeerSchadeFormulier() }>Registreer schade</button>
+                                <button onClick={() => SetUitgaveStatus("beschadigd"), () => CreeerSchadeFormulier() }>Registreer schade</button>
                             )}
                                         <button onClick={() => HandelInNameAf()}>Neem voertuig in.</button>
                                         <button onClick={CloseWindow}>Sluiten</button>

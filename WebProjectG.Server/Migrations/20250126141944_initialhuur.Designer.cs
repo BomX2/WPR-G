@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250125152138_initial")]
-    partial class initial
+    [Migration("20250126141944_initialhuur")]
+    partial class initialhuur
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -214,11 +214,22 @@ namespace WebProjectG.Server.Migrations
                     b.Property<int>("AanvraagId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErnstVDSchade")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Kenteken")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SchadeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefoonnummer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -360,6 +371,9 @@ namespace WebProjectG.Server.Migrations
 
                     b.Property<decimal>("PrijsPerDag")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .IsRequired()
