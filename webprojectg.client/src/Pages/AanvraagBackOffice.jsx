@@ -12,6 +12,7 @@ const AanvraagBackOffice = () => {
             try {
                 const response = await fetch(`https://localhost:7065/api/gebruikers/getAanvragen`);
                 const data = await response.json();
+                console.log(data); 
                 const geupdateData = data.map((item) => ({
                     ...item,
 
