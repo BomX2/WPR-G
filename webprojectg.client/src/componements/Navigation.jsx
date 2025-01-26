@@ -73,8 +73,18 @@ function Navigation() {
                         {['BackOffice', 'Admin'].includes(user.role) && (
                             <li>
                                 <Link to="/AanvraagBackOffice">Aanvragen(B)</Link>
+                            </li>,
+                            <li>
+                                <Link to="/VoertuigBeheren">Voertuigen Beheren</Link>
                             </li>
                         )}
+
+                        {['BackOffice', 'Admin'].includes(user.role) && (
+                            <li>
+                                <Link to="/AanvraagBackOffice">Aanvragen(B)</Link>
+                            </li>
+                        )}
+
 
                         {['FrontOffice', 'Admin'].includes(user.role) && (
                             <li>
