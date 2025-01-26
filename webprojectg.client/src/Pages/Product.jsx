@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useParams, useLocation } from "react-router-dom";
 import './modal.css';
@@ -11,6 +10,7 @@ export default function Product() {
     const [autoBestaat, setAutoBestaat] = useState(true);
     const { Kenteken } = useParams();
     const [item, setItem] = useState([]);
+    const [lock, setLock] = useState(false);
     const location = useLocation();
     const queryparams = new URLSearchParams(location.search);
     const ophaalDatum = queryparams.get("ophaalDatum");
@@ -19,7 +19,6 @@ export default function Product() {
     const inleverTijd = queryparams.get("inleverTijd");
     const fOphaalDatum = dayjs(ophaalDatum).format("YYYY-MM-DD");
     const fInleverDatum = dayjs(inleverDatum).format("YYYY-MM-DD");
-    const [geboektedatums, setGeBoekteDatums] = useState({});
 
     useEffect(() => {
         const RoepUserGegevens = async () => {
@@ -44,53 +43,7 @@ export default function Product() {
         }
         RoepUserGegevens();
     }, [Kenteken]);
-    useEffect(() => {
-        const fetchGeboekteDatums = async () => {
-            try {
-                console.log("productpagina:", ophaalDatum, inleverDatum);
-                
-
-               
-                const Calldatums = await fetch(`https://localhost:7065/api/gebruikers/GetgeboekteDatums/${Kenteken}`, {
-
-                })  
-                if (Calldatums.ok) {
-                    const data = await Calldatums.json();
-                    console.log("Data ontvangen van API:", data);
-                    data.forEach(({ fOphaalDatum, fInleverDatum  }) => {
-                        console.log(`Oorspronkelijke data - Begin: ${fOphaalDatum}, Eind: ${fInleverDatum}`);
-
-                        const current = new Date(fOphaalDatum);
-                        const end = new Date(fInleverDatum);
-                        console.log(`Verwerken: Startdatum=${current}, Einddatum=${end}`);
-                        if (isNaN(current)) {
-                            console.error(`Parsing error: Ongeldige datum voor startDatum - ${fOphaalDatum}`);
-                        }
-                        if (!isNaN(current)) {
-                            while (current <= end) {
-                                geboektedatums.push(new Date(current));
-                                current.setDate(current.getDate() + 1);
-                            }
-                        }
-                        while (current <= end) {
-                            geboektedatums.push(new Date(current));
-                            current.setDate(current.getDate() + 1);
-                        }
-                    });
-                    console.log("Geformatteerde geboektedatums:", geboektedatums);
-                    setGeBoekteDatums(geboektedatums);
-                }
-                else {
-                    console.log("pagina incorrect geladen");
-                }
-            }
-
-            catch (error) {
-                console.log("error:", error)
-            }
-        }
-        fetchGeboekteDatums();
-    }, [Kenteken]);
+  
         useEffect(() => {
         const fetchCar = async () => {
             try {
@@ -134,6 +87,7 @@ export default function Product() {
             })
            
             if (PostAanvraag.ok) {
+                setLock(true);
                 alert("Aanvraag succesvol aangemaakt");
                
             }
@@ -195,7 +149,7 @@ export default function Product() {
             
             <div className="date-picker-container">
           
-            <button onClick={() => HandleAanvraag()}  >klik hier om een huuraanvraag te maken voor deze auto</button>
+                        <button disabled={lock} onClick={() => HandleAanvraag()}  >klik hier om een huuraanvraag te maken voor deze auto</button>
    
                     </div>
                 </div>

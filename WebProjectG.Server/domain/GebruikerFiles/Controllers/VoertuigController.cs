@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.VoertuigFiles;
 using WebProjectG.Server.domain.Huur;
+using System.Data;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -147,6 +148,31 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 .ToListAsync();
 
             return Ok(merken);
+        }
+        [HttpPut("RepareerVoertuig/{kenteken}")]
+        public async Task<IActionResult> RepareerAuto(string kenteken)
+        {
+            var voertuig = await _huurContext.Voertuigen.FirstOrDefaultAsync(auto => auto.Kenteken == kenteken);
+            if (voertuig == null)
+            {
+                return BadRequest(); 
+            }
+            voertuig.Status = "Gerepareerd";
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            } 
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.Voertuigen.Any(v => v.Kenteken == kenteken)) {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
         }
     }
 }

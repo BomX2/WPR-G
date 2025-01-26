@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initialHuur : Migration
+    public partial class initialhuur : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,6 +38,7 @@ namespace WebProjectG.Server.Migrations
                     Merk = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Kleur = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AanschafJaar = table.Column<int>(type: "int", nullable: false),
                     PrijsPerDag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     InclusiefVerzekering = table.Column<bool>(type: "bit", nullable: false),
@@ -215,6 +216,9 @@ namespace WebProjectG.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SchadeType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ErnstVDSchade = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefoonnummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Kenteken = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VoertuigKenteken = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AanvraagId = table.Column<int>(type: "int", nullable: false)
