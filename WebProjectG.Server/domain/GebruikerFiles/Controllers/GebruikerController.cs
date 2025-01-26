@@ -389,13 +389,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("getAanvragen")]
         public async Task<ActionResult> GetAanvragen()
         {
-            var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == null)
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == false && aanv.Status != "beschadigd")
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, aanv.Kenteken })
+
                 .ToListAsync();
 
-            if (!aanvragen.Any()) return NotFound();
+            if (aanvragen.Count == 0) return NotFound();
             return Ok(aanvragen);
         }
 
