@@ -579,14 +579,27 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
             return NotFound();
         }
-        [HttpPost("MaakSchadeFormulier")]
-        public async Task<ActionResult> PostSchade(SchadeFormulierDto schadeFormulierDto)
+        [HttpGet("GetSFormulieren")]
+        public async Task<ActionResult> GetFormulieren()
         {
-            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Email, schadeFormulierDto.Telefoonnummer, schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId, "niet ingevuld");
-
-            _huurContext.schadeFormulieren.Add(schadeformulier);
+            var Schadeformulieren = await _huurContext.schadeFormulieren.ToListAsync();
+            if (Schadeformulieren.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(Schadeformulieren);
+        }
+        [HttpDelete("SchadeformVerwijder/{id}")]
+        public async Task<IActionResult> VerwijderSchadeForm(int id)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == id);
+            if (schadeFormulier == null)
+            {
+                return BadRequest();
+            }
+            _huurContext.schadeFormulieren.Remove(schadeFormulier);
             await _huurContext.SaveChangesAsync();
-            return CreatedAtAction("GetSchadeFormulier", new { id = schadeformulier.Id }, schadeformulier);
+            return NoContent();
         }
         [HttpGet("SchadeFormulier/{id}")]
         public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)
@@ -600,9 +613,39 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(schadeFormulier);
         }
+        [HttpPut("PutSchadeForm/{SchadeId}")]
+        public async Task<IActionResult> PutSFormulier(int SchadeId, PutSchadeformulierDto putSchadeformulier)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == SchadeId);
+            if (schadeFormulier == null)
+            {
+                return BadRequest();
+            }
+            var voertuig = await _huurContext.Voertuigen.FirstOrDefaultAsync(car => car.Kenteken == schadeFormulier.Kenteken);
+            if (voertuig == null)
+            {
 
-
-
-
+                return NotFound();
+            }
+            schadeFormulier.ErnstVDSchade = putSchadeformulier.ErnstVDSchade;
+            schadeFormulier.SchadeType = putSchadeformulier.SchadeType;
+            voertuig.Status = "beschadigd";
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            }
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.schadeFormulieren.Any(sch => sch.Id == schadeFormulier.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
     }
 }
