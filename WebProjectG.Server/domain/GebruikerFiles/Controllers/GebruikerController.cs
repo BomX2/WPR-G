@@ -579,6 +579,15 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
             return NotFound();
         }
+        [HttpPost("MaakSchadeFormulier")]
+        public async Task<ActionResult> PostSchade(SchadeFormulierDto schadeFormulierDto)
+        {
+            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Email, schadeFormulierDto.Telefoonnummer, schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId, "niet ingevuld");
+
+            _huurContext.schadeFormulieren.Add(schadeformulier);
+            await _huurContext.SaveChangesAsync();
+            return CreatedAtAction("GetSchadeFormulier", new { id = schadeformulier.Id }, schadeformulier);
+        }
         [HttpGet("GetSFormulieren")]
         public async Task<ActionResult> GetFormulieren()
         {
