@@ -403,14 +403,15 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         public async Task<ActionResult> GetAanvragenFront()
         {
             var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == true)
+                .Where(aanv => aanv.Goedgekeurd == true && aanv.Status != "beschadigd")
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, Kenteken = aanv.Kenteken })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
             return Ok(aanvragen);
         }
+
 
         [HttpPut("KeurAanvraagGoed/{id}")]
         public async Task<IActionResult> KeurAanvraagGoed(int id, [FromBody] AanvraagDto aanvraagDto)
