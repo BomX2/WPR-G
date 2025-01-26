@@ -8,6 +8,7 @@ import heroImage from '../image/CARNAL_LOGO.png';
 import { useNavigate } from 'react-router-dom';
 import SearchFilters from '../componements/filter-bar/FilterBar';
 
+
 const Home = () => {
     const navigate = useNavigate();
 

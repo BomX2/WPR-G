@@ -10,9 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Migrations\HuurContextMigrations\**" />
 	  <Compile Remove="Migrations\Huur\**" />
+	  <Content Remove="Migrations\HuurContextMigrations\**" />
 	  <Content Remove="Migrations\Huur\**" />
+	  <EmbeddedResource Remove="Migrations\HuurContextMigrations\**" />
 	  <EmbeddedResource Remove="Migrations\Huur\**" />
+	  <None Remove="Migrations\HuurContextMigrations\**" />
 	  <None Remove="Migrations\Huur\**" />
 	</ItemGroup>
 
@@ -32,6 +36,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
 
@@ -43,8 +48,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
-	  <Folder Include="Migrations\GebruikerDb\" />
-	  <Folder Include="Migrations\HuurContextMigrations\" />
 	</ItemGroup>
 
 </Project>

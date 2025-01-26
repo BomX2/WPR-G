@@ -27,6 +27,7 @@ public class CustomClaimsPrincipalFactory
         {
             identity.AddClaim(new Claim(ClaimTypes.MobilePhone, user.PhoneNumber));
         }
+        identity.AddClaim(new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString()));
 
         return identity;
     }

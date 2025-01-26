@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useUser } from '../userContext';
+
 
 const SearchFilters = ({ onSubmit }) => {
-    const [vehicleType, setVehicleType] = useState("");
+    const [vehicleType, setVehicleType] = useState("auto");
     const [ophaalDatum, setOphaalDatum] = useState(null);
     const [inleverDatum, setInleverDatum] = useState(null);
     const [ophaalTime, setOphaalTime] = useState("");
     const [inleverTime, setInleverTime] = useState("");
+    const { user } = useUser() || {};
+
+    if (!user) {
+        return <div></div>; // Handle null user gracefully
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -29,11 +36,18 @@ const SearchFilters = ({ onSubmit }) => {
     return (
         <form className="search-filter" onSubmit={handleSubmit}>
             <div className="filters">
-                <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value.trim())}>
+                <select
+                    onChange={(e) => setVehicleType(e.target.value.trim())}
+                    disabled={user.role === "ZakelijkeHuurder"}
+                >
                     <option value="" disabled>Voertuigtype</option>
                     <option value="auto">Auto</option>
-                    <option value="camper">Camper</option>
-                    <option value="caravan">Caravan</option>
+                    {user.role !== "ZakelijkeHuurder" && (
+                        <>
+                            <option value="camper">Camper</option>
+                            <option value="caravan">Caravan</option>
+                        </>
+                    )}
                 </select>
 
                 <div className="date-picker">
