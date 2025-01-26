@@ -58,7 +58,7 @@ const VoertuigBeheren = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("/api/voertuigen/createVoertuig", {
+            const response = await fetch("https://localhost:5173/api/voertuigen/createVoertuig", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -139,19 +139,19 @@ const VoertuigBeheren = () => {
                     />
                 </div>
 
-                {/*<div>*/}
-                {/*    <label htmlFor="type" className="block font-medium">*/}
-                {/*        Type*/}
-                {/*    </label>*/}
-                {/*    <input*/}
-                {/*        type="text"*/}
-                {/*        id="type"*/}
-                {/*        name="type"*/}
-                {/*        value={formData.type}*/}
-                {/*        onChange={handleInputChange}*/}
-                {/*        className="border p-2 rounded w-full"*/}
-                {/*    />*/}
-                {/*</div>*/}
+                <div>
+                    <label htmlFor="type" className="block font-medium">
+                        Type
+                    </label>
+                    <input
+                        type="text"
+                        id="type"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleInputChange}
+                        className="border p-2 rounded w-full"
+                    />
+                </div>
 
                 <div>
                     <label htmlFor="kleur" className="block font-medium">
@@ -346,7 +346,7 @@ const VoertuigBeheren = () => {
                             type="text"
                             id="slaapplaatsen"
                             name="slaapplaatsen"
-                            value={formData.extraFields.slaapplaatsen|| ""}
+                            value={formData.extraFields.slaapplaatsen || ""}
                             onChange={handleExtraFieldChange}
                             className="border p-2 rounded w-full"
                         />
@@ -442,7 +442,7 @@ const VoertuigBeheren = () => {
                             type="checkbox"
                             id="heeftZonnepanelen"
                             name="heeftZonnepanelen"
-                            value={formData.extraFields.heeftZonnepanelen|| ""}
+                            value={formData.extraFields.heeftZonnepanelen || ""}
                             onChange={handleExtraFieldChange}
                             className="border p-2 rounded w-full"
                         />
