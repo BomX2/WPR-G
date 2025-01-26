@@ -12,7 +12,7 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250126195135_initial")]
+    [Migration("20250126220619_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -376,6 +376,10 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VoertuigFoto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

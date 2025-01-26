@@ -5,6 +5,7 @@ import SideBar from '../componements/SideBar/SideBar';
 import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import SearchFilters from '../componements/filter-bar/FilterBar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Catalogus() {
     const location = useLocation();
@@ -13,6 +14,8 @@ export default function Catalogus() {
     const [filters, setFilters] = useState({});
     const [soort, setSoort] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const queryparams = new URLSearchParams(location.search);
@@ -71,6 +74,20 @@ export default function Catalogus() {
         }
     };
 
+    const handleShowFilters = () => {
+        setShowFilters(true);
+    };
+
+    const handleSearchSubmit = (filters) => {
+        const { vehicleType, ophaalDatum, inleverDatum, ophaalTime, inleverTime } = filters;
+
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&OphaalTijd=${ophaalTime}
+            &inleverDatum=${encodeURIComponent(inleverDatum)}&InleverTijd=${inleverTime}
+            &soort=${encodeURIComponent(vehicleType)}`);
+
+        
+    };
+
     const getNestedValue = (obj, path) => {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     };
@@ -114,10 +131,10 @@ export default function Catalogus() {
     return (
         <div className="catalogus-container">
             {showFilters ? (
-                <SearchFilters />
+                <SearchFilters onSubmit={handleSearchSubmit} />
             ) : (
                 <>
-                    <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
+                        <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} onShowFilters={handleShowFilters} />
                     <div className="content">
                         {errorMessage ? (
                             <div className="error-message">{errorMessage}</div>

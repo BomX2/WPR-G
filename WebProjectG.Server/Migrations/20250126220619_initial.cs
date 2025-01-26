@@ -42,7 +42,8 @@ namespace WebProjectG.Server.Migrations
                     AanschafJaar = table.Column<int>(type: "int", nullable: false),
                     PrijsPerDag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     InclusiefVerzekering = table.Column<bool>(type: "bit", nullable: false),
-                    soort = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    soort = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VoertuigFoto = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

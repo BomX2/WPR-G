@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./SideBar.css";
 
-export default function SideBar({ filters, onFilterChange, soort }) {
+export default function SideBar({ filters, onFilterChange, soort, onShowFilters }) {
     const [merken, setMerken] = useState([]);
     
     // Ophalen van merken vanuit de API
@@ -203,6 +203,7 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             <button onClick={resetFilters} className="reset-button">
                 Reset alle filters
             </button>
+            <button onClick={onShowFilters}>wijzig tijden</button>
         </div>
     );
 }
