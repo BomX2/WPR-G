@@ -37,8 +37,7 @@ const App = () => {
                     <Route path="/AanvraagBackOffice" element={<AanvraagBackOffice />} />
                     <Route path="/FrontAanvraag" element={<FrontOfficeAanvraag />} />
                     <Route path="/MedewerkerRegistratie" element={<MedewerkerRegistratie />} />
-                    <Route path="/SchadePagina" element={<SchadeRegistreren /> } />
-                 </Routes>
+                    <Route path="/SchadePagina" element={<SchadeRegistreren />} />
                     <Route path="/privacy" element={<Privacy />} />
                 </Routes>
             </div>
