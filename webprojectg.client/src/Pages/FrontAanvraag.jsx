@@ -96,7 +96,7 @@ const FrontOfficeAanvraag = () => {
                 const data = await MaakFormulier.json();
                 const SchadeId = data.id;
                 console.log(data.id);
-                console.log(SchadeId)
+                console.log(SchadeId);
                 sessionStorage.setItem("SchadeId", SchadeId);
                 navigeren('/SchadePagina');
             }

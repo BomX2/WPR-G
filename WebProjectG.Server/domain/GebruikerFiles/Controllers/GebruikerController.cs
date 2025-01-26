@@ -389,13 +389,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("getAanvragen")]
         public async Task<ActionResult> GetAanvragen()
         {
-            var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == null)
+            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == false && aanv.Status != "beschadigd")
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, aanv.Kenteken })
+
                 .ToListAsync();
 
-            if (!aanvragen.Any()) return NotFound();
+            if (aanvragen.Count == 0) return NotFound();
             return Ok(aanvragen);
         }
 
@@ -403,14 +403,15 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         public async Task<ActionResult> GetAanvragenFront()
         {
             var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == true)
+                .Where(aanv => aanv.Goedgekeurd == true && aanv.Status != "beschadigd")
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, Kenteken = aanv.Kenteken })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
             return Ok(aanvragen);
         }
+
 
         [HttpPut("KeurAanvraagGoed/{id}")]
         public async Task<IActionResult> KeurAanvraagGoed(int id, [FromBody] AanvraagDto aanvraagDto)
@@ -587,6 +588,28 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             await _huurContext.SaveChangesAsync();
             return CreatedAtAction("GetSchadeFormulier", new { id = schadeformulier.Id }, schadeformulier);
         }
+        [HttpGet("GetSFormulieren")]
+        public async Task<ActionResult> GetFormulieren()
+        {
+            var Schadeformulieren = await _huurContext.schadeFormulieren.ToListAsync();
+            if (Schadeformulieren.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(Schadeformulieren);
+        }
+        [HttpDelete("SchadeformVerwijder/{id}")]
+        public async Task<IActionResult> VerwijderSchadeForm(int id)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == id);
+            if (schadeFormulier == null)
+            {
+                return BadRequest();
+            }
+            _huurContext.schadeFormulieren.Remove(schadeFormulier);
+            await _huurContext.SaveChangesAsync();
+            return NoContent();
+        }
         [HttpGet("SchadeFormulier/{id}")]
         public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)
         {
@@ -599,9 +622,39 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(schadeFormulier);
         }
+        [HttpPut("PutSchadeForm/{SchadeId}")]
+        public async Task<IActionResult> PutSFormulier(int SchadeId, PutSchadeformulierDto putSchadeformulier)
+        {
+            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == SchadeId);
+            if (schadeFormulier == null)
+            {
+                return BadRequest();
+            }
+            var voertuig = await _huurContext.Voertuigen.FirstOrDefaultAsync(car => car.Kenteken == schadeFormulier.Kenteken);
+            if (voertuig == null)
+            {
 
-
-
-
+                return NotFound();
+            }
+            schadeFormulier.ErnstVDSchade = putSchadeformulier.ErnstVDSchade;
+            schadeFormulier.SchadeType = putSchadeformulier.SchadeType;
+            voertuig.Status = "beschadigd";
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            }
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.schadeFormulieren.Any(sch => sch.Id == schadeFormulier.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
     }
 }
