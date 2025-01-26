@@ -61,7 +61,10 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     .Distinct();
 
                 // Filter voertuigen die niet beschikbaar zijn
-                query = query.Where(v => !bezetteAuto.Contains(v.Kenteken));
+                query = query.Where(v =>
+            !bezetteAuto.Contains(v.Kenteken) &&
+            v.Status.ToLower() != "beschadigd" &&
+            v.Status.ToLower() != "verwijderd");
             }
 
             // Haal gefilterde voertuigen op

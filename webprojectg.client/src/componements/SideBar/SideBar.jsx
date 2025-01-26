@@ -116,29 +116,12 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor campers
     const camperFilters = (
         <>
-            <label>Lengte (m)</label>
-            <input
-                type="number"
-                name="lengteMax"
-                placeholder="Max lengte"
-                value={filters.lengteMax || ""}
-                onChange={onFilterChange}
-            />
-
-            <label>Hoogte (m)</label>
-            <input
-                type="number"
-                name="hoogteMax"
-                placeholder="Max hoogte"
-                value={filters.hoogteMax || ""}
-                onChange={onFilterChange}
-            />
 
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsenMin"
-                placeholder="Min slaapplaatsen"
+                name="slaapplaatsen"
+                placeholder="aantal slaapplaatsen"
                 value={filters.slaapplaatsenMin || ""}
                 onChange={onFilterChange}
             />
@@ -172,15 +155,7 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor caravans
     const caravanFilters = (
         <>
-            <label>Lengte (m)</label>
-            <input
-                type="number"
-                name="lengteMax"
-                placeholder="Max lengte"
-                value={filters.lengteMax || ""}
-                onChange={onFilterChange}
-            />
-
+            
             <label>Slaapplaatsen</label>
             <input
                 type="number"

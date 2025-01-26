@@ -82,14 +82,7 @@ export default function Catalogus() {
             }
 
             if (typeof autoValue === 'number') {
-                // Filteren op minimale waarde
-                if (key.includes('Min') && value !== "") {
-                    return autoValue >= value;  // Alleen voertuigen waarvan de waarde groter dan of gelijk is aan de minwaarde
-                }
-                // Filteren op maximale waarde
-                if (key.includes('Max') && value !== "") {
-                    return autoValue <= value;  // Alleen voertuigen waarvan de waarde kleiner dan of gelijk is aan de maxwaarde
-                }
+                return autoValue === parseInt(value); // Vergelijk alleen als het een nummer is
             }
 
             if (typeof autoValue === 'boolean') {

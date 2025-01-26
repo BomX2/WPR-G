@@ -12,8 +12,8 @@ using WebProjectG.Server.domain;
 namespace WebProjectG.Server.Migrations
 {
     [DbContext(typeof(HuurContext))]
-    [Migration("20250126190513_updateCarAndAll")]
-    partial class updateCarAndAll
+    [Migration("20250126195135_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
