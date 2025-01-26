@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebProjectG.Server.domain.VoertuigFiles;
 using WebProjectG.Server.domain.Huur;
+using System.Data;
 
 namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 {
@@ -60,7 +61,10 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     .Distinct();
 
                 // Filter voertuigen die niet beschikbaar zijn
-                query = query.Where(v => !bezetteAuto.Contains(v.Kenteken));
+                query = query.Where(v =>
+            !bezetteAuto.Contains(v.Kenteken) &&
+            v.Status.ToLower() != "beschadigd" &&
+            v.Status.ToLower() != "verwijderd");
             }
 
             // Haal gefilterde voertuigen op
@@ -106,7 +110,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             // Als geen specifieke soort is opgegeven, retourneer de voertuigen zonder filtering
             return Ok(gefilterdeVoertuigen);
         }
-    
+
 
         [HttpGet("getByKenteken/{Kenteken}")]
         public async Task<ActionResult> GetAutoById(String Kenteken)
@@ -127,7 +131,7 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                     break;
 
                 case "caravan":
-                    extraInfo = await _huurContext.caravans.FirstOrDefaultAsync(a => a.Kenteken== Kenteken);
+                    extraInfo = await _huurContext.caravans.FirstOrDefaultAsync(a => a.Kenteken == Kenteken);
                     break;
 
                 default:
@@ -135,6 +139,43 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             }
 
             return Ok(extraInfo);
+        }
+
+        [HttpGet("merken")]
+        public async Task<IActionResult> GetMerken([FromQuery] string soort)
+        {
+            var merken = await _huurContext.Voertuigen
+                .Where(v => v.soort.ToLower() == soort.ToLower())
+                .Select(v => v.Merk)
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(merken);
+        }
+        [HttpPut("RepareerVoertuig/{kenteken}")]
+        public async Task<IActionResult> RepareerAuto(string kenteken)
+        {
+            var voertuig = await _huurContext.Voertuigen.FirstOrDefaultAsync(auto => auto.Kenteken == kenteken);
+            if (voertuig == null)
+            {
+                return BadRequest(); 
+            }
+            voertuig.Status = "Gerepareerd";
+            try
+            {
+                await _huurContext.SaveChangesAsync();
+            } 
+            catch (DBConcurrencyException)
+            {
+                if (!_huurContext.Voertuigen.Any(v => v.Kenteken == kenteken)) {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
         }
     }
 }

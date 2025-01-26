@@ -12,6 +12,10 @@ export default function Products({ auto }) {
     const InleverTijd = queryparams.get("InleverTijd");
     const verhicleType = queryparams.get("soort");
     const navigate = useNavigate('');
+
+    const vehicleImage = `../../images/${auto.voertuig.voertuigFoto}`;
+    console.log("Afbeeldingspad:", vehicleImage);
+
     return (
         <section className="products-container">
             <section className="products">

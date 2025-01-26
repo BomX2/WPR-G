@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebProjectG.Server", "WebProjectG.Server\WebProjectG.Server.csproj", "{27693547-4D1E-410D-BD69-5AD0B88CD9B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebProjectG.Server", "WebProjectG.Server\WebProjectG.Server.csproj", "{27693547-4D1E-410D-BD69-5AD0B88CD9B8}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "webprojectg.client", "webprojectg.client\webprojectg.client.esproj", "{AF8E84B9-EA9B-489F-B9C8-093955267468}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebprojectG.Tests", "WebprojectG.Tests\WebprojectG.Tests.csproj", "{E2AAB1CE-2384-4CC9-AFC6-6028B1E8E8E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{AF8E84B9-EA9B-489F-B9C8-093955267468}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF8E84B9-EA9B-489F-B9C8-093955267468}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF8E84B9-EA9B-489F-B9C8-093955267468}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E2AAB1CE-2384-4CC9-AFC6-6028B1E8E8E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2AAB1CE-2384-4CC9-AFC6-6028B1E8E8E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2AAB1CE-2384-4CC9-AFC6-6028B1E8E8E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2AAB1CE-2384-4CC9-AFC6-6028B1E8E8E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

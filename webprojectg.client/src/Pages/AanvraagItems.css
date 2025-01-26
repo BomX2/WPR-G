@@ -5,6 +5,7 @@
 }
 .aanvraagItems-layout{
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 1rem;
 }
@@ -27,7 +28,22 @@
     display: flex;
     flex: 1;
 }
+.bovenste-rij,
+.onderste-rij {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+    
+}
 
+.onderste-rij {
+    border: none; 
+}
 .linker-balk,
 .rechter-balk {
     flex: 1;
