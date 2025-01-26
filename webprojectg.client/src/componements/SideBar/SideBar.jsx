@@ -3,9 +3,10 @@ import "./SideBar.css";
 
 export default function SideBar({ filters, onFilterChange, soort }) {
     const [merken, setMerken] = useState([]);
-
+    
     // Ophalen van merken vanuit de API
     useEffect(() => {
+        
         const fetchMerken = async () => {
             try {
                 const response = await fetch(`https://localhost:7065/api/voertuigen/merken?soort=${soort}`);
@@ -98,15 +99,6 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 Heeft airco
             </label>
 
-            <label>Brandstofverbruik (L/100km)</label>
-            <input
-                type="number"
-                name="brandstofVerbruik"
-                placeholder="Max brandstofverbruik"
-                value={filters.brandstofVerbruik || ""}
-                onChange={onFilterChange}
-            />
-
             <label>Transmissietype</label>
             <select
                 name="transmissieType"
@@ -118,14 +110,6 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 <option value="Automatisch">Automatisch</option>
             </select>
 
-            <label>Bagageruimte (L)</label>
-            <input
-                type="number"
-                name="bagageruimte"
-                placeholder="Min bagageruimte"
-                value={filters.bagageruimte || ""}
-                onChange={onFilterChange}
-            />
         </>
     );
 

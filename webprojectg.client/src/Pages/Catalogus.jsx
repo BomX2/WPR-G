@@ -89,14 +89,18 @@ export default function Catalogus() {
         });
     });
 
+  
     const sortedAutos = filteredAutos.sort((a, b) => {
-        if (filters.prijs === 'laag-hoog') {
-            return a.prijs - b.prijs;
-        }
-        if (filters.prijs === 'hoog-laag') {
-            return b.prijs - a.prijs;
-        }
-        return 0;
+            const prijsA = getNestedValue(a, 'voertuig.prijsPerDag');
+            const prijsB = getNestedValue(b, 'voertuig.prijsPerDag');
+
+            if (filters.prijs === 'laag-hoog') {
+                return prijsA - prijsB; // Sorteer op voertuig.prijsPerDag in oplopende volgorde
+            }
+            if (filters.prijs === 'hoog-laag') {
+                return prijsB - prijsA; // Sorteer op voertuig.prijsPerDag in aflopende volgorde
+            }
+            return 0;
     });
 
     return (
