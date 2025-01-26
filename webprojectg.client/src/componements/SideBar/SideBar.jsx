@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./SideBar.css";
 
-export default function SideBar({ filters, onFilterChange, soort }) {
+export default function SideBar({ filters, onFilterChange, soort, onShowFilters }) {
     const [merken, setMerken] = useState([]);
     
     // Ophalen van merken vanuit de API
@@ -22,6 +22,15 @@ export default function SideBar({ filters, onFilterChange, soort }) {
 
         fetchMerken();
     }, [soort]);
+
+    const resetFilters = () => {
+        onFilterChange({
+            target: {
+                name: "reset",
+                value: null,
+            },
+        });
+    };
 
     // Algemene filters die altijd beschikbaar zijn
     const commonFilters = (
@@ -70,15 +79,6 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor auto's
     const autoFilters = (
         <>
-            <label>Aantal deuren</label>
-            <input
-                type="number"
-                name="aantalDeuren"
-                placeholder="Aantal deuren"
-                value={filters.aantalDeuren || ""}
-                onChange={onFilterChange}
-            />
-
             <label>Brandstoftype</label>
             <select name="brandstofType" value={filters.brandstofType || ""} onChange={onFilterChange}>
                 <option value="">Alle brandstoffen</option>
@@ -116,30 +116,13 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor campers
     const camperFilters = (
         <>
-            <label>Lengte (m)</label>
-            <input
-                type="number"
-                name="lengteMax"
-                placeholder="Max lengte"
-                value={filters.lengteMax || ""}
-                onChange={onFilterChange}
-            />
-
-            <label>Hoogte (m)</label>
-            <input
-                type="number"
-                name="hoogteMax"
-                placeholder="Max hoogte"
-                value={filters.hoogteMax || ""}
-                onChange={onFilterChange}
-            />
 
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsenMin"
-                placeholder="Min slaapplaatsen"
-                value={filters.slaapplaatsenMin || ""}
+                name="slaapplaatsen"
+                placeholder="aantal slaapplaatsen"
+                value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
             />
 
@@ -172,22 +155,15 @@ export default function SideBar({ filters, onFilterChange, soort }) {
     // Filters specifiek voor caravans
     const caravanFilters = (
         <>
-            <label>Lengte (m)</label>
-            <input
-                type="number"
-                name="lengteMax"
-                placeholder="Max lengte"
-                value={filters.lengteMax || ""}
-                onChange={onFilterChange}
-            />
-
+            
             <label>Slaapplaatsen</label>
             <input
                 type="number"
-                name="slaapplaatsenMin"
-                placeholder="Min slaapplaatsen"
-                value={filters.slaapplaatsenMin || ""}
+                name="slaapplaatsen"
+                placeholder="slaapplaatsen"
+                value={filters.slaapplaatsen || ""}
                 onChange={onFilterChange}
+                min="0"
             />
 
             <label>
@@ -201,6 +177,18 @@ export default function SideBar({ filters, onFilterChange, soort }) {
                 />
                 Heeft keuken
             </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="heeftLuifel"
+                    checked={filters.heeftLuifel || false}
+                    onChange={(e) =>
+                        onFilterChange({ target: { name: "heeftLuifel", value: e.target.checked } })
+                    }
+                />
+                Heeft Luifel
+            </label>
         </>
     );
 
@@ -211,6 +199,11 @@ export default function SideBar({ filters, onFilterChange, soort }) {
             {soort === "auto" && autoFilters}
             {soort === "camper" && camperFilters}
             {soort === "caravan" && caravanFilters}
+
+            <button onClick={resetFilters} className="reset-button">
+                Reset alle filters
+            </button>
+            <button onClick={onShowFilters}>wijzig tijden</button>
         </div>
     );
 }

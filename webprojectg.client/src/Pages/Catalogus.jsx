@@ -5,6 +5,7 @@ import SideBar from '../componements/SideBar/SideBar';
 import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import SearchFilters from '../componements/filter-bar/FilterBar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Catalogus() {
     const location = useLocation();
@@ -13,6 +14,8 @@ export default function Catalogus() {
     const [filters, setFilters] = useState({});
     const [soort, setSoort] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const queryparams = new URLSearchParams(location.search);
@@ -60,11 +63,29 @@ export default function Catalogus() {
     }, [location.search]);
 
     const handleFilterChange = (event) => {
-        const { name, value } = event.target;
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value,
-        }));
+        if (event.target.name === "reset") {
+            setFilters({});
+        } else {
+            const { name, value } = event.target;
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                [name]: value,
+            }));
+        }
+    };
+
+    const handleShowFilters = () => {
+        setShowFilters(true);
+    };
+
+    const handleSearchSubmit = (filters) => {
+        const { vehicleType, ophaalDatum, inleverDatum, ophaalTime, inleverTime } = filters;
+
+        navigate(`/Catalogus?ophaalDatum=${encodeURIComponent(ophaalDatum)}&OphaalTijd=${ophaalTime}
+            &inleverDatum=${encodeURIComponent(inleverDatum)}&InleverTijd=${inleverTime}
+            &soort=${encodeURIComponent(vehicleType)}`);
+
+        
     };
 
     const getNestedValue = (obj, path) => {
@@ -82,18 +103,11 @@ export default function Catalogus() {
             }
 
             if (typeof autoValue === 'number') {
-                // Filteren op minimale waarde
-                if (key.includes('Min') && value !== "") {
-                    return autoValue >= value;  // Alleen voertuigen waarvan de waarde groter dan of gelijk is aan de minwaarde
-                }
-                // Filteren op maximale waarde
-                if (key.includes('Max') && value !== "") {
-                    return autoValue <= value;  // Alleen voertuigen waarvan de waarde kleiner dan of gelijk is aan de maxwaarde
-                }
+                return autoValue === parseInt(value); // Vergelijk alleen als het een nummer is
             }
 
             if (typeof autoValue === 'boolean') {
-                return autoValue === (value === 'true');
+                return autoValue === (value === true || value === "true");
             }
 
             return true;
@@ -117,10 +131,10 @@ export default function Catalogus() {
     return (
         <div className="catalogus-container">
             {showFilters ? (
-                <SearchFilters />
+                <SearchFilters onSubmit={handleSearchSubmit} />
             ) : (
                 <>
-                    <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} />
+                        <SideBar filters={filters} onFilterChange={handleFilterChange} soort={soort} onShowFilters={handleShowFilters} />
                     <div className="content">
                         {errorMessage ? (
                             <div className="error-message">{errorMessage}</div>

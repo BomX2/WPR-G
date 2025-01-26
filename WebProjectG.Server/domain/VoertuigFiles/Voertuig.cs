@@ -15,6 +15,7 @@ namespace WebProjectG.Server.domain.VoertuigFiles
         public decimal PrijsPerDag { get; set; }
         public bool InclusiefVerzekering { get; set; }
         public String soort {  get; set; }
+        public String VoertuigFoto { get; set; }
 
 
         public Voertuig(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering)
@@ -28,7 +29,7 @@ namespace WebProjectG.Server.domain.VoertuigFiles
             PrijsPerDag = prijsPerDag;
             InclusiefVerzekering = inclusiefVerzekering;
         }
-        public Voertuig(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering, string? status)
+        public Voertuig(string huurStatus, string merk, string type, string kenteken, string kleur, int aanschafJaar, decimal prijsPerDag, bool inclusiefVerzekering, string? status, string voertuigfoto)
         {
             HuurStatus = huurStatus;
             Merk = merk;
@@ -39,6 +40,7 @@ namespace WebProjectG.Server.domain.VoertuigFiles
             PrijsPerDag = prijsPerDag;
             InclusiefVerzekering = inclusiefVerzekering;
             Status = status;
+            VoertuigFoto = voertuigfoto;
         }
     }
 }
