@@ -89,65 +89,70 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             return BadRequest(new { message = errors });
         }
 
-        //Login a user
+        // Login a user with password, check if 2FA is required
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new { message = "Invalid data provided." });
+
+            // Find user by Email or Username
+            Gebruiker user = model.EmailOrUsername.Contains('@')
+                ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
+                : await _userManager.FindByNameAsync(model.EmailOrUsername);
+
+            if (user == null)
+                return Unauthorized(new { message = "Invalid email/username or password." });
+
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: false
+            );
+
+            if (result.RequiresTwoFactor)
+                return Ok(new { requiresTwoFactor = true, userId = user.Id });
+
+            if (result.Succeeded)
+                return Ok(new { message = "Login successful" });
+
+            if (result.IsLockedOut)
+                return Unauthorized(new { message = "User is locked out." });
+
+            return Unauthorized(new { message = "Invalid email/username or password." });
+        }
+
+
+        [HttpPost("verify-2fa-login")]
+        public async Task<IActionResult> VerifyTwoFactorLogin([FromBody] TwoFactorLoginDto model)
+        {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new { message = "Invalid data provided." });
-                }
-
-                var user = model.EmailOrUsername.Contains("@")
-                    ? await _userManager.FindByEmailAsync(model.EmailOrUsername)
-                    : await _userManager.FindByNameAsync(model.EmailOrUsername);
-
-                if (user == null)
-                {
-                    return Unauthorized(new { message = "Invalid email/username or password." });
-                }
-
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(
+                    model.TwoFactorCode,
+                    model.RememberMe,
+                    rememberClient: false
+                );
 
                 if (result.Succeeded)
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
-
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.StreetAddress, user.Adres),
-                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "User"),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
-            };
-                    foreach (var claim in claims)
-                    {
-                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-                    }
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe
-                    };
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    return Ok(new { message = "Login successful" });
+                    return Ok(new { message = "2FA login successful" });
                 }
-
-                return Unauthorized(new { message = "Invalid email/username or password." });
+                else if (result.IsLockedOut)
+                {
+                    return Unauthorized(new { message = "User is locked out." });
+                }
+                else
+                {
+                    return Unauthorized(new { message = "Invalid 2FA code." });
+                }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new
                 {
-                    message = "An unexpected error occurred during login.",
+                    message = "An unexpected error occurred verifying 2FA.",
                     details = ex.Message
                 });
             }
@@ -173,6 +178,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var phonenumber = User.FindFirst(ClaimTypes.MobilePhone)?.Value;
+            var twoFactorEnabledString = User.FindFirst("TwoFactorEnabled")?.Value;
+            bool twoFactorEnabled = bool.TryParse(twoFactorEnabledString, out var parsedResult) && parsedResult;
+
 
             return Ok(new
             {
@@ -180,10 +188,79 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
                 email = email,
                 adres = adres,
                 role = role,
-                name = username,
-                phonenumber = phonenumber
+                username = username,
+                phonenumber = phonenumber,
+                twoFactorEnabled = twoFactorEnabled
             });
         }
+
+        [HttpPost("enable-2fa")]
+        [Authorize]
+        public async Task<IActionResult> EnableTwoFactorAuthentication()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { Message = "User not found." });
+
+            var key = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrEmpty(key))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                key = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+
+            var email = user.Email ?? user.UserName;
+            var issuer = "CarAndAll";
+            var otpauthUrl = $"otpauth://totp/{issuer}:{email}?secret={key}&issuer={issuer}&digits=6";
+
+            // Return the otpauth URL so the front-end can generate a QR code
+            return Ok(new { OtpAuthUrl = otpauthUrl });
+        }
+
+        [HttpPost("disable-2fa")]
+        [Authorize]
+        public async Task<IActionResult> DisableTwoFactorAuthentication()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { message = "User not found." });
+
+            user.TwoFactorEnabled = false;
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(new { message = "Could not disable 2FA." });
+            }
+
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+
+            return Ok(new { message = "2FA disabled successfully." });
+        }
+
+        [HttpPost("verify-2fa")] //verify for enabling
+        [Authorize]
+        public async Task<IActionResult> VerifyTwoFactorToken([FromBody] VerifyTokenDto model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { Message = "User not found." });
+
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user,
+                TokenOptions.DefaultAuthenticatorProvider,
+                model.Token);
+
+            if (!isValid)
+                return BadRequest(new { Message = "Invalid token." });
+
+            user.TwoFactorEnabled = true;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { Message = "Could not enable 2FA." });
+
+            return Ok(new { Message = "2FA is enabled." });
+        }
+
 
         //Fetch user details
         [HttpGet("getUser/{id}")]
@@ -206,30 +283,28 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         }
 
         //Update user details
-        [HttpPut("{id}")]
+        [HttpPut("updateGebruiker/{id}")]
         public async Task<IActionResult> UpdateUserDetails(string id, [FromBody] UpdateGebruikerDto model)
         {
             var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-            {
+            if (user is null)
                 return NotFound(new { message = "User not found." });
-            }
 
+            user.UserName = model.UserName;
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
             user.Adres = model.Adres;
 
             var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { message = string.Join(", ", result.Errors.Select(e => e.Description)) });
 
-            if (result.Succeeded)
-            {
-                return Ok(new { message = "User details updated successfully." });
-            }
+            // refresh claims
+            await _signInManager.RefreshSignInAsync(user);
 
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return BadRequest(new { message = errors });
+            return Ok(new { message = "User details updated, claims refreshed." });
         }
+
 
         //Change password
         [HttpPost("password/change")]
@@ -314,13 +389,13 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpGet("getAanvragen")]
         public async Task<ActionResult> GetAanvragen()
         {
-            var aanvragen = await _huurContext.Aanvragen.Where(aanv => aanv.Goedgekeurd == false && aanv.Status != "beschadigd")
+            var aanvragen = await _huurContext.Aanvragen
+                .Where(aanv => aanv.Goedgekeurd == null)
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, aanv.Kenteken })
-
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Email, aanv.Telefoonnummer, AutoType = aanv.Adres, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
-            if (aanvragen.Count == 0) return NotFound();
+            if (!aanvragen.Any()) return NotFound();
             return Ok(aanvragen);
         }
 
@@ -328,9 +403,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         public async Task<ActionResult> GetAanvragenFront()
         {
             var aanvragen = await _huurContext.Aanvragen
-                .Where(aanv => aanv.Goedgekeurd == true && aanv.Status != "beschadigd")
+                .Where(aanv => aanv.Goedgekeurd == true)
                 .Include(aanv => aanv.voertuig)
-                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk, Kenteken = aanv.Kenteken })
+                .Select(aanv => new { aanv.Id, aanv.StartDatum, aanv.EindDatum, aanv.Adres, aanv.Email, aanv.Telefoonnummer, aanv.Status, AutoType = aanv.voertuig.Type, AutoMerk = aanv.voertuig.Merk })
                 .ToListAsync();
 
             if (!aanvragen.Any()) return NotFound();
@@ -389,7 +464,6 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
             { return NotFound(); }
             return bedrijf;
         }
-
 
 
         [HttpPut("putBedrijfsAbonnement/{kvkNummer}")]
@@ -507,33 +581,11 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
         [HttpPost("MaakSchadeFormulier")]
         public async Task<ActionResult> PostSchade(SchadeFormulierDto schadeFormulierDto)
         {
-            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Email, schadeFormulierDto.Telefoonnummer, schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId, "niet ingevuld");
+            var schadeformulier = new SchadeFormulier("beschadigd", schadeFormulierDto.Kenteken, schadeFormulierDto.AanvraagId);
 
             _huurContext.schadeFormulieren.Add(schadeformulier);
             await _huurContext.SaveChangesAsync();
             return CreatedAtAction("GetSchadeFormulier", new { id = schadeformulier.Id }, schadeformulier);
-        }
-        [HttpGet("GetSFormulieren")]
-        public async Task<ActionResult> GetFormulieren()
-        {
-            var Schadeformulieren = await _huurContext.schadeFormulieren.ToListAsync();
-            if (Schadeformulieren.Count == 0)
-            {
-                return NotFound();
-            }
-            return Ok(Schadeformulieren);
-        }
-        [HttpDelete("SchadeformVerwijder/{id}")]
-        public async Task<IActionResult> VerwijderSchadeForm(int id)
-        {
-            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == id);
-            if (schadeFormulier == null)
-            {
-                return BadRequest();
-            }
-            _huurContext.schadeFormulieren.Remove(schadeFormulier);
-            await _huurContext.SaveChangesAsync();
-            return NoContent();
         }
         [HttpGet("SchadeFormulier/{id}")]
         public async Task<ActionResult<SchadeFormulier>> GetSchadeFormulier(int id)
@@ -547,39 +599,9 @@ namespace WebProjectG.Server.domain.GebruikerFiles.Controllers
 
             return Ok(schadeFormulier);
         }
-        [HttpPut("PutSchadeForm/{SchadeId}")]
-        public async Task<IActionResult> PutSFormulier(int SchadeId, PutSchadeformulierDto putSchadeformulier)
-        {
-            var schadeFormulier = await _huurContext.schadeFormulieren.FirstOrDefaultAsync(schade => schade.Id == SchadeId);
-            if (schadeFormulier == null)
-            {
-                return BadRequest();
-            }
-            var voertuig = await _huurContext.Voertuigen.FirstOrDefaultAsync(car => car.Kenteken == schadeFormulier.Kenteken);
-            if (voertuig == null)
-            {
 
-                return NotFound();
-            }
-            schadeFormulier.ErnstVDSchade = putSchadeformulier.ErnstVDSchade;
-            schadeFormulier.SchadeType = putSchadeformulier.SchadeType;
-            voertuig.Status = "beschadigd";
-            try
-            {
-                await _huurContext.SaveChangesAsync();
-            }
-            catch (DBConcurrencyException)
-            {
-                if (!_huurContext.schadeFormulieren.Any(sch => sch.Id == schadeFormulier.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return NoContent();
-        }
+
+
+
     }
 }

@@ -144,8 +144,8 @@ const Registratie = () => {
                             required
                         />
                     </div>
-                    <div className="input">
-                        <label htmlFor="role">Role:</label>
+                    <div className="roleinput">
+                        <label htmlFor="role">Kies uw rol:</label>
                         <select
                             placeholder="Select your role"
                             id="role"

@@ -23,20 +23,18 @@ builder.Services.AddIdentity<Gebruiker, IdentityRole>()
     .AddDefaultTokenProviders();
 
 // Add Authentication and Cookie Configuration
-builder.Services.AddAuthentication(options =>
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Set the default scheme
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
+    // The default scheme used by Identity is "Identity.Application"
+    options.Cookie.Name = "CarAndAll.Identity";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.ExpireTimeSpan = TimeSpan.FromHours(6); // cookie expiration time
-    options.SlidingExpiration = true; // extend cookie every time the user interacts
-    options.LoginPath = "/Pages/login"; // Redirect to login page when unauthorized
-    options.AccessDeniedPath = "/Pages/access-denied"; // Redirect when access is denied
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.ExpireTimeSpan = TimeSpan.FromHours(6);
+    options.SlidingExpiration = true;
+    // Where to redirect if unauthorized or access denied:
+    options.LoginPath = "/Pages/Inlog";
+    options.AccessDeniedPath = "/Pages/access-denied";
 });
 
 // Add CORS policy for frontend-backend communication
