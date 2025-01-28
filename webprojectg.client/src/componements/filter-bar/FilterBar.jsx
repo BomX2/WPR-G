@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useUser } from '../userContext';
@@ -12,9 +13,6 @@ const SearchFilters = ({ onSubmit }) => {
     const [inleverTime, setInleverTime] = useState("");
     const { user } = useUser() || {};
 
-    if (!user) {
-        return <div></div>; // Handle null user gracefully
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,11 +36,11 @@ const SearchFilters = ({ onSubmit }) => {
             <div className="filters">
                 <select
                     onChange={(e) => setVehicleType(e.target.value.trim())}
-                    disabled={user.role === "ZakelijkeHuurder"}
+                    disabled={user?.role === "ZakelijkeHuurder"}
                 >
                     <option value="" disabled>Voertuigtype</option>
                     <option value="auto">Auto</option>
-                    {user.role !== "ZakelijkeHuurder" && (
+                    {user?.role !== "ZakelijkeHuurder" && (
                         <>
                             <option value="camper">Camper</option>
                             <option value="caravan">Caravan</option>
@@ -99,8 +97,14 @@ const SearchFilters = ({ onSubmit }) => {
                         <option value="avond">Avond</option>
                     </select>
                 </div>
-
-                <button className="cta-button" type="submit">Huur Nu</button>
+                
+                {user ? (
+                    <button className="cta-button" type="submit">Huur Nu</button>
+                ) : (
+                    <Link to="/registratie" className="cta-button">
+                        Maak een account aan
+                    </Link>
+                )}
             </div>
         </form>
     );
