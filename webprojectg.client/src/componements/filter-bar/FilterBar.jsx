@@ -99,7 +99,7 @@ const SearchFilters = ({ onSubmit }) => {
                 </div>
                 
                 {user ? (
-                    <button className="cta-button" type="submit">Huur Nu</button>
+                    <button className="cta-button" type="submit">Zoek</button>
                 ) : (
                     <Link to="/registratie" className="cta-button">
                         Maak een account aan

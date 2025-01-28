@@ -80,7 +80,7 @@ const Registratie = () => {
                 <div className="inputs">
                     <div className="input">
                         <input
-                            placeholder="username"
+                            placeholder="username*"
                             type="username"
                             id="username"
                             name="username"
@@ -91,7 +91,7 @@ const Registratie = () => {
                     </div>
                     <div className="input">
                         <input
-                            placeholder="email"
+                            placeholder="email*"
                             type="email"
                             id="email"
                             name="email"
@@ -102,7 +102,7 @@ const Registratie = () => {
                     </div>
                     <div className="input">
                         <input
-                            placeholder="password"
+                            placeholder="password*"
                             type="password"
                             id="password"
                             name="password"
@@ -113,7 +113,7 @@ const Registratie = () => {
                     </div>
                     <div className="input">
                         <input
-                            placeholder="confirmPassword"
+                            placeholder="confirmPassword*"
                             type="password"
                             id="confirmPassword"
                             name="confirmPassword"
@@ -124,7 +124,7 @@ const Registratie = () => {
                     </div>
                     <div className="input">
                         <input
-                            placeholder="adres"
+                            placeholder="adres*"
                             type="text"
                             id="adres"
                             name="adres"
@@ -135,7 +135,7 @@ const Registratie = () => {
                     </div>
                     <div className="input">
                         <input
-                            placeholder="phoneNumber"
+                            placeholder="phoneNumber*"
                             type="tel"
                             id="phoneNumber"
                             name="phoneNumber"
