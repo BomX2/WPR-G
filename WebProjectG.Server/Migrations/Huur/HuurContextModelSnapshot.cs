@@ -377,7 +377,6 @@ namespace WebProjectG.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VoertuigFoto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("soort")

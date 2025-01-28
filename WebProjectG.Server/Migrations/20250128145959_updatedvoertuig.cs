@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProjectG.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class updatedvoertuig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,7 +43,7 @@ namespace WebProjectG.Server.Migrations
                     PrijsPerDag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     InclusiefVerzekering = table.Column<bool>(type: "bit", nullable: false),
                     soort = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VoertuigFoto = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    VoertuigFoto = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
